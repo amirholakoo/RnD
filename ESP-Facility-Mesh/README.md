@@ -1,0 +1,1 @@
+This firmware creates a dynamic ESP32 mesh network for facility control using FreeRTOS. Each node automatically assigns itself a specific role (like EAST_GATE or WEST_WB) by reading GPIO pins on startup. Child nodes then report their function to the root node, which builds a master table to map functions to specific device MAC addresses for future command and control

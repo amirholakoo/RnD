@@ -1,0 +1,7 @@
+settings = {
+    'resolution': (1280, 720),
+    'framerate': 60,
+    'duration': 15,
+    'output_dir': '/home/pi/videos',
+    'retention_days': 1
+}
