@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP32 Camera Feeds</title>
+</head>
+<body>
+    {% for slot in range(1, 5) %}
+    <div class="camera-slot">
+        <h3>Slot {{ slot }}</h3>
+        <p id="slot{{ slot }}-id">Unassigned</p>
+        <img src="static/images/slot{{ slot }}.png" alt="Slot {{ slot }}" class="camera-feed">
+    </div>
+    {% endfor %}
+</body>
+</html>
