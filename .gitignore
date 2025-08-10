@@ -1,3 +1,9 @@
 /robust_esp_wifi/.devcontainer
 /robust_esp_wifi/.vscode
 /robust_esp_wifi/build
+/Quad_ESP32_img_query/src/10. new_qrcode/qrcode/.devcontainer
+/Quad_ESP32_img_query/src/10. new_qrcode/qrcode/.vscode
+/Quad_ESP32_img_query/src/4.quad_esp_downlaod_img/quad_espidf_img_download/.devcontainer
+*.log
+/Quad_ESP32_img_query/src/9. idf_qrcode/ds_camera_feed/.devcontainer
+/Quad_ESP32_img_query/src/9. idf_qrcode/ds_camera_feed/.vscode

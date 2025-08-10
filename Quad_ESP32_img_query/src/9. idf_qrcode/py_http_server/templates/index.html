@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32-CAM Monitor</title>
+    <style>
+        .slot-container {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        img {
+            width: 320px;
+            height: 240px;
+            object-fit: contain;
+        }
+    </style>
+    <script>
+        // Fetch slot assignments and update DOM
+        async function updateSlots() {
+            try {
+                const response = await fetch('/get_slots');
+                const slots = await response.json();
+                for (let i = 1; i <= 4; i++) {
+                    const slotText = document.getElementById('slot-text-' + i);
+                    slotText.textContent = slots[i] ? slots[i] : 'Unassigned';
+                }
+            } catch (error) {
+                console.error('Error fetching slots:', error);
+            }
+        }
+
+        // Refresh images to prevent caching
+        function refreshImages() {
+            for (let i = 1; i <= 4; i++) {
+                const img = document.getElementById('slot-img-' + i);
+                img.src = '/static/images/slot' + i + '.png?' + new Date().getTime();
+            }
+        }
+
+        // Run updates periodically
+        setInterval(() => {
+            updateSlots();
+            refreshImages();
+        }, 1000); // Update every 5 seconds
+
+        // Initial update on page load
+        window.onload = () => {
+            updateSlots();
+            refreshImages();
+        };
+    </script>
+</head>
+<body>
+    <div>
+        {% for slot in range(1, 5) %}
+        <div class="slot-container">
+            <p id="slot-text-{{ slot }}">Unassigned</p>
+            <img id="slot-img-{{ slot }}" src="/static/images/slot{{ slot }}.png" alt="Camera Feed {{ slot }}">
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
