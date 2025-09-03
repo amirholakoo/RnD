@@ -1,0 +1,32 @@
+# Sensor selection configuration
+# Set SENSOR_TYPE to choose which sensor to build:
+# - MQ135: Build MQ-135 air quality sensor (default)
+# - MQ2: Build MQ-2 gas sensor
+# - ADXL345: Build ADXL345 accelerometer with FFT analysis
+if(NOT DEFINED SENSOR_TYPE)
+    set(SENSOR_TYPE "MQ135")
+endif()
+
+if(SENSOR_TYPE STREQUAL "MQ2")
+    set(SENSOR_MAIN_FILE "mq2_sensor_main.c")
+    message(STATUS "Building for MQ-2 Gas Sensor")
+elseif(SENSOR_TYPE STREQUAL "MQ135")
+    set(SENSOR_MAIN_FILE "blink_example_main.c")
+    message(STATUS "Building for MQ-135 Air Quality Sensor")
+elseif(SENSOR_TYPE STREQUAL "ADXL345")
+    set(SENSOR_MAIN_FILE "adxl345_fft_main.c")
+    set(SENSOR_ADDITIONAL_SRCS "framework.c" "adxl345_driver.c")
+    message(STATUS "Building for ADXL345 Accelerometer with FFT Analysis")
+    message(STATUS "All configuration is done in adxl345_fft_main.c - no menuconfig needed!")
+else()
+    message(FATAL_ERROR "Unknown SENSOR_TYPE: ${SENSOR_TYPE}. Valid options: MQ135, MQ2, ADXL345")
+endif()
+
+# Prepare source files list
+set(COMPONENT_SRCS "${SENSOR_MAIN_FILE}")
+if(DEFINED SENSOR_ADDITIONAL_SRCS)
+    list(APPEND COMPONENT_SRCS ${SENSOR_ADDITIONAL_SRCS})
+endif()
+
+idf_component_register(SRCS ${COMPONENT_SRCS}
+                       INCLUDE_DIRS ".")

@@ -1,0 +1,313 @@
+menu "Example Configuration"
+
+    orsource "$IDF_PATH/examples/common_components/env_caps/$IDF_TARGET/Kconfig.env_caps"
+
+    choice BLINK_LED
+        prompt "Blink LED type"
+        default BLINK_LED_GPIO
+        help
+            Select the LED type. A normal level controlled LED or an addressable LED strip.
+            The default selection is based on the Espressif DevKit boards.
+            You can change the default selection according to your board.
+
+        config BLINK_LED_GPIO
+            bool "GPIO"
+        config BLINK_LED_STRIP
+            bool "LED strip"
+    endchoice
+
+    choice BLINK_LED_STRIP_BACKEND
+        depends on BLINK_LED_STRIP
+        prompt "LED strip backend peripheral"
+        default BLINK_LED_STRIP_BACKEND_RMT if SOC_RMT_SUPPORTED
+        default BLINK_LED_STRIP_BACKEND_SPI
+        help
+            Select the backend peripheral to drive the LED strip.
+
+        config BLINK_LED_STRIP_BACKEND_RMT
+            depends on SOC_RMT_SUPPORTED
+            bool "RMT"
+        config BLINK_LED_STRIP_BACKEND_SPI
+            bool "SPI"
+    endchoice
+
+    config BLINK_GPIO
+        int "Blink GPIO number"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_OUT_RANGE_MAX
+        default 8
+        help
+            GPIO number (IOxx) to blink on and off the LED.
+            Some GPIOs are used for other purposes (flash connections, etc.) and cannot be used to blink.
+
+    config BLINK_PERIOD
+        int "Blink period in ms"
+        range 10 3600000
+        default 1000
+        help
+            Define the blinking period in milliseconds.
+
+    menu "ADXL345 Accelerometer Configuration"
+        depends on SENSOR_TYPE_ADXL345
+
+        choice ADXL345_INTERFACE
+            prompt "Communication Interface"
+            default ADXL345_USE_SPI
+            help
+                Select the communication interface for ADXL345
+
+            config ADXL345_USE_SPI
+                bool "SPI"
+            config ADXL345_USE_I2C
+                bool "I2C"
+        endchoice
+
+        menu "SPI Configuration"
+            depends on ADXL345_USE_SPI
+
+            config ADXL345_SPI_CS_GPIO
+                int "SPI CS GPIO number"
+                range 0 39
+                default 5
+                help
+                    GPIO number for SPI chip select pin
+
+            config ADXL345_SPI_SCLK_GPIO
+                int "SPI SCLK GPIO number"
+                range 0 39
+                default 18
+                help
+                    GPIO number for SPI clock pin
+
+            config ADXL345_SPI_MOSI_GPIO
+                int "SPI MOSI GPIO number"
+                range 0 39
+                default 23
+                help
+                    GPIO number for SPI MOSI pin
+
+            config ADXL345_SPI_MISO_GPIO
+                int "SPI MISO GPIO number"
+                range 0 39
+                default 19
+                help
+                    GPIO number for SPI MISO pin
+
+            config ADXL345_SPI_CLOCK_SPEED
+                int "SPI Clock Speed (Hz)"
+                range 100000 10000000
+                default 5000000
+                help
+                    SPI clock frequency in Hz
+
+        endmenu
+
+        menu "I2C Configuration"
+            depends on ADXL345_USE_I2C
+
+            config ADXL345_I2C_SDA_GPIO
+                int "I2C SDA GPIO number"
+                range 0 39
+                default 21
+                help
+                    GPIO number for I2C SDA pin
+
+            config ADXL345_I2C_SCL_GPIO
+                int "I2C SCL GPIO number"
+                range 0 39
+                default 22
+                help
+                    GPIO number for I2C SCL pin
+
+            config ADXL345_I2C_CLOCK_SPEED
+                int "I2C Clock Speed (Hz)"
+                range 100000 1000000
+                default 400000
+                help
+                    I2C clock frequency in Hz
+
+            choice ADXL345_I2C_ADDRESS
+                prompt "I2C Device Address"
+                default ADXL345_I2C_ADDR_LOW
+                help
+                    ADXL345 I2C address selection
+
+                config ADXL345_I2C_ADDR_LOW
+                    bool "0x53 (ALT pin low)"
+                config ADXL345_I2C_ADDR_HIGH
+                    bool "0x1D (ALT pin high)"
+            endchoice
+
+        endmenu
+
+        choice ADXL345_RANGE
+            prompt "Measurement Range"
+            default ADXL345_RANGE_16G
+            help
+                Select measurement range for maximum sensitivity
+
+            config ADXL345_RANGE_2G
+                bool "+/- 2g"
+            config ADXL345_RANGE_4G
+                bool "+/- 4g"
+            config ADXL345_RANGE_8G
+                bool "+/- 8g"
+            config ADXL345_RANGE_16G
+                bool "+/- 16g"
+        endchoice
+
+        choice ADXL345_DATA_RATE
+            prompt "Data Rate"
+            default ADXL345_RATE_3200HZ
+            help
+                Select data acquisition rate
+
+            config ADXL345_RATE_25HZ
+                bool "25 Hz"
+            config ADXL345_RATE_50HZ
+                bool "50 Hz"
+            config ADXL345_RATE_100HZ
+                bool "100 Hz"
+            config ADXL345_RATE_200HZ
+                bool "200 Hz"
+            config ADXL345_RATE_400HZ
+                bool "400 Hz"
+            config ADXL345_RATE_800HZ
+                bool "800 Hz"
+            config ADXL345_RATE_1600HZ
+                bool "1600 Hz"
+            config ADXL345_RATE_3200HZ
+                bool "3200 Hz (Maximum)"
+        endchoice
+
+        config ADXL345_FULL_RESOLUTION
+            bool "Enable Full Resolution Mode"
+            default y
+            help
+                Enable full resolution mode for higher precision
+
+        config ADXL345_USE_FIFO
+            bool "Enable FIFO Mode"
+            default y
+            help
+                Enable FIFO mode for burst reading
+
+    endmenu
+
+    menu "FFT Configuration"
+        depends on SENSOR_TYPE_ADXL345
+
+        config FFT_SIZE
+            int "FFT Size (samples)"
+            range 64 4096
+            default 1024
+            help
+                Number of samples for FFT analysis. Must be power of 2.
+
+        config FFT_SAMPLE_BUFFER_SIZE
+            int "Sample Buffer Size"
+            range 128 8192
+            default 2048
+            help
+                Size of sample buffer for continuous data acquisition
+
+        choice FFT_WINDOW_TYPE
+            prompt "FFT Window Function"
+            default FFT_WINDOW_HANN
+            help
+                Select window function for FFT preprocessing
+
+            config FFT_WINDOW_NONE
+                bool "No Window (Rectangular)"
+            config FFT_WINDOW_HANN
+                bool "Hann Window"
+            config FFT_WINDOW_HAMMING
+                bool "Hamming Window"
+            config FFT_WINDOW_BLACKMAN
+                bool "Blackman Window"
+        endchoice
+
+        config FFT_OVERLAP_PERCENT
+            int "FFT Overlap Percentage"
+            range 0 75
+            default 50
+            help
+                Percentage of overlap between consecutive FFT windows
+
+        config FFT_DC_REMOVE
+            bool "Remove DC Component"
+            default y
+            help
+                Remove DC component before FFT analysis
+
+        config FFT_OUTPUT_MAGNITUDE
+            bool "Output Magnitude Spectrum"
+            default y
+            help
+                Calculate and output magnitude spectrum
+
+        config FFT_OUTPUT_PHASE
+            bool "Output Phase Spectrum"
+            default n
+            help
+                Calculate and output phase spectrum
+
+        config FFT_LOG_SCALE
+            bool "Use Logarithmic Scale (dB)"
+            default y
+            help
+                Convert magnitude to logarithmic scale (dB)
+
+    endmenu
+
+    menu "WiFi Configuration"
+        depends on SENSOR_TYPE_ADXL345
+
+        config WIFI_SSID
+            string "WiFi SSID"
+            default "your_wifi_ssid"
+            help
+                WiFi network name to connect to
+
+        config WIFI_PASSWORD
+            string "WiFi Password"
+            default "your_wifi_password"
+            help
+                WiFi network password
+
+        config WIFI_MAX_RETRY
+            int "Maximum WiFi Connection Retries"
+            range 1 10
+            default 5
+            help
+                Maximum number of retry attempts for WiFi connection
+
+        config HTTP_SERVER_URL
+            string "HTTP Server URL"
+            default "http://192.168.1.100:8080/data"
+            help
+                URL of the server to send FFT data to
+
+        config HTTP_TIMEOUT_MS
+            int "HTTP Request Timeout (ms)"
+            range 1000 30000
+            default 10000
+            help
+                Timeout for HTTP requests in milliseconds
+
+        config HTTP_MAX_DATA_SIZE
+            int "Maximum HTTP Data Size (bytes)"
+            range 1024 65536
+            default 8192
+            help
+                Maximum size of data to send in a single HTTP request
+
+        config DATA_SEND_INTERVAL_MS
+            int "Data Send Interval (ms)"
+            range 100 10000
+            default 1000
+            help
+                Interval between HTTP data transmissions
+
+    endmenu
+
+endmenu
