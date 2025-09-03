@@ -7,3 +7,6 @@
 *.log
 /Quad_ESP32_img_query/src/9. idf_qrcode/ds_camera_feed/.devcontainer
 /Quad_ESP32_img_query/src/9. idf_qrcode/ds_camera_feed/.vscode
+/TOTAL Monitoring/DHT22_Modules/V1/.devcontainer
+/TOTAL Monitoring/DHT22_Modules/V1/.vscode
+/TOTAL Monitoring/DHT22_Modules/V1/build
