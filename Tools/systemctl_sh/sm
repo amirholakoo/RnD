@@ -1,0 +1,169 @@
+#!/bin/bash
+#
+# Service Manager Wrapper Script
+# Convenient one-line commands for managing systemd services
+#
+# Usage:
+#   ./sm add <service_name> <script_path> [options]
+#   ./sm remove <service_name>
+#   ./sm start <service_name>
+#   ./sm stop <service_name>
+#   ./sm restart <service_name>
+#   ./sm enable <service_name>
+#   ./sm disable <service_name>
+#   ./sm status <service_name>
+#   ./sm list
+#
+# Examples:
+#   ./sm add my-app /path/to/script.sh --user myuser
+#   ./sm add my-python-app /path/to/script.py --venv /path/to/venv
+#   ./sm remove my-app
+#   ./sm start my-app
+#   ./sm status my-app
+#   ./sm list
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SERVICE_MANAGER="$SCRIPT_DIR/service_manager.py"
+
+# Check if service_manager.py exists
+if [[ ! -f "$SERVICE_MANAGER" ]]; then
+    echo "Error: service_manager.py not found at $SERVICE_MANAGER"
+    exit 1
+fi
+
+# Check if Python 3 is available
+if ! command -v python3 &> /dev/null; then
+    echo "Error: python3 is required but not installed"
+    exit 1
+fi
+
+# Function to show usage
+show_usage() {
+    echo "Service Manager - Convenient systemd service management"
+    echo ""
+    echo "Usage:"
+    echo "  $0 add <service_name> <script_path> [options]     - Add a new service"
+    echo "  $0 remove <service_name>                          - Remove a service"
+    echo "  $0 start <service_name>                           - Start a service"
+    echo "  $0 stop <service_name>                            - Stop a service"
+    echo "  $0 restart <service_name>                         - Restart a service"
+    echo "  $0 enable <service_name>                          - Enable a service"
+    echo "  $0 disable <service_name>                         - Disable a service"
+    echo "  $0 status <service_name>                          - Show service status"
+    echo "  $0 list                                           - List all managed services"
+    echo ""
+    echo "Options for 'add' command:"
+    echo "  --venv <path>         - Python virtual environment path"
+    echo "  --user <user>         - User to run service as"
+    echo "  --description <desc>  - Service description"
+    echo "  --working-dir <dir>   - Working directory"
+    echo "  --env KEY=VALUE       - Environment variable (can be used multiple times)"
+    echo "  --system              - Install as system service (requires sudo)"
+    echo "  --auto-start          - Start service after installation"
+    echo ""
+    echo "Examples:"
+    echo "  $0 add my-app /path/to/script.sh --user myuser"
+    echo "  $0 add my-python-app /path/to/script.py --venv /path/to/venv"
+    echo "  $0 remove my-app"
+    echo "  $0 start my-app"
+    echo "  $0 status my-app"
+    echo "  $0 list"
+}
+
+# Check if no arguments provided
+if [[ $# -eq 0 ]]; then
+    show_usage
+    exit 1
+fi
+
+COMMAND="$1"
+shift
+
+case "$COMMAND" in
+    "add")
+        if [[ $# -lt 2 ]]; then
+            echo "Error: 'add' command requires service_name and script_path"
+            echo "Usage: $0 add <service_name> <script_path> [options]"
+            exit 1
+        fi
+        python3 "$SERVICE_MANAGER" add-service "$@"
+        ;;
+    
+    "remove")
+        if [[ $# -lt 1 ]]; then
+            echo "Error: 'remove' command requires service_name"
+            echo "Usage: $0 remove <service_name>"
+            exit 1
+        fi
+        python3 "$SERVICE_MANAGER" remove-service "$@"
+        ;;
+    
+    "start")
+        if [[ $# -lt 1 ]]; then
+            echo "Error: 'start' command requires service_name"
+            echo "Usage: $0 start <service_name>"
+            exit 1
+        fi
+        python3 "$SERVICE_MANAGER" manage-service "$1" start
+        ;;
+    
+    "stop")
+        if [[ $# -lt 1 ]]; then
+            echo "Error: 'stop' command requires service_name"
+            echo "Usage: $0 stop <service_name>"
+            exit 1
+        fi
+        python3 "$SERVICE_MANAGER" manage-service "$1" stop
+        ;;
+    
+    "restart")
+        if [[ $# -lt 1 ]]; then
+            echo "Error: 'restart' command requires service_name"
+            echo "Usage: $0 restart <service_name>"
+            exit 1
+        fi
+        python3 "$SERVICE_MANAGER" manage-service "$1" restart
+        ;;
+    
+    "enable")
+        if [[ $# -lt 1 ]]; then
+            echo "Error: 'enable' command requires service_name"
+            echo "Usage: $0 enable <service_name>"
+            exit 1
+        fi
+        python3 "$SERVICE_MANAGER" manage-service "$1" enable
+        ;;
+    
+    "disable")
+        if [[ $# -lt 1 ]]; then
+            echo "Error: 'disable' command requires service_name"
+            echo "Usage: $0 disable <service_name>"
+            exit 1
+        fi
+        python3 "$SERVICE_MANAGER" manage-service "$1" disable
+        ;;
+    
+    "status")
+        if [[ $# -lt 1 ]]; then
+            echo "Error: 'status' command requires service_name"
+            echo "Usage: $0 status <service_name>"
+            exit 1
+        fi
+        python3 "$SERVICE_MANAGER" status "$1"
+        ;;
+    
+    "list")
+        python3 "$SERVICE_MANAGER" list-services
+        ;;
+    
+    "help"|"-h"|"--help")
+        show_usage
+        ;;
+    
+    *)
+        echo "Error: Unknown command '$COMMAND'"
+        echo ""
+        show_usage
+        exit 1
+        ;;
+esac

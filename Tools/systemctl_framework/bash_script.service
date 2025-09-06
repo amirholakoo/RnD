@@ -1,0 +1,28 @@
+[Unit]
+Description=Template for Bash Script Service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=admin
+Group=admin
+WorkingDirectory=/path/to/your/script/directory
+ExecStart=/bin/bash /path/to/your/script.sh
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Environment variables (uncomment and modify as needed)
+# Environment=VAR1=value1
+# Environment=VAR2=value2
+
+# Security settings (uncomment and modify as needed)
+# NoNewPrivileges=true
+# PrivateTmp=true
+# ProtectSystem=strict
+# ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
