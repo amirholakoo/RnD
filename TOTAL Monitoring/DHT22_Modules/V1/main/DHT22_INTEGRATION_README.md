@@ -1,6 +1,6 @@
 # DHT22 Sensor Integration with WiFi Framework
 
-This document explains how the DHT22 temperature and humidity sensor has been integrated into your existing robust WiFi framework and HTTP client system using the **chimpieters/esp32-dht** library.
+This document explains how the DHT22 temperature and humidity sensor has been integrated into your existing robust WiFi framework and HTTP client system using a **custom robust DHT22 driver** based on proven Arduino implementations.
 
 ## 🏗️ **System Architecture**
 
@@ -12,8 +12,8 @@ This document explains how the DHT22 temperature and humidity sensor has been in
          │                       │                       │
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│ esp32-dht Lib   │    │   Data Sender   │    │   JSON Data     │
-│   (Reliable)    │    │   (Task)        │    │   (3-Part Format)│
+│ Custom DHT22    │    │   Data Sender   │    │   JSON Data     │
+│ Driver (Robust) │    │   (Task)        │    │   (3-Part Format)│
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -66,13 +66,13 @@ ESP32                    DHT22
 ### **Device Identification**
 The system automatically uses the device's **MAC address** for identification instead of a static device ID. This ensures each ESP32 device has a unique identifier.
 
-### **DHT Library Configuration**
+### **DHT Driver Configuration**
 ```c
-dht_params_t dht_params = {
-    .type = DHT_TYPE_DHT22,      // Sensor type
-    .pin = DHT22_GPIO_PIN,       // GPIO pin
-    .pull_up_en = true           // Enable pull-up resistor
-};
+/* Initialize the robust DHT22 driver */
+esp_err_t ret = dht_init(DHT22_GPIO_PIN, DHT_TYPE_DHT22);
+if (ret != ESP_OK) {
+    ESP_LOGE(TAG, "Failed to initialize DHT22 sensor: %s", esp_err_to_name(ret));
+}
 ```
 
 ## 📊 **JSON Data Format**

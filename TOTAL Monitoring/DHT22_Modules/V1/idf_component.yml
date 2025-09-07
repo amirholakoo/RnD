@@ -1,4 +1,0 @@
-dependencies:
-  chimpieters/esp32-dht:
-    version: "^1.0.0"
-    git: https://github.com/chimpieters/esp32-dht.git 
