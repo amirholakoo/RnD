@@ -1,0 +1,33 @@
+[Unit]
+Description=Template for Python Script Service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=admin
+Group=admin
+WorkingDirectory=/path/to/your/script/directory
+ExecStart=/path/to/your/venv/bin/python /path/to/your/script.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Environment variables (uncomment and modify as needed)
+# Environment=PYTHONPATH=/path/to/your/venv/lib/python3.x/site-packages
+# Environment=VAR1=value1
+# Environment=VAR2=value2
+
+# Python-specific environment
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+
+# Security settings (uncomment and modify as needed)
+# NoNewPrivileges=true
+# PrivateTmp=true
+# ProtectSystem=strict
+# ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
