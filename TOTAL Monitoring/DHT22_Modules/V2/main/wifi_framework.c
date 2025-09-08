@@ -944,7 +944,7 @@ void wifi_framework_get_default_config(wifi_framework_config_t* config,
     config->retry_delay_ms = WIFI_FRAMEWORK_RETRY_DELAY_MS;
     config->pmf_capable = true;
     config->pmf_required = false;
-    config->max_tx_power = 60;
+    config->max_tx_power = 40;
     config->channel = 0U; /* Auto */
     config->auto_reconnect = false;
 } 
