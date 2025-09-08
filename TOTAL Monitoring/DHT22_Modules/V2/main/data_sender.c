@@ -20,9 +20,9 @@ esp_err_t data_sender_init(const char* server_url, const char* auth_token)
         return ESP_ERR_INVALID_ARG;
     }
     
-    // Prepare HTTP client configuration
+    // Prepare HTTP client configuration with increased timeout
     http_client_config_t config = {
-        .timeout_ms = 10000,
+        .timeout_ms = 30000,  /* Increased timeout to 30 seconds for better reliability */
         .verify_ssl = false,
     };
     
@@ -141,6 +141,7 @@ esp_err_t data_sender_send_dht22_data(const char* device_id, const char* sensor_
         cJSON_Delete(root);
         return ESP_FAIL;
     }
+    ESP_LOGI(TAG, "DHT22 data: %s", json_string);
     
     // Send via HTTP
     http_response_t response;
@@ -159,6 +160,7 @@ esp_err_t data_sender_send_dht22_data(const char* device_id, const char* sensor_
         }
     } else {
         ESP_LOGE(TAG, "Failed to send DHT22 data");
+        // Note: Error handling for restart is done in the calling function
     }
     
     return ret;
@@ -224,6 +226,7 @@ esp_err_t data_sender_send_status(const char* device_id, const char* status)
         }
     } else {
         ESP_LOGE(TAG, "Failed to send status data");
+        // Note: Error handling for restart is done in the calling function
     }
     
     return ret;

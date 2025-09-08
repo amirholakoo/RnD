@@ -12,7 +12,8 @@
 #include "nvs_flash.h"
 #include "esp_mac.h"
 #include "esp_timer.h"
-#include "driver/gpio.h"`
+#include "driver/gpio.h"
+#include "esp_system.h"
 #include <time.h>
 
 /* WiFi Configuration - CHANGE THESE FOR YOUR NETWORK */
@@ -26,10 +27,25 @@
 /* DHT22 Sensor Configuration - CHANGE GPIO PIN AS NEEDED */
 #define DHT22_GPIO_PIN GPIO_NUM_4  // Change this to your GPIO pin
 
+/* Error Handling Configuration */
+#define MAX_WIFI_CONNECTION_FAILURES 5U    /* Maximum WiFi connection failures before restart */
+#define MAX_HTTP_SEND_FAILURES 10U         /* Maximum HTTP send failures before restart */
+#define WIFI_FAILURE_RESET_TIME_MS 300000U /* 5 minutes to reset WiFi failure counter */
+#define HTTP_FAILURE_RESET_TIME_MS 600000U /* 10 minutes to reset HTTP failure counter */
+#define WIFI_RECONNECTION_TIMEOUT_MS 5000U /* 5 seconds timeout for WiFi reconnection */
+
 static const char* WIFI_TAG = "WiFi_Framework";
 static const char* DATA_Q_TAG = "WiFi_Framework";
 static const char* MAIN_TAG = "Main";
 static bool g_wifi_connected = false;
+
+/* Error tracking variables */
+static uint32_t wifi_connection_failures = 0U;
+static uint32_t http_send_failures = 0U;
+static uint64_t last_wifi_failure_time = 0U;
+static uint64_t last_http_failure_time = 0U;
+static uint64_t wifi_reconnection_start_time = 0U;
+static bool wifi_reconnection_in_progress = false;
 
 /* MAC address for device identification */
 static char device_mac_str[18]; // "XX:XX:XX:XX:XX:XX" + null terminator
@@ -40,6 +56,11 @@ static void wifi_event_callback(wifi_framework_event_t event, void* user_data);
 static void wifi_monitor_task(void* pvParameters);
 static void data_sender_task(void* pvParameters);
 static void get_device_mac_address(void);
+static void handle_wifi_connection_failure(void);
+static void handle_http_send_failure(void);
+static void reset_failure_counters_if_needed(void);
+static void restart_esp32(const char* reason);
+static void check_wifi_reconnection_timeout(void);
 
 /* ============================== MAC ADDRESS FUNCTIONS ============================== */
 
@@ -63,6 +84,117 @@ static void get_device_mac_address(void)
     }
 }
 
+/* ============================== ERROR HANDLING FUNCTIONS ============================== */
+
+/**
+ * @brief Handle WiFi connection failure and track failures
+ */
+static void handle_wifi_connection_failure(void)
+{
+    uint64_t current_time = esp_timer_get_time() / 1000U; /* Convert to milliseconds */
+    
+    /* Reset counter if enough time has passed since last failure */
+    if ((current_time - last_wifi_failure_time) > WIFI_FAILURE_RESET_TIME_MS) {
+        wifi_connection_failures = 0U;
+    }
+    
+    wifi_connection_failures++;
+    last_wifi_failure_time = current_time;
+    
+    ESP_LOGW(WIFI_TAG, "WiFi connection failure #%lu", (unsigned long)wifi_connection_failures);
+    
+    if (wifi_connection_failures >= MAX_WIFI_CONNECTION_FAILURES) {
+        ESP_LOGE(WIFI_TAG, "Too many WiFi connection failures (%lu), restarting ESP32", 
+                 (unsigned long)wifi_connection_failures);
+        restart_esp32("WiFi connection failures");
+    }
+}
+
+/**
+ * @brief Handle HTTP send failure and track failures
+ */
+static void handle_http_send_failure(void)
+{
+    uint64_t current_time = esp_timer_get_time() / 1000U; /* Convert to milliseconds */
+    
+    /* Reset counter if enough time has passed since last failure */
+    if ((current_time - last_http_failure_time) > HTTP_FAILURE_RESET_TIME_MS) {
+        http_send_failures = 0U;
+    }
+    
+    http_send_failures++;
+    last_http_failure_time = current_time;
+    
+    ESP_LOGW(DATA_Q_TAG, "HTTP send failure #%lu", (unsigned long)http_send_failures);
+    
+    if (http_send_failures >= MAX_HTTP_SEND_FAILURES) {
+        ESP_LOGE(DATA_Q_TAG, "Too many HTTP send failures (%lu), restarting ESP32", 
+                 (unsigned long)http_send_failures);
+        restart_esp32("HTTP send failures");
+    }
+}
+
+/**
+ * @brief Reset failure counters if enough time has passed
+ */
+static void reset_failure_counters_if_needed(void)
+{
+    uint64_t current_time = esp_timer_get_time() / 1000U; /* Convert to milliseconds */
+    
+    /* Reset WiFi failure counter if enough time has passed */
+    if ((current_time - last_wifi_failure_time) > WIFI_FAILURE_RESET_TIME_MS) {
+        if (wifi_connection_failures > 0U) {
+            ESP_LOGI(WIFI_TAG, "Resetting WiFi failure counter after %lu ms", 
+                     (unsigned long)WIFI_FAILURE_RESET_TIME_MS);
+            wifi_connection_failures = 0U;
+        }
+    }
+    
+    /* Reset HTTP failure counter if enough time has passed */
+    if ((current_time - last_http_failure_time) > HTTP_FAILURE_RESET_TIME_MS) {
+        if (http_send_failures > 0U) {
+            ESP_LOGI(DATA_Q_TAG, "Resetting HTTP failure counter after %lu ms", 
+                     (unsigned long)HTTP_FAILURE_RESET_TIME_MS);
+            http_send_failures = 0U;
+        }
+    }
+}
+
+/**
+ * @brief Check if WiFi reconnection has timed out and restart if necessary
+ */
+static void check_wifi_reconnection_timeout(void)
+{
+    if (wifi_reconnection_in_progress) {
+        uint64_t current_time = esp_timer_get_time() / 1000U; /* Convert to milliseconds */
+        
+        if ((current_time - wifi_reconnection_start_time) > WIFI_RECONNECTION_TIMEOUT_MS) {
+            ESP_LOGE(WIFI_TAG, "WiFi reconnection timeout after %lu ms, restarting ESP32", 
+                     (unsigned long)WIFI_RECONNECTION_TIMEOUT_MS);
+            restart_esp32("WiFi reconnection timeout");
+        }
+    }
+}
+
+/**
+ * @brief Restart the ESP32 with a given reason
+ * @param reason Reason for restart (for logging)
+ */
+static void restart_esp32(const char* reason)
+{
+    if (reason != NULL) {
+        ESP_LOGE(MAIN_TAG, "Restarting ESP32 due to: %s", reason);
+    } else {
+        ESP_LOGE(MAIN_TAG, "Restarting ESP32 due to critical error");
+    }
+    
+    /* Give some time for logs to be sent */
+    vTaskDelay(pdMS_TO_TICKS(2000U));
+    
+    /* Restart the ESP32 */
+    esp_restart();
+}
+
 /* ============================== EVENT CALLBACK ============================== */
 
 /**
@@ -81,6 +213,7 @@ static void wifi_event_callback(wifi_framework_event_t event, void* user_data)
         case WIFI_FRAMEWORK_EVENT_DISCONNECTED:
             ESP_LOGI(WIFI_TAG, "WiFi disconnected event received");
             g_wifi_connected = false;
+            wifi_reconnection_in_progress = false;
             break;
             
         case WIFI_FRAMEWORK_EVENT_IP_ACQUIRED:
@@ -94,10 +227,14 @@ static void wifi_event_callback(wifi_framework_event_t event, void* user_data)
         case WIFI_FRAMEWORK_EVENT_CONNECTION_FAILED:
             ESP_LOGE(WIFI_TAG, "WiFi connection failed event received");
             g_wifi_connected = false;
+            wifi_reconnection_in_progress = false;
+            handle_wifi_connection_failure();
             break;
             
         case WIFI_FRAMEWORK_EVENT_RECONNECTING:
             ESP_LOGI(WIFI_TAG, "WiFi reconnecting event received");
+            wifi_reconnection_in_progress = true;
+            wifi_reconnection_start_time = esp_timer_get_time() / 1000U; /* Convert to milliseconds */
             break;
             
         default:
@@ -214,6 +351,7 @@ static void data_sender_task(void* pvParameters)
         ESP_LOGI(DATA_Q_TAG, "Initial status sent successfully");
     } else {
         ESP_LOGE(DATA_Q_TAG, "Failed to send initial status");
+        handle_http_send_failure();
     }
     
     /* Main loop - read sensor and send data every 30 seconds */
@@ -221,7 +359,11 @@ static void data_sender_task(void* pvParameters)
         /* Check if WiFi is still connected */
         if (!wifi_framework_is_connected() || !wifi_framework_has_ip()) {
             ESP_LOGW(DATA_Q_TAG, "WiFi disconnected, waiting for reconnection...");
-            vTaskDelay(pdMS_TO_TICKS(5000U)); /* 5 seconds */
+            
+            /* Check for reconnection timeout */
+            check_wifi_reconnection_timeout();
+            
+            vTaskDelay(pdMS_TO_TICKS(1000U)); /* 1 second - check more frequently */
             continue;
         }
         
@@ -236,7 +378,10 @@ static void data_sender_task(void* pvParameters)
                 ESP_LOGW(DATA_Q_TAG, "Check: wiring, power supply, pull-up resistor, GPIO configuration");
                 
                 /* Send error status */
-                data_sender_send_status(device_mac_str, "sensor_zero_values");
+                esp_err_t status_ret = data_sender_send_status(device_mac_str, "sensor_zero_values");
+                if (status_ret != ESP_OK) {
+                    handle_http_send_failure();
+                }
                 continue;
             }
             
@@ -247,7 +392,10 @@ static void data_sender_task(void* pvParameters)
                 ESP_LOGW(DATA_Q_TAG, "Expected: Temp -40°C to +80°C, Humidity 0%% to 100%%");
                 
                 /* Send error status */
-                data_sender_send_status(device_mac_str, "sensor_out_of_range");
+                esp_err_t status_ret = data_sender_send_status(device_mac_str, "sensor_out_of_range");
+                if (status_ret != ESP_OK) {
+                    handle_http_send_failure();
+                }
                 continue;
             }
             
@@ -262,18 +410,27 @@ static void data_sender_task(void* pvParameters)
             
             if (ret == ESP_OK) {
                 ESP_LOGI(DATA_Q_TAG, "DHT22 data sent successfully to server");
+                /* Reset HTTP failure counter on successful send */
+                if (http_send_failures > 0U) {
+                    ESP_LOGI(DATA_Q_TAG, "Resetting HTTP failure counter after successful send");
+                    http_send_failures = 0U;
+                }
             } else {
                 ESP_LOGE(DATA_Q_TAG, "Failed to send DHT22 data: %s", esp_err_to_name(ret));
+                handle_http_send_failure();
             }
         } else {
             ESP_LOGE(DATA_Q_TAG, "Failed to read DHT22 sensor: %s", esp_err_to_name(ret));
             
             /* Send error status */
-            data_sender_send_status(device_mac_str, "sensor_error");
+            esp_err_t status_ret = data_sender_send_status(device_mac_str, "sensor_error");
+            if (status_ret != ESP_OK) {
+                handle_http_send_failure();
+            }
         }
         
         /* Wait before next transmission */
-        vTaskDelay(pdMS_TO_TICKS(30000)); /* 30 seconds */
+        vTaskDelay(pdMS_TO_TICKS(60000)); /* 60 seconds */
     }
 }
 
@@ -377,10 +534,28 @@ void app_main(void)
     
     /* Main application loop */
     while (1) {
+        /* Reset failure counters if enough time has passed */
+        reset_failure_counters_if_needed();
+        
+        /* Check for WiFi reconnection timeout */
+        check_wifi_reconnection_timeout();
+        
         /* Check if WiFi is connected and has IP */
         if (wifi_framework_is_connected() && wifi_framework_has_ip()) {
             /* WiFi is ready for application use */
             ESP_LOGI(MAIN_TAG, "WiFi is ready for application use");
+            
+            /* Reset WiFi failure counter on successful connection */
+            if (wifi_connection_failures > 0U) {
+                ESP_LOGI(MAIN_TAG, "Resetting WiFi failure counter after successful connection");
+                wifi_connection_failures = 0U;
+            }
+            
+            /* Clear reconnection state on successful connection */
+            if (wifi_reconnection_in_progress) {
+                ESP_LOGI(MAIN_TAG, "WiFi reconnection completed successfully");
+                wifi_reconnection_in_progress = false;
+            }
             
             /* Here you would typically start your main application tasks */
             /* For example: sensor reading, data transmission, etc. */
