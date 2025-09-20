@@ -27,8 +27,8 @@
 #include "DHT.h"
 
 // ----------- USER SETTINGS (EDIT THESE) -----------
-const char* WIFI_SSID = "VPN1";
-const char* WIFI_PASS = "09126141426";
+const char* WIFI_SSID = "XXX";
+const char* WIFI_PASS = "XXX";
 
 // Your Raspberry Pi address (static) and port
 const char* RPI_HOST = "192.168.1.236";   // <-- change to your Pi's IP
