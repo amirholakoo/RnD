@@ -1,0 +1,24 @@
+dependencies:
+  espressif/esp-dsp:
+    dependencies: []
+    source:
+      path: C:\Users\RASM\Documents\GitHub\Sensor-Acquisition\managed_components\espressif__esp-dsp
+      type: local
+    version: 1.4.12
+  espressif/led_strip:
+    dependencies: []
+    source:
+      path: C:\Users\RASM\Documents\GitHub\Sensor-Acquisition\managed_components\espressif__led_strip
+      type: local
+    version: 2.5.5
+  idf:
+    source:
+      type: idf
+    version: 5.4.0
+direct_dependencies:
+- espressif/esp-dsp
+- espressif/led_strip
+- idf
+manifest_hash: c70253a51705926096e1420dc94a49996e1a4c384c79935a9def721432c57c08
+target: esp32s3
+version: 2.0.0
