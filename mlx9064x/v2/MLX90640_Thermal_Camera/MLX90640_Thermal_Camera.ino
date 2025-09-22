@@ -131,7 +131,7 @@ void setup() {
   server.on("/data", HTTP_GET, handleData);
   server.begin();
   Serial.println("HTTP server started.");
-}
+}ع
 
 void loop() {
   // Check if it's time to read the sensor data
