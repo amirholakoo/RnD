@@ -14,8 +14,8 @@
 // =================================================================
 
 // -- WiFi Credentials --
-const char* ssid = "Homayoun";
-const char* password = "1q2w3e4r$@";
+const char* ssid = "XXX";
+const char* password = "XXX";
 
 #define EEPROM_SIZE 512
 #define CONFIG_VERSION "v1.0" // Change this to force a reset of EEPROM settings
