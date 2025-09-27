@@ -13,8 +13,8 @@
 // =================================================================
 
 // -- WiFi Credentials --
-const char* ssid = "Homayoun";
-const char* password = "1q2w3e4r$@";
+const char* ssid = "XXX";
+const char* password = "XXX";
 
 // -- Server Endpoint --
 String serverName = "http://192.168.2.20:7500";
