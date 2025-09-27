@@ -12,8 +12,8 @@
 // =================================================================
 
 // -- WiFi Credentials --
-const char* ssid = "Homayoun";
-const char* password = "1q2w3e4r$@";
+const char* ssid = "XXX";
+const char* password = "XXX";
 
 // -- Static IP Configuration --
 IPAddress staticIP(172, 16, 15, 21);     // Your desired static IP
