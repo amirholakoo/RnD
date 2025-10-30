@@ -1,0 +1,1 @@
+https://bir-robotic.ir/product/%d9%85%d8%a7%da%98%d9%88%d9%84-%d8%af%d9%85%d8%a7%d8%b3%d9%86%d8%ac-%d8%ba%db%8c%d8%b1-%d8%aa%d9%85%d8%a7%d8%b3%db%8c-%d9%85%d8%af%d9%84-gy-906-bcc-%d9%85%d8%a7%d8%af%d9%88%d9%86-%d9%82%d8%b1%d9%85/
