@@ -1,0 +1,20 @@
+{
+  "remote_user": "username",
+  "ssh_pass": "password",
+  "remote_devices": [
+    "192.168.2.46",
+    "192.168.2.20",
+    "192.168.2.22"
+  ],
+  "remote_search_dir": "/home/username",
+  "remote_backup_dir": "/home/username/remote-backups",
+  "backup_system_dir": "/home/username/backup-system",
+  "local_backup_base": "backups",
+  "log_file": "backup.log",
+  "retention_days": 7,
+  "enable_external_backup": true,
+  "external_storage_path": "/media/username",
+  "external_backup_dir": "backup-system",
+  "interval_hours": 24
+}
+
