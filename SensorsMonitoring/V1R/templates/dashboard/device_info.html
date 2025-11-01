@@ -1,0 +1,470 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load to_jalali %}
+{% block title %}Device Info - {{ device.name|default:"Unknown Device" }}{% endblock %}
+{% block Link %}{% endblock %}
+{% block content %}
+<div class="container-fliud p-3 mt-5">
+    <div class="stats-grid">
+        <div class="stat-card device-stat">
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="9" cy="9" r="2" stroke="currentColor" stroke-width="2"/>
+                    <path d="M21 15.5C20.5 14.5 19 14 17.5 14S14.5 14.5 14 15.5" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-title">نام دستگاه</h3>
+                <p class="stat-value">{{ device.name|default:"ناشناس" }}</p>
+                <p id="device_id" class="stat-value d-none">{{ device.device_id|default:"ناشناس" }}</p>
+            </div>
+        </div>
+        <div class="stat-card sensor-stat">
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 14V17M12 14V17M16 14V17M8 10V7M12 10V7M16 10V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-title">نوع سنسور</h3>
+                <p class="stat-value">{{ sensor.sensor_type|title }}</p>
+                <p id="sensor_type" class="stat-value d-none">{{ sensor.sensor_type }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card logs-stat">
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                    <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+                    <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/>
+                    <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/>
+                    <polyline points="10,9 9,9 8,9" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-title">تعداد کل داده‌ها</h3>
+                <p class="stat-value">{{ all_logs|floatformat:0 }}</p>
+            </div>
+        </div>
+
+        {% if device.location %}
+        <div class="stat-card location-stat">
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-title">مکان</h3>
+                <p class="stat-value">{{ device.location }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="chart-container-wrapper">
+        <div class="filter-container">
+            <div class="filter-item">
+                <label for="min-value">بازه مقادیر:</label>
+                <input type="number" id="min-value" placeholder="حداقل" style="width: 120px; padding: 8px; border-radius: 5px; text-align: center;">
+            </div>
+            <div class="filter-item">
+                <input type="number" id="max-value" placeholder="حداکثر" style="width: 120px; padding: 8px; border-radius: 5px; text-align: center;">
+            </div>
+            <button class="btn btn-primary p-2" style="font-size: 14px;" id="apply-filter" onclick="applyValueFilter()">اعمال فیلتر</button>
+        </div>
+        <div class="chart-filter" style="text-align: center;">
+            <a  class="{% if not 'daily' in request.GET and not 'week' in request.GET and not 'month' in request.GET %}active{% endif %}" onclick="Progress()">ساعتی</a>
+            <a  class="daily {% if 'daily' in request.GET %}active{% endif %}" onclick="Progress()">روزانه</a>
+            <a  class="week {% if 'week' in request.GET %}active{% endif %}" onclick="Progress()">هفتگی</a>
+            <a  class="month {% if 'month' in request.GET %}active{% endif %}" onclick="Progress()">ماهانه</a>
+        </div>
+    </div>
+    <div class="chart-container" id="charts_container">
+
+    </div>
+    {% for x in chart_data %}
+    <div id="chart_{{ forloop.counter }}" class="chart">
+    </div>
+    {% endfor %}
+
+    {% if page_obj %}
+    <div class="data-section">
+        <div class="section-header">
+            <h2 class="section-title">تاریخچه داده‌ها</h2>
+            <div class="data-count">{{ page_obj|length }} مورد از {{ all_logs }} داده</div>
+        </div>
+
+        <div class="data-table-container">
+            <table class="data-table" id="LogsData">
+                <thead>
+                    <tr>
+                        <th>زمان</th>
+                        <th>داده</th>
+                        <th>Device ID</th>
+                        <th>IP Address</th>
+                        <th>وضعیت</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in page_obj %}
+                    <tr class="data-row">
+                        <td class="time-cell">
+                            <div class="time-content">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                    <polyline points="12,6 12,12 16,14" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                {% to_jalali item.CreationDateTime %}
+                            </div>
+                        </td>
+                        <td class="data-cell">
+                            <span class="data-value-badge">{{ item.data }}</span>
+                        </td>
+                        <td class="device-id-cell">{{ item.sensor.device.device_id }}</td>
+                        <td class="ip-cell">{{ item.sensor.device.ip_address }}</td>
+                        <td class="status-cell">
+                            <span class="status-badge {% if item.sensor.device.Is_Known %}status-known{% else %}status-unknown{% endif %}">
+                                {% if item.sensor.device.Is_Known %}شناخته شده{% else %}ناشناس{% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-data-state">
+        <div class="empty-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.5"/>
+                <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+        </div>
+        <h3 class="empty-title">هیچ داده‌ای یافت نشد</h3>
+        <p class="empty-message">داده‌ای تا الان دریافت نشده است. پس از دریافت داده‌ها، آن‌ها در اینجا نمایش داده خواهند شد.</p>
+    </div>
+    {% endif %}
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="pagination-container">
+        <div class="pagination-wrapper">
+            <a onclick="Progress();window.location = `?page=1`;Progress()" class="pagination-btn pagination-first {% if page_obj.number == 1 %}disabled{% endif %}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 17L18 12L13 7M6 17L11 12L6 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                اولین
+            </a>
+            
+            {% if page_obj.has_previous %}
+            <a onclick="Progress();window.location = `?page={{ page_obj.previous_page_number }}`;Progress()" class="pagination-btn pagination-prev">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                قبلی
+            </a>
+            {% endif %}
+            
+            <div class="pagination-info">
+                <span class="current-page">{{ page_obj.number }}</span>
+                <span class="page-separator">از</span>
+                <span class="total-pages">{{ page_obj.paginator.num_pages }}</span>
+            </div>
+            
+            {% if page_obj.has_next %}
+            <a onclick="Progress();window.location = `?page={{ page_obj.next_page_number }}`;Progress()" class="pagination-btn pagination-next">
+                بعدی
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            {% endif %}
+            
+            <a onclick="Progress();window.location = `?page={{ page_obj.paginator.num_pages }}`;Progress()" class="pagination-btn pagination-last {% if page_obj.number == page_obj.paginator.num_pages %}disabled{% endif %}">
+                آخرین
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 17L6 12L11 7M18 17L13 12L18 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block Script %}
+<script>
+    let chart_filter = document.querySelectorAll('.chart-filter a');
+    let charts_container = document.querySelector('#charts_container');
+    function applyValueFilter() {
+        data = {
+            min_value: document.querySelector('#min-value').value,
+            max_value: document.querySelector('#max-value').value,
+        }
+        console.log("data",data);
+        build_chart(data);
+    }
+    function resetValueFilter() {
+        min_value.value = '';
+        max_value.value = '';
+    }
+    function build_chart(filter_data=null) {
+        if(filter_data){
+            if(!filter_data.min_value && !filter_data.max_value){
+                filter_data = false;
+            }
+        }
+        charts_container.innerHTML = '';
+        chart_filter.forEach(item=>{
+            let chart_container = document.createElement('div');
+            chart_container.classList.add(item.classList.contains("week") ? 'week' : item.classList.contains("month") ? 'month' : item.classList.contains("daily") ? 'daily' : 'hourly');
+            charts_container.appendChild(chart_container);
+            chart_container.classList.add('on_loading');
+
+            item.addEventListener('click',()=>{
+                Progress();
+                chart_filter.forEach(item=>{
+                    item.classList.remove('active');
+                    document.querySelector(`#charts_container ${item.classList.contains("week") ? '.week' : item.classList.contains("month") ? '.month' : item.classList.contains("daily") ? '.daily' : '.hourly'}`).classList.remove('active');
+                });
+                item.classList.add('active');
+                document.querySelector(`#charts_container ${item.classList.contains("week") ? '.week' : item.classList.contains("month") ? '.month' : item.classList.contains("daily") ? '.daily' : '.hourly'}`).classList.add('active');
+                Progress(false);
+            });
+
+
+            fetch(`/dashboard/chart_info_json/{{ page_obj.0.sensor.id }}?${item.classList.contains("week") ? 'week' : item.classList.contains("month") ? 'month' : item.classList.contains("daily") ? 'daily' : 'hourly'}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    min_value: filter_data ? filter_data.min_value : false,
+                    max_value: filter_data ? filter_data.max_value : false,
+                    week: item.classList.contains("week"),
+                    month: item.classList.contains("month"),
+                    daily: item.classList.contains("daily"),
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                chart_container.classList.remove('on_loading');
+                console.log("Success:", data,item);
+                if(data.length < 1){
+                    console.log("هیچ داده‌ای یافت نشد");
+                    chart_container.insertAdjacentHTML('beforeend',`
+                    <div class="alert alert-warning text-center">
+                        هیچ داده‌ای یافت نشد
+                    </div>
+                    `);
+                } else {
+                    
+                }
+                let index = 1;
+                for(const x of data){
+                    let chart_data = document.createElement('div');
+                    chart_data.id = `chart_${item.classList.contains("week") ? 'week' : item.classList.contains("month") ? 'month' : item.classList.contains("daily") ? 'daily' : 'hourly'}_${x.type}`;
+                    chart_container.appendChild(chart_data);
+                    chart_data.insertAdjacentHTML('beforebegin',`
+                    <div class="chart-container-wrapper mb-3 mt-5">
+                        <div class="filter-container">
+                            <div class="filter-item">
+                                <label for="min-value">بازه مقادیر:</label>
+                                <input type="number" id="min-value-${x.type}" placeholder="حداقل" style="width: 120px; padding: 8px; border-radius: 5px; text-align: center;">
+                            </div>
+                            <div class="filter-item">
+                                <input type="number" id="max-value-${x.type}" placeholder="حداکثر" style="width: 120px; padding: 8px; border-radius: 5px; text-align: center;">
+                            </div>
+                            <button class="btn btn-primary p-2" style="font-size: 14px;" id="apply-filter" onclick="applyValueFilter()">اعمال فیلتر</button>
+                        </div>
+                    </div>`);
+                    let data = [{
+                            name: x.type,
+                            data: x.data,
+                        }]
+                    let timestamps_data = x.timestamps;
+                    let test_prediction_data = {{ prediction_data|safe }};
+                    console.log("test_prediction_data",test_prediction_data.length)
+                    let pred_start_timestamps = {{ pred_start_timestamps }};
+                    console.log(pred_start_timestamps)
+                    let pred_data = [];
+                    if(item.classList.contains("week") && x.type == "temperature" && window.location.href.includes("device_info/2/4")){
+                        let pred_index = 0;
+                        for(let i = 0; i < data[0].data.length; i++){
+                            console.log(x.s[i])
+                            if(x.s[i] >= pred_start_timestamps){
+                                if (pred_index < test_prediction_data.length){
+                                    pred_data.push(test_prediction_data[pred_index]);
+                                    pred_index++;
+                                } else {
+                                    pred_data.push(null);
+                                }
+                            } else {
+                                pred_data.push(null);
+                            }
+                        }
+                        for(let i = pred_index; i < test_prediction_data.length; i++){
+                            pred_data.push(test_prediction_data[i]);
+                            data[0].data.push(null);
+                            timestamps_data.push(`${i+1} ساعت`);
+                        }
+                        console.log("pred_data",pred_data)
+                        data.push({
+                            name: "prediction",
+                            data: pred_data,
+                        })
+                        console.log("_______________________",data)
+                    }
+                    var options = {
+                        series: data,
+                        chart: {
+                            height: 500,
+                            type: 'area',
+                            zoom: {
+                                enabled: false
+                            },
+                            toolbar: {
+                                show: false,
+                            },
+                        },
+                        fill: {
+                            type: 'gradient',
+                            gradient: {
+                                shade: 'light',              // or 'dark'
+                                type: 'vertical',            // 'vertical' or 'horizontal'
+                                shadeIntensity: 0.2,         // how strong the shading effect is
+                                gradientToColors: undefined, // or specific colors ['#f8b26a']
+                                inverseColors: false,
+                                opacityFrom: 0.3,            // start opacity of area
+                                opacityTo: 0.0,              // fade to transparent
+                                stops: [0, 90, 100],         // where gradient stops happen
+                            },
+                        },
+                        dataLabels: {
+                            enabled: false,
+
+                        },
+                        markers: {
+                            size: [0, 0],
+                            colors: undefined,
+                            strokeColors: '#ffffff',
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 1,
+                        },
+                        colors: ['#00b996', '#ff9800'],
+
+                        grid: {
+                            xaxis: {
+                                lines: {
+                                    show: true
+                                }
+                            },
+                            yaxis: {
+                                lines: {
+                                    show: true
+                                }
+                            },
+                            row: {
+                                colors: undefined,
+                                opacity: 0.5
+                            },
+                            column: {
+                                colors: undefined,
+                                opacity: 0.5
+                            },
+                        },
+                        xaxis: {
+
+                            categories: timestamps_data,
+                            min:1,
+                            max:timestamps_data.length,
+                            labels: {
+                                style: {
+                                    colors: ['#000'],
+                                },
+                                rotate: 0,
+                            },
+                        },
+                        yaxis: {
+                            labels: {
+                            formatter: function (val) {
+                                return val.toFixed(2);
+                            },
+                            style: {
+                                colors: ['#000'],
+                            },
+                            offsetX: -25,
+                            },
+                        },
+                        tooltip: {
+                            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                                return '<div class="bg-white rounded shadow-sm p-3">' +
+                                    '<span style="color: #000;">' + series[seriesIndex][dataPointIndex] + '</span>' +
+                                    '</div>'
+                            }
+                        },
+                        legend: {
+                            fontFamily: 'Peyda',
+                            fontSize: '15px',
+                            horizontalAlign: 'center',
+                            markers: {
+                                width: 19,
+                                height: 19,
+                                offsetX: 6,
+                                offsetY: 0
+                            },
+                            itemMargin: {
+                                horizontal: 20,
+                                vertical: 0,
+                            },
+                        },
+                        title: {
+                        text: x.type,
+                        align: 'center'
+                        },
+                        // title: {
+                        //     text: 'تولید ماه جاری',
+                        //     align: 'center',
+                        //     margin: 30,
+                        //     offsetX: 0,
+                        //     offsetY: 0,
+                        //     floating: false,
+                        //     style: {
+                        //         fontSize: '15px',
+                        //         fontWeight: 'bold',
+                        //         fontFamily: 'Peyda',
+                        //         color: 'var(--main)'
+                        //     },
+                        // },
+                    };
+
+                    new ApexCharts(chart_data, options).render();
+                    chart_container.classList.remove('on_loading');
+                    index++;
+                }
+                Progress(false);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                Progress(false);
+            });
+            chart_filter.forEach(item=>{
+                item.classList.remove('active');
+            });
+            document.querySelector(".chart-filter > a").classList.add('active');
+            document.querySelector("#charts_container > div").classList.add('active');
+        });
+    }
+
+    build_chart();
+</script>
+{% endblock %}
