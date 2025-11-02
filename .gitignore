@@ -23,3 +23,5 @@
 /mlx9064x/v1/MLX90640_Thermal_Camera/.theia
 /TOTAL Monitoring/MQ-4/V1(deprecated)/.devcontainer
 /TOTAL Monitoring/MQ-4/V1(deprecated)/.vscode
+*.sqlite3
+__pycache__
