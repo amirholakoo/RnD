@@ -1,0 +1,403 @@
+@media only screen and (min-width: 1920px) {}
+
+@media (max-width: 1400px) {
+    .pulse:not(.danger) {
+        width: 100%;
+        margin: 2px auto;
+    }
+    .card {
+        position: absolute;
+        top: -116px;
+        left: 160px;
+        background-color: #0d6e86;
+        color: #fff;
+        text-align: justify;
+        padding: 55px;
+        max-width: 41%;
+    }
+    .card p {
+        line-height: 40px;
+        font-size: 18px;
+    }
+    h3 {
+        font-size: 20px;
+    }
+    p {
+        font-size: 18px;
+    }
+    span {
+        font-size: 18px;
+    }
+    .prof {
+        width: 120px;
+        height: 120px;
+    }
+    .blog-img img {
+        max-height: 608px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .card p {
+        line-height: 28px;
+        font-size: 16px;
+    }
+    .card {
+        position: absolute;
+        top: -116px;
+        left: 36px;
+        background-color: #0d6e86;
+        color: #fff;
+        text-align: justify;
+        padding: 55px;
+        max-width: 41%;
+    }
+    .blog-img img {
+        max-height: none;
+    }
+    .header_bg {
+        width: 100%;
+     padding: 34px 70px !important;
+    }
+    .footer {
+        background-size: 70%;
+    }
+    .footer .text-right {
+        text-align: right!important;
+        padding: 10px;
+        background: #ffffff9c;
+    }
+    div#comparison1,
+div#comparison2 {
+    width: 35%;
+    overflow: hidden;
+}
+.instagram_card {
+    width: 100%;
+}
+.row .figure_item {
+    flex-basis: 50%;
+}
+}
+
+@media (max-width: 992px) {
+    .content {
+        position: unset;
+        padding: 23px;
+    }
+    div#comparison {
+        width: 100%;
+    }
+    section {
+        margin-top: 20px;
+    }
+    .card {
+        position: unset;
+        padding: 44px;
+        max-width: 100%;
+    }
+    .footer {
+        background-size: 100%;
+    }
+    div#comparison1,
+    div#comparison2 {
+        width: 25%;
+        overflow: hidden;
+    }
+    div#comparison1,
+    div#comparison2 {
+        width: 50%;
+        overflow: hidden;
+    }
+    .instagram_card {
+        width: 50%;
+    }
+    .header_img {
+        display: none !important;
+    }
+    .Help .help_card {
+        max-width: 50%;
+    }
+    .profile_card {
+        margin-bottom: 26px;
+    }
+    .nav.nav-tabs {
+        position: fixed;
+        width: calc(100% - 0px);
+        bottom: 0;
+        left: 0;
+        padding: 18px 24px !important;
+        z-index: +999;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.5) !important;
+        border-top: 1px solid #5e8eff !important;
+        margin: 0 !important;
+    }
+    .user_account ul.right_bar {
+        border-radius: 20px 20px 0 0 !important;
+    }
+    .nav.nav-tabs li.nav-item {
+        width: auto !important;
+    }
+    .nav.nav-tabs li.nav-item a.nav-link {
+        flex-direction: column;
+        color: #3f3f3f;
+        border: none;
+        border-bottom: 0px solid #e7e7e7;
+        margin-bottom: 0px;
+        border-radius: 0px;
+        background: none;
+        justify-content: space-between;
+        padding: 0 !important;
+        position: relative;
+    }
+    .nav.nav-tabs li.nav-item a.nav-link svg {
+        margin-bottom: 6px;
+        width: 20px;
+        height: 20px;
+        position: relative;
+    }
+    .nav.nav-tabs li.nav-item a.nav-link h6 {
+        font-size: 13px !important;
+    }
+    .user_account ul.right_bar li.nav-item a.active path {
+        stroke: #5e8eff !important;
+    }
+    .user_account ul.right_bar li.nav-item a::before {
+        content: "";
+        background: #5e8eff;
+        width: 20px;
+        height: 4px;
+        left: calc(50% - 10px);
+        top: -22px;
+        position: absolute;
+        border-radius: 20px;
+        transition: all 0.3s;
+        opacity: 0;
+        transform: scale(0);
+    }
+    .user_account ul.right_bar li.nav-item a.active::before {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .user_account ul.right_bar li.nav-item a.active {
+        color: rgb(0, 0, 0) !important;
+        background: none !important;
+    }
+    .nav.nav-tabs li:nth-child(4), .nav.nav-tabs li:nth-child(7), .nav.nav-tabs li:nth-child(8), .nav.nav-tabs li:nth-child(6) {
+        display: none !important;
+    }
+    .nav.nav-tabs li.reserv-btn {
+        position: absolute;
+        bottom: 48px;
+        left: calc(50% - 25px);
+        background: #fff;
+        padding: 10px;
+        border-radius: 26px;
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+        background: linear-gradient(white, white) padding-box, linear-gradient(180deg, #ffffff 0, #5e8eff 100%) border-box;
+        border: 1px solid transparent;
+    }
+}
+
+@media (max-width: 768px) {
+    .facility .facility-step {
+        flex-basis: calc(50% - 6px) !important;
+        margin-right: 6px;
+    }
+    .header_img {
+        display: none !important;
+    }
+
+    .mobile_btns {
+        display: flex;
+    }
+    .end-navbar {
+        margin-bottom: 80px;
+    }
+    .points img {
+        width: 35% !important;
+    }
+    .pulse {
+        transform: translate(0%, 0%);
+        padding: 6px 18px;
+    }
+    .content h3 {
+        color: #000 !important;
+        font-size: 18px;
+        margin-bottom: 0px !important;
+    }
+    section.img_bg_card {
+        margin-top: 0 !important;
+    }
+    section.img_bg_card .card {
+        margin-top: 0 !important;
+    }
+    section {
+        margin-top: 50px !important;
+    }
+    div#comparison1,
+div#comparison2 {
+    width: 75%;
+    overflow: hidden;
+}
+.instagram_card {
+    width: 75%;
+}
+.user_form_topic {
+    font-size: 14px;
+    line-height: 22px;
+}
+.user_form_topic .logo {
+    max-width: 100px !important;
+}
+header .content  {
+    border: 1px solid #52c5a8;
+    padding: 10% 0;
+    margin: 10% 0;
+    justify-content: center;
+    border-radius: 370px 370px 0px 0px;
+}
+.Login_Register h1 {
+    margin-top: 15px;
+}
+header .content > div:last-child {
+    display: none !important;
+}
+.go_to {
+    position: absolute;
+    bottom: 18%;
+    left: 10px;
+}
+.Help .help_card {
+    max-width: 80%;
+}
+.ticket .message_card {
+    max-width: 100% !important;
+}
+.ticket .message_card .body p {
+    font-size: 15px !important;
+    font-weight: 700;
+}
+.ticket .message_card .date span{
+    font-size: 14px !important;
+}
+.repayment_box {
+        flex-direction: column;
+    }
+.repayment_box .pay{
+        margin-top: 20px;
+    }
+    .alert_parent {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        background-repeat: no-repeat !important;
+        background-size: 100% !important;
+    }
+    div#comparison1,
+    div#comparison2 {
+        width: 100%;
+    }
+    section,
+    section.points {
+        margin-top: 20px;
+    }
+    section.about {
+        padding: 0 35px !important;
+    }
+
+    h3 {
+        font-size: 24px;
+    }
+    p {
+        font-size: 18px !important;
+    }
+    span {
+        font-size: 16px;
+    }
+    section.img_bg_card  {
+        margin-top: 40px !important;
+    }
+    .Login_Register h1 {
+        font-size: 28px;
+    }
+    .Login_Register h4 {
+        font-size: 13px;
+    }
+    .Login_Register .topic {
+        text-align: center !important;
+        margin-bottom: 0 !important;
+    }
+    .instagram_card {
+        width: 100%;
+    }
+    .row .figure_item {
+        padding: 6px !important;
+        margin-bottom: 0px !important;
+    }
+    .Login_Register .login_card {
+        max-width: 100% !important;
+        /* padding: 0 40px !important; */
+    }
+    .Login_Register .login_card .topic h6 {
+        font-size: 16px !important;
+        line-height: 22px !important;
+    }
+    .Login_Register .login_card .phone img {
+        max-height: 90px !important;
+    }
+    .Login_Register .yalda_logo {
+        max-width: calc(100% / 5 * 2);
+    }
+    .Login_Register .login_card label {
+        font-size: 14px;
+    }
+    .snow {
+        display: block !important;
+    }
+    .logo img {
+        width: 100%;
+        max-width: 100px;
+    }
+    .choose_services .services .item span, .choose_presenter .presenter .item span, .choose_time .times .item span {
+        font-size: 14px !important;
+    }
+    .choose_services .services .item, .choose_presenter .presenter .item, .choose_time .times .item {
+        padding: 10px !important;
+    }
+    .tab-pane.wallet .wallet_total {
+        padding: 15px !important;
+        height: 150px !important;
+        border-radius: 35px !important;
+    }
+    .tab-pane.wallet .wallet_total .detail h5 {
+        font-size: 16px !important;
+        padding: 12px 8px !important;
+        border-radius: 12px !important;
+    }
+    .tab-pane.wallet img {
+        max-height: 90px;
+    }
+    .user_account .account_details_card .item {
+        flex-basis: 100% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar .days .day_item .title {
+        min-height: 42px !important;
+    }
+}
+
+@media (max-width: 450px) {
+    .choose_services .services .item, .choose_presenter .presenter .item, .choose_time .times .item {
+        width: 100%;
+    }
+}
