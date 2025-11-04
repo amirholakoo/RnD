@@ -1,0 +1,247 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load to_jalali %}
+{% block title %}Dashboard{% endblock %}
+{% block Link %}{% endblock %}
+{% block content %}
+<div class="container p-3 mt-5">
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-6">
+            <div class="guid w-100 text-center">
+                <div class="alert alert-primary pb-1" dir="ltr">
+                    <p class="mb-2 text-left">
+                        PM = Product Machine ( ماشین تولید کاغذ )
+                    </p>
+                    <div class="mb-2 d-flex align-items-center">
+                        <div class="device-status-indicator mr-2 online"></div> = سنسور های آنلاین
+                    </div>
+                    <div class="mb-2 d-flex align-items-center">
+                        <div class="device-status-indicator mr-2 offline"></div> = سنسور های آفلاین
+                    </div>
+                    <div class="mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="device-status-indicator mr-2 bg-warning"></div> = سنسور های مشکوک به فیک
+                        </div>
+                        <p class="mb-0 text-center text-muted" dir="rtl">سیستم این سنسور هارو به صورت خودکار بعد از 30 دقیقه حذف خواهد کرد.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if data %}
+    <div class="row">
+        {% for device in data %}
+        <div class="col-lg-4 mb-3">
+            <div class="device-card h-100">
+                <div class="device-header h-100">
+                    <div class="device-info">
+                        <h3 class="device-name">{{ device.device.name|default:"Unknown Device" }}</h3>
+                        <p class="device-location d-flex align-items-center">
+                            <svg class="ml-2 width="12" height="16" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 7.92285C1 12.7747 5.24448 16.7869 7.12319 18.3252C7.39206 18.5454 7.52811 18.6568 7.72871 18.7132C7.88491 18.7572 8.1148 18.7572 8.271 18.7132C8.47197 18.6567 8.60707 18.5463 8.87695 18.3254C10.7557 16.7871 14.9999 12.7751 14.9999 7.9233C14.9999 6.08718 14.2625 4.32605 12.9497 3.02772C11.637 1.72939 9.8566 1 8.00008 1C6.14357 1 4.36301 1.7295 3.05025 3.02783C1.7375 4.32616 1 6.08674 1 7.92285Z" stroke="#000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M6 7C6 8.10457 6.89543 9 8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7Z" stroke="#000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            {{ device.device.location|default:"No location" }}</p>
+                    </div>
+                    <div class="d-flex">
+                        {% for sensor in device.sensors %}
+                        {% if not sensor.sensor_type == "status" %}
+                        <div data="{{ sensor.id }}" class="device-status-indicator mr-2 {% if sensor.sensor_logs.last.CreationDateTime > now %}online{% else %}offline{% endif %} {% if sensor.sensor_logs.count < 10 %}bg-warning{% endif %}"></div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="device-edit-btn" onclick="openDeviceModal({{ device.device.id }})" title="ویرایش دستگاه">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 16.5861H17M1 16.5861V12.5861L11.8686 1.7174L11.8704 1.7157C12.2652 1.32082 12.463 1.12303 12.691 1.04894C12.8919 0.983686 13.1082 0.983686 13.3091 1.04894C13.5369 1.12297 13.7345 1.32054 14.1288 1.71486L15.8686 3.45466C16.2646 3.85067 16.4627 4.04878 16.5369 4.2771C16.6022 4.47795 16.6021 4.69429 16.5369 4.89513C16.4628 5.1233 16.265 5.3211 15.8695 5.71655L15.8686 5.7174L5 16.586L1 16.5861Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="device-body">
+                    <div class="device-details">
+                        <div class="detail-item">
+                            <span class="detail-label">IP Address:</span>
+                            <span class="detail-value" style="font-family: 'Courier New', monospace !important;">{{ device.device.ip_address }}</span>
+                        </div>
+                        {% if device.device.description %}
+                        <div class="detail-item">
+                            <span class="detail-label">Description:</span>
+                            <span class="detail-value">{{ device.device.description }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="detail-item">
+                            <span class="detail-label">Last Update:</span>
+                            <span class="detail-value">{% to_jalali device.device.LastUpdate %}</span>
+                        </div>
+                    </div>
+    
+                    {% if device.sensors %}
+                    <div class="sensors-section">
+                        <h4 class="sensors-title">سنسور های متصل</h4>
+                        <div class="sensors-grid">
+                            {% for sensor in device.sensors %}
+                            {% if not sensor.sensor_type == "status" %}
+                            <div style="position: relative;">
+                                <a onclick="Progress();;window.location = `{% url 'device_info' device.device.id sensor.id %}`;Progress()" class="sensor-card">
+                                    <div class="sensor-icon d-flex justify-content-center align-items-center">
+                                        <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6.34277 10.5899C6.80861 10.0903 7.37187 9.6915 7.9978 9.41804C8.62372 9.14458 9.29954 9.00246 9.98259 9.00007C10.6656 8.99769 11.3419 9.13534 11.9697 9.40443C12.5975 9.67351 13.1637 10.0683 13.633 10.5646M4.14941 7.54393C4.89476 6.74465 5.79597 6.10655 6.79745 5.66902C7.79893 5.23148 8.87926 5.00389 9.97214 5.00007C11.065 4.99626 12.1466 5.21651 13.1511 5.64704C14.1556 6.07757 15.0617 6.70942 15.8127 7.50348M1.22363 4.81635C2.34165 3.61742 3.69347 2.66028 5.19569 2.00398C6.69791 1.34768 8.31792 1.0058 9.95724 1.00007C11.5966 0.994351 13.2208 1.32472 14.7276 1.97052C16.2344 2.61632 17.5931 3.56458 18.7195 4.75568M10 15.0001C9.44772 15.0001 9 14.5524 9 14.0001C9 13.4478 9.44772 13.0001 10 13.0001C10.5523 13.0001 11 13.4478 11 14.0001C11 14.5524 10.5523 15.0001 10 15.0001Z" stroke="#404040" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                    <div class="sensor-info">
+                                        <h5 class="sensor-name">{{ sensor.sensor_type|title }}</h5>
+                                        <p class="sensor-type">{{ sensor.sensor_type|title }}</p>
+                                        {% if sensor.description %}
+                                        <p class="sensor-description">{{ sensor.description }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="sensor-meta">
+                                        <span class="sensor-id">ID: {{ sensor.id }}</span>
+                                        <span class="sensor-update">{% to_jalali sensor.sensor_logs.last.CreationDateTime %}</span>
+                                    </div>
+                                    <div data="{{ sensor.id }}" class="device-status-indicator {% if sensor.sensor_logs.last.CreationDateTime > now %}online{% else %}offline{% endif %} {% if sensor.sensor_logs.count < 10 %}bg-warning{% endif %}"></div>
+                                </a>
+                                <div class="tools_bar" style="display: flex; gap: 2px; position: absolute; bottom: 2px; left: 5px;">
+                                    <a class="tools_bar_item" style="text-decoration: none; color: #404040; padding: 0.2rem 0.5rem; border-radius: 0.5rem; font-size: 12px; font-weight: 700;" href="{% url 'device_info_json' sensor.id %}" onclick="Progress()" class="sensor-icon-link">
+                                        API
+                                    </a>
+                                    <button class="tools_bar_item" onclick="openSensorModal({{ sensor.id }})" style="text-decoration: none; color: #404040; padding: 0.2rem 0.5rem; border-radius: 0.5rem;font-size: 12px; font-weight: 700; cursor: pointer;" title="ویرایش سنسور">
+                                        <svg width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1 16.5861H17M1 16.5861V12.5861L11.8686 1.7174L11.8704 1.7157C12.2652 1.32082 12.463 1.12303 12.691 1.04894C12.8919 0.983686 13.1082 0.983686 13.3091 1.04894C13.5369 1.12297 13.7345 1.32054 14.1288 1.71486L15.8686 3.45466C16.2646 3.85067 16.4627 4.04878 16.5369 4.2771C16.6022 4.47795 16.6021 4.69429 16.5369 4.89513C16.4628 5.1233 16.265 5.3211 15.8695 5.71655L15.8686 5.7174L5 16.586L1 16.5861Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="no-sensors">
+                        <span class="no-sensors-icon">📡</span>
+                        <p>No sensors detected</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📊</div>
+        <h2 class="empty-state-title">No Data Available</h2>
+        <p class="empty-state-message">داده ای تا الان دریافت نشده!</p>
+        <p class="empty-state-submessage">Devices will appear here once they start sending data.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Device Edit Modal -->
+<div id="deviceModal" class="edit-modal">
+    <div class="edit-modal-content">
+        <div class="edit-modal-header">
+            <h4>ویرایش دستگاه</h4>
+            <span class="edit-modal-close" onclick="closeDeviceModal()">&times;</span>
+        </div>
+        <form id="deviceEditForm" class="edit-modal-body">
+            {% csrf_token %}
+            <input type="hidden" id="device_id" name="device_id">
+            <div class="form-group">
+                <label for="device_name">نام دستگاه:</label>
+                <input type="text" id="device_name" name="name" class="form-control" placeholder="نام دستگاه">
+            </div>
+            <div class="form-group">
+                <label for="device_location">مکان:</label>
+                <input type="text" id="device_location" name="location" class="form-control" placeholder="مکان دستگاه">
+            </div>
+            <div class="form-group">
+                <label for="device_ip_address">آدرس IP:</label>
+                <input type="text" id="device_ip_address" name="ip_address" class="form-control" placeholder="آدرس IP">
+            </div>
+            <div class="form-group">
+                <label for="device_description">توضیحات:</label>
+                <textarea id="device_description" name="description" class="form-control" rows="3" placeholder="توضیحات دستگاه"></textarea>
+            </div>
+            <div class="edit-modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeviceModal()">لغو</button>
+                <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Sensor Edit Modal -->
+<div id="sensorModal" class="edit-modal">
+    <div class="edit-modal-content">
+        <div class="edit-modal-header">
+            <h4>ویرایش سنسور</h4>
+            <span class="edit-modal-close" onclick="closeSensorModal()">&times;</span>
+        </div>
+        <form id="sensorEditForm" class="edit-modal-body">
+            {% csrf_token %}
+            <input type="hidden" id="sensor_id" name="sensor_id">
+            <div class="form-group">
+                <label for="sensor_type">نوع سنسور:</label>
+                <input type="text" id="sensor_type" name="sensor_type" class="form-control" placeholder="نوع سنسور" required>
+            </div>
+            <div class="form-group">
+                <label for="sensor_description">توضیحات:</label>
+                <textarea id="sensor_description" name="description" class="form-control" rows="3" placeholder="توضیحات سنسور"></textarea>
+            </div>
+            <div class="edit-modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeSensorModal()">لغو</button>
+                <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function updateSensorStatus() {
+        fetch('{% url "get_sensor_status" %}', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                data.sensors.forEach(sensor => {
+                    const statusIndicator = document.querySelectorAll(`[data="${sensor.sensor_id}"]`);
+                    for(const x of statusIndicator) {
+                        if (x) {
+                        x.classList.remove('online', 'offline');
+                        
+                        if (sensor.is_online) {
+                            x.classList.add('online');
+                        } else {
+                            x.classList.add('offline');
+                        }
+                    }
+                    }
+                });
+                
+                console.log('Sensor status updated at:', new Date().toLocaleTimeString());
+            } else {
+                console.error('Failed to fetch sensor status:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching sensor status:', error);
+        });
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        updateSensorStatus();
+        window.sensorStatusInterval = setInterval(updateSensorStatus, 1000);
+    });
+
+</script>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block Script %}
+<script src="{% static 'dashboard/js/dashboard.js' %}?version={{version}}"></script>
+{% endblock %}
