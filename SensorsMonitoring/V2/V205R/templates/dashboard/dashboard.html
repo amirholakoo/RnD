@@ -237,7 +237,7 @@
         for (const x of all_device) {
             let all_sensors = x.querySelectorAll(".device-status-indicator")
             let offline_sensors = x.querySelectorAll(".device-status-indicator.offline")
-            if (offline_sensors.length+1 > ((all_sensors.length+1) / 2)) {
+            if (offline_sensors.length > (all_sensors.length / 2)) {
                 if (!x.classList.contains("offline")) {
                     x.classList.add("offline")
                 }
