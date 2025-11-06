@@ -1,0 +1,116 @@
+{% load static %}
+<html lang="fa" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Seyed Amirmohammad Mousavi | 09014131719">
+        <meta name="theme-color" content="#5e8eff" >
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'base/img/apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'base/img/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'base/img/favicon-16x16.png' %}">
+        <link rel="manifest" href="{% static 'base/img/site.webmanifest' %}">
+        <link rel="icon" href="{% static 'base/img/favicon-32x32.png' %}" type="image/x-icon">
+        <link rel="stylesheet" href="{% static 'base/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'base/css/main.style.css' %}?version={{version}}" type="text/css">
+        <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}?version={{version}}" type="text/css">
+        <script src="{% static 'base/js/apexcharts.js' %}"></script>
+        <title>{% block title %}{% endblock %}</title>
+        {% block Link %}{% endblock %}
+        <style>
+            @font-face {
+                font-family: Peyda;
+                font-style: normal;
+                font-weight: 900;
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Black.eot' %}");
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Black.eot?#iefix' %}") format("embedded-opentype"),
+                    url("{% static 'base/fonts/woff2/PeydaWeb-Black.woff2' %}") format("woff2"),
+                    url("{% static 'base/fonts/woff/PeydaWeb-Black.woff' %}") format("woff"),
+                    url("{% static 'base/fonts/ttf/Peyda.ttf' %}") format("truetype");
+            }
+        
+            @font-face {
+                font-family: Peyda;
+                font-style: normal;
+                font-weight: 700;
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Bold.eot' %}");
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Bold.eot?#iefix' %}") format("embedded-opentype"),
+                    url("{% static 'base/fonts/woff2/PeydaWeb-Bold.woff2' %}") format("woff2"),
+                    url("{% static 'base/fonts/woff/PeydaWeb-Bold.woff' %}") format("woff"),
+                    url("{% static 'base/fonts/ttf/Peyda.ttf' %}") format("truetype");
+            }
+        
+            @font-face {
+                font-family: Peyda;
+                font-style: normal;
+                font-weight: 400;
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Medium.eot' %}");
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Medium.eot?#iefix' %}") format("embedded-opentype"),
+                    url("{% static 'base/fonts/woff2/PeydaWeb-Medium.woff2' %}") format("woff2"),
+                    url("{% static 'base/fonts/woff/PeydaWeb-Medium.woff' %}") format("woff"),
+                    url("{% static 'base/fonts/ttf/Peyda.ttf' %}") format("truetype");
+            }
+        
+            @font-face {
+                font-family: Peyda;
+                font-style: normal;
+                font-weight: 100;
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Regular.eot' %}");
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Regular.eot?#iefix' %}") format("embedded-opentype"),
+                    url("{% static 'base/fonts/woff2/PeydaWeb-Regular.woff2' %}") format("woff2"),
+                    url("{% static 'base/fonts/woff/PeydaWeb-Regular.woff' %}") format("woff"),
+                    url("{% static 'base/fonts/ttf/Peyda.ttf' %}") format("truetype");
+            }
+        </style>
+    </head>
+    <body> 
+        <div id="Alert" class="alert_parent"></div>
+        {% include "base/header.html" %}
+        <div class="progressbar" id="progressbar">
+            <div class="progress bg-white p-4 rounded shadow d-flex align-items-center">
+                <h6 class="m-3">لطفا صبر کنید</h6>
+                <div class="loader"></div>
+            </div>
+        </div>
+        {% block content %}{% endblock %}
+        <div id="unknown_devices">
+            <form id="unknown_devices_form">
+                {% csrf_token %}
+                <div class="w-100 alert alert-secondary text-right" role="alert">
+                    دستگاهی با مشخصات زیر در حال ارسال داده به ما میباشد لطفا اطلاعات آن را تکمیل کنید
+                </div>
+                <div class="inputs-group">
+                    <div>
+                        <label for="device_id">نشانی دستگاه ( mac address )</label>
+                        <input type="text" name="device_id" placeholder="Device ID" style="pointer-events: none;opacity: 0.7;">
+                    </div>
+                    <div>
+                        <label for="ip_address">آدرس ip</label>
+                        <input type="text" name="ip_address" placeholder="آدرس ip" style="pointer-events: none;opacity: 0.7;">
+                    </div>
+                </div>
+                <div class="inputs-group">
+                    <div>
+                        <label for="sensor_type">نوع سنسور</label>
+                        <input type="text" name="sensor_type" placeholder="نوع سنسور" style="pointer-events: none;opacity: 0.7;">
+                    </div>
+                    <div>
+                        <label for="CreationDateTime">زمان ساخت</label>
+                        <input type="text" name="CreationDateTime" placeholder="زمان ساخت" style="pointer-events: none;opacity: 0.7;">
+                    </div>
+                </div>
+                <label for="name">نام دلخواه (اختیاری)</label>
+                <input type="text" name="name" placeholder="نام دلخواه (اختیاری)" >
+                <label for="location">مکان (اختیاری)</label>
+                <input type="text" name="location" placeholder="مثال: انبار سنگین">
+                <button class="mt-2" type="submit">افزودن دستگاه</button>
+            </form>
+        </div>
+        {% block footer %}{% endblock %}
+        {% block Script %}{% endblock %}
+        <script src="{% static 'base/js/jquery-3.6.0.min.js' %}"></script>
+        <script src="{% static 'base/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'base/js/jquery.ajax.min.js' %}"></script>
+        <script src="{% static 'base/js/jalaali.min.js' %}"></script>
+        <script src="{% static 'base/js/main.js' %}?version={{version}}"></script>
+    </body>
+</html>
