@@ -399,11 +399,24 @@
                             },
                         },
                         tooltip: {
-                            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-                                return '<div class="bg-white rounded shadow-sm p-3">' +
-                                    '<span style="color: #000;">' + series[seriesIndex][dataPointIndex] + '</span>' +
-                                    '</div>'
-                            }
+                            shared: true,
+                            intersect: false,
+                            y: {
+                                formatter: function (val) {
+                                    if (typeof val === 'undefined' || val === null) return '';
+                                    return val.toFixed(2);
+                                }
+                            },
+                            style: {
+                                fontSize: '14px',
+                                fontFamily: 'Peyda',
+                                color: '#000',
+                                direction: 'rtl',
+                            },
+                            marker: {
+                                show: true,
+                            },
+                            theme: 'light',
                         },
                         legend: {
                             fontFamily: 'Peyda',

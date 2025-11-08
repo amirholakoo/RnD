@@ -63,12 +63,23 @@ def post_data(request):
                 for key, value in latest_data["data"].items():
                     target_values = value[:3]
                     creation_time = time.time()+3600
-                    for x in target_values:
-                        new_log = SensorLogs(sensor=sensor,CreationDateTime=creation_time,data={"temperature":x})
-                        new_log.save()
-                        new_log.LastUpdate = creation_time
-                        new_log.save()
-                        creation_time += 3600
+                    now = time.time()
+                    last_log = SensorLogs.objects.filter(sensor=sensor).last()
+                    if last_log:
+                        if creation_time - last_log.CreationDateTime >= (3 * 3600)-60:
+                            for x in target_values:
+                                new_log = SensorLogs(sensor=sensor,CreationDateTime=creation_time,data={"temperature":x})
+                                new_log.save()
+                                new_log.LastUpdate = creation_time
+                                new_log.save()
+                                creation_time += 3600
+                    else:
+                        for x in target_values:
+                            new_log = SensorLogs(sensor=sensor,CreationDateTime=creation_time,data={"temperature":x})
+                            new_log.save()
+                            new_log.LastUpdate = creation_time
+                            new_log.save()
+                            creation_time += 3600
             else:
                 new_log = SensorLogs(sensor=sensor,data=latest_data["data"])
                 new_log.save()
@@ -79,3 +90,7 @@ def post_data(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     else:
         return JsonResponse({'status': 'error', 'message': 'Only POST allowed'}, status=405)
+
+# import jdatetime
+# import datetime
+# print(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(SensorLogs.objects.filter(sensor__id=317).last().CreationDateTime))).strftime(" %m-%d %H:%M")))
