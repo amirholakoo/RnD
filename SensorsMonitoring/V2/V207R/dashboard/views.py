@@ -175,7 +175,7 @@ def chart_info_json(request,sensor_id):
                 for key, value in json.loads(x.data.replace("'",'"')).items():
                     if not key == "timestamp" and not key == "type":
                         if key not in [x["type"] for x in chart_data]:
-                            chart_data.append({"type":key,"data":[value],"ai_data":[],"timestamps":[str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %m-%d %H:%M"))],"time":float(x.CreationDateTime),"s":[float(x.CreationDateTime)]})
+                            chart_data.append({"type":key,"data":[value],"ai_data":[],"timestamps":[str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %d %b - %H:%M"))],"time":float(x.CreationDateTime),"s":[float(x.CreationDateTime)]})
                         else:
                             min_value = False
                             max_value = False
@@ -196,12 +196,12 @@ def chart_info_json(request,sensor_id):
                                             max_value = float(value)
                                         if float(value) >= float(min_value) and float(value) <= float(max_value):
                                             chart_data[index]["data"].append(float(f'{value:.2f}'))
-                                            chart_data[index]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %m-%d %H:%M")))
+                                            chart_data[index]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %d %b - %H:%M")))
                                             chart_data[index]["time"] = float(x.CreationDateTime)
                                             chart_data[index]["s"].append(float(x.CreationDateTime))
                                     else:
                                         chart_data[index]["data"].append(float(f'{value:.2f}'))
-                                        chart_data[index]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %m-%d %H:%M")))
+                                        chart_data[index]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %d %b - %H:%M")))
                                         chart_data[index]["time"] = float(x.CreationDateTime)
                                         chart_data[index]["s"].append(float(x.CreationDateTime))
                             else:
@@ -229,14 +229,13 @@ def chart_info_json(request,sensor_id):
                                     max_set = False
                         index += 1
         chart_data = [x for x in chart_data if x["data"]]
-        if has_ai and chart_data:
+        if has_ai and chart_data and not filter_time == 3600:
             index=0
             ai_index=0
             for x in chart_data[0]["data"]:
-                if chart_data[0]["s"][index] >= ai_data.first().CreationDateTime :
+                if chart_data[0]["s"][index] >= ai_data.first().CreationDateTime and ai_index < ai_data.count():
                     ai_target_data = json.loads(ai_data[ai_index].data.replace("'",'"'))
-                    chart_data[0]["ai_data"].append(float(ai_target_data[x["type"]]))
-                    print(float(ai_target_data[x["type"]]),"float(ai_target_data")
+                    chart_data[0]["ai_data"].append(float(ai_target_data[chart_data[0]["type"]]))
                     ai_index += 1
                 else:
                     chart_data[0]["ai_data"].append(None)
@@ -246,7 +245,6 @@ def chart_info_json(request,sensor_id):
                     ai_target_data = json.loads(ai_data[ai_index].data.replace("'",'"'))
                     chart_data[0]["data"].append(None)
                     chart_data[0]["ai_data"].append(float(ai_target_data[chart_data[0]["type"]]))
-                    print(float(ai_target_data[chart_data[0]["type"]]))
                     chart_data[0]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(ai_data[ai_index].CreationDateTime))).strftime(" %d %b %H:%M:%S")))
                     ai_index += 1
         for x in chart_data:

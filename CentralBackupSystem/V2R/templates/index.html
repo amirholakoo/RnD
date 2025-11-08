@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backup System Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .header h1 {
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.1rem;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+    }
+
+    .card-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .backup-icon {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+    }
+
+    .logs-icon {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      color: white;
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .backup-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .backup-table th {
+      background: #f8fafc;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #4a5568;
+      border-bottom: 2px solid #e2e8f0;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .backup-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #2d3748;
+    }
+
+    .backup-table tr:hover {
+      background: #f8fafc;
+    }
+
+    .file-name {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.9rem;
+      color: #4a5568;
+    }
+
+    .file-size {
+      font-weight: 600;
+      color: #38a169;
+    }
+
+    .file-date {
+      color: #718096;
+      font-size: 0.9rem;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .download-btn:active {
+      transform: translateY(0);
+    }
+
+    .download-btn svg {
+      display: block;
+    }
+
+    /* Tab Styles */
+    .tabs-container {
+      margin-bottom: 1rem;
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: none;
+      color: #718096;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      margin-bottom: -2px;
+    }
+
+    .tab-button:hover {
+      color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .tab-button.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+      font-weight: 600;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .logs-container {
+      max-height: 400px;
+      overflow-y: auto;
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .log-line {
+      color: #e2e8f0;
+      margin-bottom: 0.25rem;
+      word-wrap: break-word;
+    }
+
+    .log-line.info {
+      color: #63b3ed;
+    }
+
+    .log-line.warning {
+      color: #f6e05e;
+    }
+
+    .log-line.error {
+      color: #fc8181;
+    }
+
+    .action-section {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .backup-btn {
+      background: #442065;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .backup-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    .backup-btn:active {
+      transform: translateY(0);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      color: white;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .system-info-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .system-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .system-info-item {
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+      box-shadow: 2px 2px 4px #00000021;
+    }
+
+    .system-info-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #718096;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .system-info-value {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.9rem;
+      color: #2d3748;
+      word-break: break-all;
+    }
+
+    .system-info-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      color: #2d3748;
+    }
+
+    .system-info-header svg {
+      width: 24px;
+      height: 24px;
+      margin-right: 0.5rem;
+      color: #667eea;
+    }
+
+    .system-info-header h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .container {
+        padding: 1rem;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Backup System Dashboard</h1>
+      <p>Monitor and manage your backup operations</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ backups_by_device|length }}</div>
+        <div class="stat-label">Remote Devices</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ backups_by_device.values()|map('length')|sum|default(0) }}</div>
+        <div class="stat-label">Total Backups</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ logs|length }}</div>
+        <div class="stat-label">Log Entries</div>
+      </div>
+      <div class="stat-card">
+        {% set ns = namespace(total=0) %}
+        {% for device_backups in backups_by_device.values() %}
+          {% for backup in device_backups %}
+            {% set ns.total = ns.total + backup.size %}
+          {% endfor %}
+        {% endfor %}
+        <div class="stat-number">
+          {% if ns.total >= 1024 %}
+            {{ "%.2f"|format(ns.total / 1024) }} GB
+          {% else %}
+            {{ "%.2f"|format(ns.total) }} MB
+          {% endif %}
+        </div>
+        <div class="stat-label">Total Size</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="next-backup-timer">--:--:--</div>
+        <div class="stat-label">Next Backup In</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="last-backup-time" style="font-size: 1.2rem;">Loading...</div>
+        <div class="stat-label">Last Backup</div>
+      </div>
+    </div>
+
+    <div class="system-info-card">
+      <div class="system-info-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+        <h3>System Configuration</h3>
+      </div>
+      <div class="system-info-grid">
+        <div class="system-info-item">
+          <div class="system-info-label">Hostname</div>
+          <div class="system-info-value">{{ system_info.hostname }}</div>
+        </div>
+        <div class="system-info-item">
+          <div class="system-info-label">Local IP</div>
+          <div class="system-info-value">{{ system_info.local_ip }}</div>
+        </div>
+        <div class="system-info-item">
+          <div class="system-info-label">Remote Devices</div>
+          <div class="system-info-value">{{ system_info.devices|join(', ') }}</div>
+        </div>
+        {% if system_info.external_storage_enabled %}
+        <div class="system-info-item" style="border-left-color: {% if system_info.external_storage_available %}#38a169{% else %}#fc8181{% endif %};">
+          <div class="system-info-label">External Storage</div>
+          <div class="system-info-value">
+            {% if system_info.external_storage_available %}
+              <span style="color: #48bb78;">● Connected</span> ({{ system_info.external_storage_path }})
+            {% else %}
+              <span style="color: #fc8181;">● Not Available</span> ({{ system_info.external_storage_path }})
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card" style="max-height: 70vh;overflow-y: scroll;">
+        <div class="card-header">
+          <div class="card-icon backup-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <h2>Available Backups</h2>
+        </div>
+        
+        {% if backups_by_device %}
+        <div class="tabs-container">
+          <div class="tab-buttons">
+            {% for device in backups_by_device.keys() %}
+            <button class="tab-button {% if loop.first %}active{% endif %}" onclick="switchTab('{{ device }}')">
+              {{ device }}
+            </button>
+            {% endfor %}
+          </div>
+          
+          {% for device, backups in backups_by_device.items() %}
+          <div class="tab-content {% if loop.first %}active{% endif %}" id="tab-{{ device }}">
+            <table class="backup-table">
+              <thead>
+                <tr>
+                  <th>File Name</th>
+                  <th>Size</th>
+                  <th>Date</th>
+                  <th>Download</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for b in backups %}
+                <tr>
+                  <td><span class="file-name">{{ b.name }}</span></td>
+                  <td><span class="file-size">{{ b.size }} MB</span></td>
+                  <td><span class="file-date">{{ b.time }}</span></td>
+                  <td>
+                    <a href="{{ url_for('download_backup', device=device, filename=b.name) }}" class="download-btn" title="Download {{ b.name }}">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p style="text-align: center; color: #718096; padding: 2rem;">No backups available yet</p>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon logs-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14,2 14,8 20,8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10,9 9,9 8,9"/>
+            </svg>
+          </div>
+          <h2>Recent Logs</h2>
+        </div>
+        <div class="logs-container">
+          {% for line in logs %}
+          <div class="log-line {% if 'ERROR' in line %}error{% elif 'WARNING' in line %}warning{% elif 'INFO' in line %}info{% endif %}">
+            {{ line.strip() }}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="action-section">
+      <form method="post" action="{{ url_for('run_backup') }}" style="display: inline-block; margin-right: 1rem;">
+        <button type="submit" class="backup-btn">
+          Run Manual Backup
+        </button>
+      </form>
+      <a href="{{ url_for('config_page') }}" class="backup-btn" style="display: inline-block; text-decoration: none; background: #38a169;">
+        Configuration
+      </a>
+    </div>
+  </div>
+
+  <script>
+    let backupStatus = null;
+    let lastFetch = 0;
+
+    function switchTab(deviceName) {
+      // Remove active class from all buttons and contents
+      const allButtons = document.querySelectorAll('.tab-button');
+      const allContents = document.querySelectorAll('.tab-content');
+      
+      allButtons.forEach(btn => {
+        btn.classList.remove('active');
+      });
+      allContents.forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      // Add active class to clicked button
+      allButtons.forEach(btn => {
+        if (btn.textContent.trim() === deviceName) {
+          btn.classList.add('active');
+        }
+      });
+      
+      // Show corresponding tab content
+      const tabContent = document.getElementById('tab-' + deviceName);
+      if (tabContent) {
+        tabContent.classList.add('active');
+      }
+    }
+
+    function formatTime(seconds) {
+      if (seconds <= 0) return "Due now";
+      
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      
+      if (hours > 24) {
+        const days = Math.floor(hours / 24);
+        const remainingHours = hours % 24;
+        return `${days}d ${remainingHours}h`;
+      }
+      
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    async function fetchBackupStatus() {
+      try {
+        const response = await fetch('/api/backup-status');
+        backupStatus = await response.json();
+        lastFetch = Date.now();
+        updateLastBackupDisplay();
+      } catch (error) {
+        console.error('Error fetching backup status:', error);
+      }
+    }
+
+    function updateLastBackupDisplay() {
+      if (backupStatus) {
+        const lastBackupEl = document.getElementById('last-backup-time');
+        lastBackupEl.textContent = backupStatus.last_backup_formatted;
+      }
+    }
+
+    function updateTimer() {
+      if (!backupStatus) return;
+      
+      const now = Date.now() / 1000;
+      const elapsed = (Date.now() - lastFetch) / 1000;
+      const secondsRemaining = Math.max(0, backupStatus.seconds_until_next - elapsed);
+      
+      const timerEl = document.getElementById('next-backup-timer');
+      timerEl.textContent = formatTime(Math.floor(secondsRemaining));
+      
+      // Refetch status every 30 seconds to stay synchronized
+      if (elapsed > 30) {
+        fetchBackupStatus();
+      }
+    }
+
+    // Initial fetch
+    fetchBackupStatus();
+    
+    // Update timer every second
+    setInterval(updateTimer, 1000);
+    
+    // Refetch status every 30 seconds
+    setInterval(fetchBackupStatus, 30000);
+  </script>
+</body>
+</html>
