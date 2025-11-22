@@ -1,0 +1,360 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'AM_Calendar/css/calendar.css' %}?version={{version}}">
+<style>
+    
+</style>
+<section class="calendar h-100 w-100 justify-content-between mt-0 pt-0" id="calendar">
+    <div class="container">
+        <div class="calendar_card w-100 parent" dir="ltr">
+            <div class="row" dir="rtl">
+                <div class="col-6 pr-0">
+                    <select class="w-100 py-2 border choose_month_title" onchange="AMCalendar(document.getElementById('calendar_choose_year').value,this.value,document.querySelector('#calendar_choose_month option:checked').innerHTML,false);Progress();setTimeout(()=>{Progress(false);defaults()},300);" id="calendar_choose_month">
+                        <option value="1" {% if curent.month == 1 %}selected{% endif %}>فروردین</option>
+                        <option value="2" {% if curent.month == 2 %}selected{% endif %}>اردیبهشت</option>
+                        <option value="3" {% if curent.month == 3 %}selected{% endif %}>خرداد</option>
+                        <option value="4" {% if curent.month == 4 %}selected{% endif %}>تیر</option>
+                        <option value="5" {% if curent.month == 5 %}selected{% endif %}>مرداد</option>
+                        <option value="6" {% if curent.month == 6 %}selected{% endif %}>شهریور</option>
+                        <option value="7" {% if curent.month == 7 %}selected{% endif %}>مهر</option>
+                        <option value="8" {% if curent.month == 8 %}selected{% endif %}>آبان</option>
+                        <option value="9" {% if curent.month == 9 %}selected{% endif %}>آذر</option>
+                        <option value="10" {% if curent.month == 10 %}selected{% endif %}>دی</option>
+                        <option value="11" {% if curent.month == 11 %}selected{% endif %}>بهمن</option>
+                        <option value="12" {% if curent.month == 12 %}selected{% endif %}>اسفند</option>
+                    </select>
+                </div>
+                <div class="col-6 pl-0">
+                    <select class="w-100 py-2 border calendar_choose_year" onchange="AMCalendar(this.value,document.getElementById('calendar_choose_month').value,document.querySelector('#calendar_choose_month option:checked').innerHTML,false);setTimeout(()=>{Progress(false);defaults()},300);" id="calendar_choose_year">
+                        {% for x in curent.year %}
+                        <option value="{{x.name}}" {% if x.active %}selected{% endif %}>{{x.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-3 day_titles">
+                <div class="days title w-100" dir="rtl">
+                    <div class="day_item">
+                        <div class="title sm-title">
+                            ش
+                        </div>
+                        <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 9L4.23309 11.4248C4.66178 11.7463 5.26772 11.6728 5.60705 11.2581L14 1" stroke="#00ffc1" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="day_item">
+                        <div class="title sm-title">
+                            ی
+                        </div>
+                        <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 9L4.23309 11.4248C4.66178 11.7463 5.26772 11.6728 5.60705 11.2581L14 1" stroke="#00ffc1" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="day_item">
+                        <div class="title sm-title">
+                            د
+                        </div>
+                        <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 9L4.23309 11.4248C4.66178 11.7463 5.26772 11.6728 5.60705 11.2581L14 1" stroke="#00ffc1" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="day_item">
+                        <div class="title sm-title">
+                            س
+                        </div>
+                        <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 9L4.23309 11.4248C4.66178 11.7463 5.26772 11.6728 5.60705 11.2581L14 1" stroke="#00ffc1" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="day_item">
+                        <div class="title sm-title">
+                            چ
+                        </div>
+                        <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 9L4.23309 11.4248C4.66178 11.7463 5.26772 11.6728 5.60705 11.2581L14 1" stroke="#00ffc1" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="day_item">
+                        <div class="title sm-title">
+                            پ
+                        </div>
+                        <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 9L4.23309 11.4248C4.66178 11.7463 5.26772 11.6728 5.60705 11.2581L14 1" stroke="#00ffc1" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="day_item">
+                        <div class="title sm-title">
+                            ج
+                        </div>
+                        <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 9L4.23309 11.4248C4.66178 11.7463 5.26772 11.6728 5.60705 11.2581L14 1" stroke="#00ffc1" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="min-height: 272px;">
+                {% for x in calendar %}
+                <div class="item-parent w-100 mt-3 text-center w-100 {% if x.active %}active{% endif %} calendar_year" id="calendar_year">
+                    {% for y in x.month %}
+                        <div class="calendar_month w-100 {% if y.active %}active{% endif %}" data-month-title="{{y.name}}"  data-year-title="{{x.year}}">
+                            <div class="d-flex justify-content-right flex-row-reverse flex-wrap days">
+                                {% if y.days.0.title == 'یک‌شنبه'%}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        30
+                                    </div>
+                                </label>
+                                {% elif y.days.0.title == 'دوشنبه' %}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        29
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        30
+                                    </div>
+                                </label>
+                                {% elif y.days.0.title == 'سه‌شنبه' %}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        28
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        29
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        30
+                                    </div>
+                                </label>
+                                {% elif y.days.0.title == 'چهارشنبه' %}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        27
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        28
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        29
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        30
+                                    </div>
+                                </label>
+                                {% elif y.days.0.title == 'پنج‌شنبه' %}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        26
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        27
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        28
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        29
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        30
+                                    </div>
+                                </label>
+                                {% elif y.days.0.title == 'جمعه' %}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        25
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        26
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        27
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        28
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        29
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        30
+                                    </div>
+                                </label>
+                                {% endif %}
+                                {% for z in y.days %}
+                                <label for="day{{x.year}}-{{y.num}}-{{forloop.counter}}" date-data="{{x.year}}-{{y.num}}-{{forloop.counter}}" data-toggle="modal" data-target="#selecttime" class="calendar_day day_item {% if z.reserved and not form %}reserved_item{% endif %}  {% if z.title == 'جمعه' %}off{% endif %} {% if z.active %}border-primary{% endif %} {% if not z.title %}disable{% endif %}" title="{{z.title}}">
+                                    <div class="title" {% if z.reserved and not form %}onclick="calendar_filter({{x.year}},{{y.num}},this.children[0].innerHTML,{% for g in user.groups.all %}{% if g.name  == 'counsellor' %}'counsellor'{% elif g.name  == 'presenter' %}'presenter'{% elif g.name  == 'bookkeeper' %}'bookkeeper'{% endif %}{% endfor %},{% if form %}true{% endif %})"{% endif %}>
+                                        {% if z.title %}
+                                        {{forloop.counter}}
+                                        {% if form  %}
+                                        <input type="radio" value="{{x.year}}-{{y.num}}-{{forloop.counter}}" name="day" id="day{{x.year}}-{{y.num}}-{{forloop.counter}}">
+                                        {% endif %}
+                                        {% endif %}                                           
+                                    </div>                                       
+                                </label>
+                                {% endfor %}
+                                {% for d in y.days %}
+                                {% if forloop.last %}
+                                {% if d.title == 'شنبه'%}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        1
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        2
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        3
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        4
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        5
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        6
+                                    </div>
+                                </label>
+                                {% elif d.title == 'یک‌شنبه' %}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        1
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        2
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        3
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        4
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        5
+                                    </div>
+                                </label>
+                                {% elif d.title == 'دوشنبه' %}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        1
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        2
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        3
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        4
+                                    </div>
+                                </label>
+                                {% elif d.title == 'سه‌شنبه' %}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        1
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        2
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        3
+                                    </div>
+                                </label>
+                                {% elif d.title == 'چهارشنبه' %}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        1
+                                    </div>
+                                </label>
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        2
+                                    </div>
+                                </label>
+                                {% elif d.title == 'پنج‌شنبه' %}
+                                <label class="day_item disable">
+                                    <div class="title">
+                                        1
+                                    </div>
+                                </label>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% if form %}
+    {% endif %}
+    <div class="container mt-3 p-0">
+        <div class="row">
+            <div class="col-12">
+                <div class="float-left">
+                    <div class="btn md-text" onclick="AMCalendar(0,0,false,false)">بیا به امروز</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="{% static 'AM_Calendar/js/calendar.js' %}?version={{version}}"></script>
