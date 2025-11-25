@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 from flask import Flask, render_template, redirect, url_for, request, jsonify, send_file, abort
 import os, time, json, jdatetime, threading, logging, socket, subprocess, glob, requests
+from collections import deque
 
+"""
+temp/events_log.json
+"""
 app = Flask(__name__)
 
 @app.route("/start-vision-monitor", methods=["POST"])
@@ -17,11 +21,14 @@ def stop_vision_monitor():
     stop_vision()
     return jsonify({"status": "ok"})
 
+
 @app.route("/logs", methods=["GET"])
 def get_logs():
     with open("log.txt", "r") as f:
-        logs = f.read()
-    return jsonify({"logs": logs})
+        last_100 = deque(f, maxlen=100)
+
+    return jsonify({"logs": "".join(last_100)})
+
 
 
 LOG_FILE = "sent_log.json"
@@ -55,7 +62,7 @@ def check_data():
     sent_files = load_sent_log()  # list of already sent files
 
     while True:
-        time.sleep(1)
+        time.sleep(5)
         all_files = get_all_files()
 
         for file in all_files:

@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+{% block title %}Visions{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>Visions</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'add_vision' %}" class="btn btn-primary">افزودن Vision</a>
+        </div>
+    </div>
+    <div class="row">
+        {% if visions %}
+        {% for vision in visions %}
+        {% if not vision.Is_Deleted %}
+            <div class="col-lg-3">
+                <a href="{% url 'view_vision' vision.id %}" class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ vision.name }}</h5>
+                    </div>
+                </a>
+                <a href="{% url 'edit_vision' vision.id %}" class="btn btn-warning">ویرایش</a>
+                <a href="{% url 'delete_vision' vision.id %}" class="btn btn-danger">حذف</a>
+            </div>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <p>هیچ Visionی یافت نشد</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -79,6 +79,7 @@
         <script src="{% static 'base/js/jquery.ajax.min.js' %}"></script>
         <script src="{% static 'base/js/jalaali.min.js' %}"></script>
         <script src="{% static 'base/js/main.js' %}?version={{version}}"></script>
+        <script src="{% static 'base/js/multi-select.js' %}"></script>
         <script>
         {% if messages %}{% for message in messages %}
         AM_alert({status : '{{message.tags}}', text:'{{ message }}',btns:false,obj:false});
