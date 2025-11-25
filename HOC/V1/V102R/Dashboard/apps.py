@@ -7,4 +7,4 @@ class DashboardConfig(AppConfig):
 
     def ready(self):
         from . import views
-        views.start_monitor_thread()
+        #views.start_monitor_thread()

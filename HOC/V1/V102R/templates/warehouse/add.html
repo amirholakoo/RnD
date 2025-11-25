@@ -1,0 +1,40 @@
+{% extends 'base/base.html' %}
+{% block title %}افزودن انبار{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>افزودن انبار</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'warehouses' %}" class="btn btn-secondary">بازگشت</a>
+        </div>
+    </div>
+    <div class="row">
+        <form action="{% url 'add_warehouse' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">نام انبار</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="نام انبار را وارد کنید" required>
+            </div>
+            <div class="form-group">
+                <label for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات انبار را وارد کنید"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="location">مکان</label>
+                <input type="text" class="form-control" id="location" name="location" placeholder="مکان انبار را وارد کنید">
+            </div>
+            <div class="form-group">
+                <label for="vision">Vision</label>
+                <select class="form-control" id="vision" name="vision" multiple data-multi-select-plugin>
+                    {% for v in visions %}
+                    <option value="{{ v.id }}">{{ v.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">افزودن</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

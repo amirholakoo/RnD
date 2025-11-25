@@ -176,6 +176,1505 @@
                 "events": []
             },
             "timestamp": 1763632055.8932636
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-20T09:56:14.179515",
+                "end_time": "2025-11-20T09:56:15.180646",
+                "processing_time_seconds": 1.0008952617645264,
+                "frames_processed": 0,
+                "effective_frames": 0,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0
+                },
+                "events": []
+            },
+            "timestamp": 1763632576.277702
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-22T11:28:56.351356",
+                "end_time": "2025-11-22T11:36:47.921645",
+                "processing_time_seconds": 471.56095790863037,
+                "frames_processed": 10206,
+                "effective_frames": 3401,
+                "counts": {
+                    "primary": 7,
+                    "secondary": 0,
+                    "total": 7
+                },
+                "events": [
+                    {
+                        "frame_number": 3999,
+                        "timestamp": "2025-11-22T11:32:01.192100",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 0,
+                            "total": 1
+                        },
+                        "snapshot_path": "result/snapshot_3999_1_20251122_113201.jpg"
+                    },
+                    {
+                        "frame_number": 4002,
+                        "timestamp": "2025-11-22T11:32:01.340115",
+                        "counts": {
+                            "primary": 2,
+                            "secondary": 0,
+                            "total": 2
+                        },
+                        "snapshot_path": "result/snapshot_4002_2_20251122_113201.jpg"
+                    },
+                    {
+                        "frame_number": 5349,
+                        "timestamp": "2025-11-22T11:33:03.017698",
+                        "counts": {
+                            "primary": 3,
+                            "secondary": 0,
+                            "total": 3
+                        },
+                        "snapshot_path": "result/snapshot_5349_3_20251122_113302.jpg"
+                    },
+                    {
+                        "frame_number": 5355,
+                        "timestamp": "2025-11-22T11:33:03.303467",
+                        "counts": {
+                            "primary": 4,
+                            "secondary": 0,
+                            "total": 4
+                        },
+                        "snapshot_path": "result/snapshot_5355_4_20251122_113303.jpg"
+                    },
+                    {
+                        "frame_number": 6744,
+                        "timestamp": "2025-11-22T11:34:07.883685",
+                        "counts": {
+                            "primary": 5,
+                            "secondary": 0,
+                            "total": 5
+                        },
+                        "snapshot_path": "result/snapshot_6744_5_20251122_113407.jpg"
+                    },
+                    {
+                        "frame_number": 9597,
+                        "timestamp": "2025-11-22T11:36:19.746148",
+                        "counts": {
+                            "primary": 6,
+                            "secondary": 0,
+                            "total": 6
+                        },
+                        "snapshot_path": "result/snapshot_9597_6_20251122_113619.jpg"
+                    },
+                    {
+                        "frame_number": 9600,
+                        "timestamp": "2025-11-22T11:36:19.882304",
+                        "counts": {
+                            "primary": 7,
+                            "secondary": 0,
+                            "total": 7
+                        },
+                        "snapshot_path": "result/snapshot_9600_7_20251122_113619.jpg"
+                    }
+                ]
+            },
+            "timestamp": 1763811420.944226
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-22T11:36:57.372498",
+                "end_time": "2025-11-22T11:43:50.460848",
+                "processing_time_seconds": 413.0797119140625,
+                "frames_processed": 8976,
+                "effective_frames": 2991,
+                "counts": {
+                    "primary": 6,
+                    "secondary": 0,
+                    "total": 6
+                },
+                "events": [
+                    {
+                        "frame_number": 105,
+                        "timestamp": "2025-11-22T11:37:02.543679",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 0,
+                            "total": 1
+                        },
+                        "snapshot_path": "result/snapshot_105_1_20251122_113702.jpg"
+                    },
+                    {
+                        "frame_number": 108,
+                        "timestamp": "2025-11-22T11:37:02.787833",
+                        "counts": {
+                            "primary": 2,
+                            "secondary": 0,
+                            "total": 2
+                        },
+                        "snapshot_path": "result/snapshot_108_2_20251122_113702.jpg"
+                    },
+                    {
+                        "frame_number": 4326,
+                        "timestamp": "2025-11-22T11:40:15.510772",
+                        "counts": {
+                            "primary": 3,
+                            "secondary": 0,
+                            "total": 3
+                        },
+                        "snapshot_path": "result/snapshot_4326_3_20251122_114015.jpg"
+                    },
+                    {
+                        "frame_number": 5850,
+                        "timestamp": "2025-11-22T11:41:25.867189",
+                        "counts": {
+                            "primary": 4,
+                            "secondary": 0,
+                            "total": 4
+                        },
+                        "snapshot_path": "result/snapshot_5850_4_20251122_114125.jpg"
+                    },
+                    {
+                        "frame_number": 7263,
+                        "timestamp": "2025-11-22T11:42:30.926271",
+                        "counts": {
+                            "primary": 5,
+                            "secondary": 0,
+                            "total": 5
+                        },
+                        "snapshot_path": "result/snapshot_7263_5_20251122_114230.jpg"
+                    },
+                    {
+                        "frame_number": 7266,
+                        "timestamp": "2025-11-22T11:42:31.065535",
+                        "counts": {
+                            "primary": 6,
+                            "secondary": 0,
+                            "total": 6
+                        },
+                        "snapshot_path": "result/snapshot_7266_6_20251122_114230.jpg"
+                    }
+                ]
+            },
+            "timestamp": 1763811843.2386477
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-22T11:45:32.018554",
+                "end_time": "2025-11-22T11:46:09.138989",
+                "processing_time_seconds": 37.082841873168945,
+                "frames_processed": 762,
+                "effective_frames": 253,
+                "counts": {
+                    "primary": 1,
+                    "secondary": 0,
+                    "total": 1
+                },
+                "events": [
+                    {
+                        "frame_number": 267,
+                        "timestamp": "2025-11-22T11:45:45.688154",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 0,
+                            "total": 1
+                        },
+                        "snapshot_path": "result/snapshot_267_1_20251122_114545.jpg"
+                    }
+                ]
+            },
+            "timestamp": 1763811982.3434956
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-22T11:46:31.020165",
+                "end_time": "2025-11-22T11:48:39.753251",
+                "processing_time_seconds": 128.5870635509491,
+                "frames_processed": 2748,
+                "effective_frames": 915,
+                "counts": {
+                    "primary": 2,
+                    "secondary": 0,
+                    "total": 2
+                },
+                "events": [
+                    {
+                        "frame_number": 186,
+                        "timestamp": "2025-11-22T11:46:39.096716",
+                        "counts": {
+                            "primary": 2,
+                            "secondary": 0,
+                            "total": 2
+                        },
+                        "snapshot_path": "result/snapshot_186_2_20251122_114638.jpg"
+                    }
+                ]
+            },
+            "timestamp": 1763812132.442334
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-22T11:48:47.588560",
+                "end_time": "2025-11-22T11:54:47.103355",
+                "processing_time_seconds": 359.50610518455505,
+                "frames_processed": 8289,
+                "effective_frames": 2762,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0
+                },
+                "events": []
+            },
+            "timestamp": 1763812499.6714196
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-22T12:00:36.639300",
+                "end_time": "2025-11-22T12:03:16.109710",
+                "processing_time_seconds": 159.45793271064758,
+                "frames_processed": 3477,
+                "effective_frames": 1158,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0
+                },
+                "events": []
+            },
+            "timestamp": 1763813008.9154408
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-22T12:03:28.313967",
+                "end_time": "2025-11-22T12:03:58.108831",
+                "processing_time_seconds": 29.787532329559326,
+                "frames_processed": 594,
+                "effective_frames": 296,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0
+                },
+                "events": []
+            },
+            "timestamp": 1763813050.953594
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-22T12:04:21.201619",
+                "end_time": "2025-11-22T12:06:38.496540",
+                "processing_time_seconds": 137.2795011997223,
+                "frames_processed": 2298,
+                "effective_frames": 1148,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0
+                },
+                "events": []
+            },
+            "timestamp": 1763813211.0780575
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-22T12:07:09.126931",
+                "end_time": "2025-11-22T12:38:49.820753",
+                "processing_time_seconds": 1900.686357975006,
+                "frames_processed": 38600,
+                "effective_frames": 19299,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0
+                },
+                "events": []
+            },
+            "timestamp": 1763815142.3816092
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-22T12:39:48.193845",
+                "end_time": "2025-11-23T05:51:45.249675",
+                "processing_time_seconds": 61917.05014824867,
+                "frames_processed": 976876,
+                "effective_frames": 488437,
+                "counts": {
+                    "primary": 23,
+                    "secondary": 22,
+                    "total": 23
+                },
+                "events": [
+                    {
+                        "frame_number": 433470,
+                        "timestamp": "2025-11-22T20:32:32.479187",
+                        "counts": {
+                            "primary": 0,
+                            "secondary": 1,
+                            "total": 1
+                        },
+                        "snapshot_path": "result/snapshot_433470_1_20251122_203232.jpg"
+                    },
+                    {
+                        "frame_number": 571266,
+                        "timestamp": "2025-11-22T23:07:04.077824",
+                        "counts": {
+                            "primary": 0,
+                            "secondary": 2,
+                            "total": 2
+                        },
+                        "snapshot_path": "result/snapshot_571266_2_20251122_230703.jpg"
+                    },
+                    {
+                        "frame_number": 869834,
+                        "timestamp": "2025-11-23T04:24:47.833569",
+                        "counts": {
+                            "primary": 0,
+                            "secondary": 3,
+                            "total": 3
+                        },
+                        "snapshot_path": "result/snapshot_869834_3_20251123_042447.jpg"
+                    },
+                    {
+                        "frame_number": 922752,
+                        "timestamp": "2025-11-23T05:07:42.764348",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 3,
+                            "total": 3
+                        },
+                        "snapshot_path": "result/snapshot_922752_3_20251123_050742.jpg"
+                    },
+                    {
+                        "frame_number": 922796,
+                        "timestamp": "2025-11-23T05:07:44.908400",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 4,
+                            "total": 4
+                        },
+                        "snapshot_path": "result/snapshot_922796_4_20251123_050744.jpg"
+                    },
+                    {
+                        "frame_number": 923900,
+                        "timestamp": "2025-11-23T05:08:38.652614",
+                        "counts": {
+                            "primary": 2,
+                            "secondary": 4,
+                            "total": 4
+                        },
+                        "snapshot_path": "result/snapshot_923900_4_20251123_050838.jpg"
+                    },
+                    {
+                        "frame_number": 923902,
+                        "timestamp": "2025-11-23T05:08:38.758666",
+                        "counts": {
+                            "primary": 3,
+                            "secondary": 4,
+                            "total": 4
+                        },
+                        "snapshot_path": "result/snapshot_923902_4_20251123_050838.jpg"
+                    },
+                    {
+                        "frame_number": 923942,
+                        "timestamp": "2025-11-23T05:08:41.002582",
+                        "counts": {
+                            "primary": 3,
+                            "secondary": 6,
+                            "total": 6
+                        },
+                        "snapshot_path": "result/snapshot_923942_6_20251123_050840.jpg"
+                    },
+                    {
+                        "frame_number": 925156,
+                        "timestamp": "2025-11-23T05:09:40.048975",
+                        "counts": {
+                            "primary": 4,
+                            "secondary": 6,
+                            "total": 6
+                        },
+                        "snapshot_path": "result/snapshot_925156_6_20251123_050939.jpg"
+                    },
+                    {
+                        "frame_number": 925158,
+                        "timestamp": "2025-11-23T05:09:40.152660",
+                        "counts": {
+                            "primary": 5,
+                            "secondary": 6,
+                            "total": 6
+                        },
+                        "snapshot_path": "result/snapshot_925158_6_20251123_050940.jpg"
+                    },
+                    {
+                        "frame_number": 925200,
+                        "timestamp": "2025-11-23T05:09:42.115376",
+                        "counts": {
+                            "primary": 5,
+                            "secondary": 7,
+                            "total": 7
+                        },
+                        "snapshot_path": "result/snapshot_925200_7_20251123_050942.jpg"
+                    },
+                    {
+                        "frame_number": 925202,
+                        "timestamp": "2025-11-23T05:09:42.322106",
+                        "counts": {
+                            "primary": 5,
+                            "secondary": 9,
+                            "total": 9
+                        },
+                        "snapshot_path": "result/snapshot_925202_9_20251123_050942.jpg"
+                    },
+                    {
+                        "frame_number": 926144,
+                        "timestamp": "2025-11-23T05:10:28.049181",
+                        "counts": {
+                            "primary": 6,
+                            "secondary": 9,
+                            "total": 9
+                        },
+                        "snapshot_path": "result/snapshot_926144_9_20251123_051027.jpg"
+                    },
+                    {
+                        "frame_number": 926146,
+                        "timestamp": "2025-11-23T05:10:28.152148",
+                        "counts": {
+                            "primary": 7,
+                            "secondary": 9,
+                            "total": 9
+                        },
+                        "snapshot_path": "result/snapshot_926146_9_20251123_051028.jpg"
+                    },
+                    {
+                        "frame_number": 926194,
+                        "timestamp": "2025-11-23T05:10:30.371613",
+                        "counts": {
+                            "primary": 7,
+                            "secondary": 11,
+                            "total": 11
+                        },
+                        "snapshot_path": "result/snapshot_926194_11_20251123_051030.jpg"
+                    },
+                    {
+                        "frame_number": 926196,
+                        "timestamp": "2025-11-23T05:10:30.478939",
+                        "counts": {
+                            "primary": 7,
+                            "secondary": 12,
+                            "total": 12
+                        },
+                        "snapshot_path": "result/snapshot_926196_12_20251123_051030.jpg"
+                    },
+                    {
+                        "frame_number": 927244,
+                        "timestamp": "2025-11-23T05:11:21.308276",
+                        "counts": {
+                            "primary": 8,
+                            "secondary": 12,
+                            "total": 12
+                        },
+                        "snapshot_path": "result/snapshot_927244_12_20251123_051121.jpg"
+                    },
+                    {
+                        "frame_number": 927292,
+                        "timestamp": "2025-11-23T05:11:23.637457",
+                        "counts": {
+                            "primary": 8,
+                            "secondary": 13,
+                            "total": 13
+                        },
+                        "snapshot_path": "result/snapshot_927292_13_20251123_051123.jpg"
+                    },
+                    {
+                        "frame_number": 928510,
+                        "timestamp": "2025-11-23T05:12:23.201932",
+                        "counts": {
+                            "primary": 9,
+                            "secondary": 13,
+                            "total": 13
+                        },
+                        "snapshot_path": "result/snapshot_928510_13_20251123_051223.jpg"
+                    },
+                    {
+                        "frame_number": 928512,
+                        "timestamp": "2025-11-23T05:12:23.326444",
+                        "counts": {
+                            "primary": 10,
+                            "secondary": 13,
+                            "total": 13
+                        },
+                        "snapshot_path": "result/snapshot_928512_13_20251123_051223.jpg"
+                    },
+                    {
+                        "frame_number": 928546,
+                        "timestamp": "2025-11-23T05:12:25.118070",
+                        "counts": {
+                            "primary": 10,
+                            "secondary": 15,
+                            "total": 15
+                        },
+                        "snapshot_path": "result/snapshot_928546_15_20251123_051225.jpg"
+                    },
+                    {
+                        "frame_number": 929696,
+                        "timestamp": "2025-11-23T05:13:20.841147",
+                        "counts": {
+                            "primary": 11,
+                            "secondary": 15,
+                            "total": 15
+                        },
+                        "snapshot_path": "result/snapshot_929696_15_20251123_051320.jpg"
+                    },
+                    {
+                        "frame_number": 929700,
+                        "timestamp": "2025-11-23T05:13:20.944612",
+                        "counts": {
+                            "primary": 12,
+                            "secondary": 15,
+                            "total": 15
+                        },
+                        "snapshot_path": "result/snapshot_929700_15_20251123_051320.jpg"
+                    },
+                    {
+                        "frame_number": 929742,
+                        "timestamp": "2025-11-23T05:13:23.190875",
+                        "counts": {
+                            "primary": 12,
+                            "secondary": 17,
+                            "total": 17
+                        },
+                        "snapshot_path": "result/snapshot_929742_17_20251123_051323.jpg"
+                    },
+                    {
+                        "frame_number": 931882,
+                        "timestamp": "2025-11-23T05:15:07.183662",
+                        "counts": {
+                            "primary": 13,
+                            "secondary": 17,
+                            "total": 17
+                        },
+                        "snapshot_path": "result/snapshot_931882_17_20251123_051507.jpg"
+                    },
+                    {
+                        "frame_number": 931884,
+                        "timestamp": "2025-11-23T05:15:07.293219",
+                        "counts": {
+                            "primary": 14,
+                            "secondary": 17,
+                            "total": 17
+                        },
+                        "snapshot_path": "result/snapshot_931884_17_20251123_051507.jpg"
+                    },
+                    {
+                        "frame_number": 931932,
+                        "timestamp": "2025-11-23T05:15:09.859204",
+                        "counts": {
+                            "primary": 14,
+                            "secondary": 18,
+                            "total": 18
+                        },
+                        "snapshot_path": "result/snapshot_931932_18_20251123_051509.jpg"
+                    },
+                    {
+                        "frame_number": 933224,
+                        "timestamp": "2025-11-23T05:16:12.513731",
+                        "counts": {
+                            "primary": 15,
+                            "secondary": 18,
+                            "total": 18
+                        },
+                        "snapshot_path": "result/snapshot_933224_18_20251123_051612.jpg"
+                    },
+                    {
+                        "frame_number": 933226,
+                        "timestamp": "2025-11-23T05:16:12.710780",
+                        "counts": {
+                            "primary": 16,
+                            "secondary": 18,
+                            "total": 18
+                        },
+                        "snapshot_path": "result/snapshot_933226_18_20251123_051612.jpg"
+                    },
+                    {
+                        "frame_number": 933284,
+                        "timestamp": "2025-11-23T05:16:15.448350",
+                        "counts": {
+                            "primary": 16,
+                            "secondary": 19,
+                            "total": 19
+                        },
+                        "snapshot_path": "result/snapshot_933284_19_20251123_051615.jpg"
+                    },
+                    {
+                        "frame_number": 933286,
+                        "timestamp": "2025-11-23T05:16:15.553151",
+                        "counts": {
+                            "primary": 16,
+                            "secondary": 20,
+                            "total": 20
+                        },
+                        "snapshot_path": "result/snapshot_933286_20_20251123_051615.jpg"
+                    },
+                    {
+                        "frame_number": 934424,
+                        "timestamp": "2025-11-23T05:17:11.058497",
+                        "counts": {
+                            "primary": 19,
+                            "secondary": 20,
+                            "total": 20
+                        },
+                        "snapshot_path": "result/snapshot_934424_20_20251123_051710.jpg"
+                    },
+                    {
+                        "frame_number": 934476,
+                        "timestamp": "2025-11-23T05:17:13.583625",
+                        "counts": {
+                            "primary": 19,
+                            "secondary": 21,
+                            "total": 21
+                        },
+                        "snapshot_path": "result/snapshot_934476_21_20251123_051713.jpg"
+                    },
+                    {
+                        "frame_number": 934478,
+                        "timestamp": "2025-11-23T05:17:13.691304",
+                        "counts": {
+                            "primary": 19,
+                            "secondary": 22,
+                            "total": 22
+                        },
+                        "snapshot_path": "result/snapshot_934478_22_20251123_051713.jpg"
+                    },
+                    {
+                        "frame_number": 935754,
+                        "timestamp": "2025-11-23T05:18:15.658912",
+                        "counts": {
+                            "primary": 20,
+                            "secondary": 22,
+                            "total": 22
+                        },
+                        "snapshot_path": "result/snapshot_935754_22_20251123_051815.jpg"
+                    },
+                    {
+                        "frame_number": 937570,
+                        "timestamp": "2025-11-23T05:19:44.278410",
+                        "counts": {
+                            "primary": 21,
+                            "secondary": 22,
+                            "total": 22
+                        },
+                        "snapshot_path": "result/snapshot_937570_22_20251123_051944.jpg"
+                    },
+                    {
+                        "frame_number": 937572,
+                        "timestamp": "2025-11-23T05:19:44.385274",
+                        "counts": {
+                            "primary": 22,
+                            "secondary": 22,
+                            "total": 22
+                        },
+                        "snapshot_path": "result/snapshot_937572_22_20251123_051944.jpg"
+                    },
+                    {
+                        "frame_number": 937574,
+                        "timestamp": "2025-11-23T05:19:44.488251",
+                        "counts": {
+                            "primary": 23,
+                            "secondary": 22,
+                            "total": 23
+                        },
+                        "snapshot_path": "result/snapshot_937574_23_20251123_051944.jpg"
+                    }
+                ]
+            },
+            "timestamp": 1763877118.0932026
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-23T05:54:02.334031",
+                "end_time": "2025-11-23T07:00:51.188083",
+                "processing_time_seconds": 4008.8478453159332,
+                "frames_processed": 81082,
+                "effective_frames": 40540,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 3,
+                    "total": 3
+                },
+                "events": [
+                    {
+                        "frame_number": 47738,
+                        "timestamp": "2025-11-23T06:33:21.851552",
+                        "counts": {
+                            "primary": 0,
+                            "secondary": 1,
+                            "total": 1
+                        },
+                        "snapshot_path": "result/snapshot_47738_1_20251123_063321.jpg"
+                    },
+                    {
+                        "frame_number": 53674,
+                        "timestamp": "2025-11-23T06:38:15.023474",
+                        "counts": {
+                            "primary": 0,
+                            "secondary": 2,
+                            "total": 2
+                        },
+                        "snapshot_path": "result/snapshot_53674_2_20251123_063814.jpg"
+                    },
+                    {
+                        "frame_number": 66528,
+                        "timestamp": "2025-11-23T06:48:48.948306",
+                        "counts": {
+                            "primary": 0,
+                            "secondary": 3,
+                            "total": 3
+                        },
+                        "snapshot_path": "result/snapshot_66528_3_20251123_064848.jpg"
+                    }
+                ]
+            },
+            "timestamp": 1763881264.1678994
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-23T07:13:25.561371",
+                "end_time": "2025-11-23T07:13:26.646130",
+                "processing_time_seconds": 1.084688663482666,
+                "frames_processed": 0,
+                "effective_frames": 0,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0
+                },
+                "events": []
+            },
+            "timestamp": 1763882019.1467505
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-23T07:17:06.954812",
+                "end_time": "2025-11-23T07:17:07.955277",
+                "processing_time_seconds": 1.0003597736358643,
+                "frames_processed": 0,
+                "effective_frames": 0,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0
+                },
+                "events": []
+            },
+            "timestamp": 1763882241.265285
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-23T07:17:41.649620",
+                "end_time": "2025-11-23T07:17:42.650124",
+                "processing_time_seconds": 1.0003671646118164,
+                "frames_processed": 0,
+                "effective_frames": 0,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0
+                },
+                "events": []
+            },
+            "timestamp": 1763882275.290058
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-23T07:18:45.989665",
+                "end_time": "2025-11-23T07:18:46.991736",
+                "processing_time_seconds": 1.0019867420196533,
+                "frames_processed": 0,
+                "effective_frames": 0,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0
+                },
+                "events": []
+            },
+            "timestamp": 1763882340.333213
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/10.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-23T07:20:41.938893",
+                "end_time": "2025-11-23T07:26:37.040408",
+                "processing_time_seconds": 355.09566164016724,
+                "frames_processed": 7148,
+                "effective_frames": 3573,
+                "counts": {
+                    "primary": 1,
+                    "secondary": 2,
+                    "total": 2
+                },
+                "events": [
+                    {
+                        "frame_number": 562,
+                        "timestamp": "2025-11-23T07:21:12.065348",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 0,
+                            "total": 1
+                        },
+                        "snapshot_path": "result/snapshot_562_1_20251123_072111.jpg"
+                    },
+                    {
+                        "frame_number": 602,
+                        "timestamp": "2025-11-23T07:21:14.513178",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 2,
+                            "total": 2
+                        },
+                        "snapshot_path": "result/snapshot_602_2_20251123_072114.jpg"
+                    }
+                ]
+            },
+            "timestamp": 1763882814.8839428
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/12.mp4",
+                "model_path": "best-50-new-yolov11_ncnn_model",
+                "start_time": "2025-11-23T09:58:25.012702",
+                "end_time": "2025-11-23T10:00:15.925136",
+                "processing_time_seconds": 110.69803214073181,
+                "frames_processed": 1956,
+                "effective_frames": 977,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0,
+                    "forklift_entry": 0,
+                    "forklift_exit": 0,
+                    "bale_entry": 0,
+                    "bale_exit": 0,
+                    "last_non_forklift_primary_class": ""
+                },
+                "events": []
+            },
+            "timestamp": 1763892034.2683702
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/12.mp4",
+                "model_path": "best-50-new-yolov11_ncnn_model",
+                "start_time": "2025-11-23T10:51:50.475101",
+                "end_time": "2025-11-23T11:02:05.333843",
+                "processing_time_seconds": 614.7516870498657,
+                "frames_processed": 12068,
+                "effective_frames": 6033,
+                "counts": {
+                    "primary": 6,
+                    "secondary": 4,
+                    "total": 6,
+                    "forklift_entry": 4,
+                    "forklift_exit": 3,
+                    "bale_entry": 6,
+                    "bale_exit": 4,
+                    "last_non_forklift_primary_class": "akhal"
+                },
+                "events": [
+                    {
+                        "frame_number": 860,
+                        "timestamp": "2025-11-23T10:52:30.760087",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 0,
+                            "total": 1,
+                            "forklift_entry": 1,
+                            "forklift_exit": 0,
+                            "bale_entry": 1,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "akhal"
+                        },
+                        "snapshot_path": "result/snapshot_860_1_20251123_105230.jpg"
+                    },
+                    {
+                        "frame_number": 862,
+                        "timestamp": "2025-11-23T10:52:30.871883",
+                        "counts": {
+                            "primary": 2,
+                            "secondary": 0,
+                            "total": 2,
+                            "forklift_entry": 1,
+                            "forklift_exit": 0,
+                            "bale_entry": 2,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "akhal"
+                        },
+                        "snapshot_path": "result/snapshot_862_2_20251123_105230.jpg"
+                    },
+                    {
+                        "frame_number": 904,
+                        "timestamp": "2025-11-23T10:52:33.077334",
+                        "counts": {
+                            "primary": 2,
+                            "secondary": 1,
+                            "total": 2,
+                            "forklift_entry": 1,
+                            "forklift_exit": 0,
+                            "bale_entry": 2,
+                            "bale_exit": 1,
+                            "last_non_forklift_primary_class": "akhal"
+                        },
+                        "snapshot_path": "result/snapshot_904_2_20251123_105232.jpg"
+                    },
+                    {
+                        "frame_number": 908,
+                        "timestamp": "2025-11-23T10:52:33.179683",
+                        "counts": {
+                            "primary": 2,
+                            "secondary": 2,
+                            "total": 2,
+                            "forklift_entry": 1,
+                            "forklift_exit": 0,
+                            "bale_entry": 2,
+                            "bale_exit": 2,
+                            "last_non_forklift_primary_class": "akhal"
+                        },
+                        "snapshot_path": "result/snapshot_908_2_20251123_105233.jpg"
+                    },
+                    {
+                        "frame_number": 2778,
+                        "timestamp": "2025-11-23T10:54:01.857335",
+                        "counts": {
+                            "primary": 3,
+                            "secondary": 2,
+                            "total": 3,
+                            "forklift_entry": 2,
+                            "forklift_exit": 0,
+                            "bale_entry": 3,
+                            "bale_exit": 2,
+                            "last_non_forklift_primary_class": "akhal"
+                        },
+                        "snapshot_path": "result/snapshot_2778_3_20251123_105401.jpg"
+                    },
+                    {
+                        "frame_number": 4418,
+                        "timestamp": "2025-11-23T10:55:19.375698",
+                        "counts": {
+                            "primary": 5,
+                            "secondary": 2,
+                            "total": 5,
+                            "forklift_entry": 3,
+                            "forklift_exit": 1,
+                            "bale_entry": 5,
+                            "bale_exit": 2,
+                            "last_non_forklift_primary_class": "akhal"
+                        },
+                        "snapshot_path": "result/snapshot_4418_5_20251123_105519.jpg"
+                    },
+                    {
+                        "frame_number": 6432,
+                        "timestamp": "2025-11-23T10:57:05.439805",
+                        "counts": {
+                            "primary": 6,
+                            "secondary": 2,
+                            "total": 6,
+                            "forklift_entry": 4,
+                            "forklift_exit": 2,
+                            "bale_entry": 6,
+                            "bale_exit": 2,
+                            "last_non_forklift_primary_class": "akhal"
+                        },
+                        "snapshot_path": "result/snapshot_6432_6_20251123_105705.jpg"
+                    },
+                    {
+                        "frame_number": 6478,
+                        "timestamp": "2025-11-23T10:57:08.035563",
+                        "counts": {
+                            "primary": 6,
+                            "secondary": 3,
+                            "total": 6,
+                            "forklift_entry": 4,
+                            "forklift_exit": 2,
+                            "bale_entry": 6,
+                            "bale_exit": 3,
+                            "last_non_forklift_primary_class": "akhal"
+                        },
+                        "snapshot_path": "result/snapshot_6478_6_20251123_105707.jpg"
+                    },
+                    {
+                        "frame_number": 6480,
+                        "timestamp": "2025-11-23T10:57:08.171206",
+                        "counts": {
+                            "primary": 6,
+                            "secondary": 4,
+                            "total": 6,
+                            "forklift_entry": 4,
+                            "forklift_exit": 2,
+                            "bale_entry": 6,
+                            "bale_exit": 4,
+                            "last_non_forklift_primary_class": "akhal"
+                        },
+                        "snapshot_path": "result/snapshot_6480_6_20251123_105708.jpg"
+                    }
+                ]
+            },
+            "timestamp": 1763895742.9646032
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/12.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-23T11:05:59.126702",
+                "end_time": "2025-11-23T11:06:16.710358",
+                "processing_time_seconds": 17.577200889587402,
+                "frames_processed": 334,
+                "effective_frames": 166,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0,
+                    "forklift_entry": 0,
+                    "forklift_exit": 0,
+                    "bale_entry": 0,
+                    "bale_exit": 0,
+                    "last_non_forklift_primary_class": ""
+                },
+                "events": []
+            },
+            "timestamp": 1763895995.1145084
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/12.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-23T11:06:23.762366",
+                "end_time": "2025-11-23T12:26:31.205324",
+                "processing_time_seconds": 4807.318335056305,
+                "frames_processed": 84898,
+                "effective_frames": 42448,
+                "counts": {
+                    "primary": 11,
+                    "secondary": 12,
+                    "total": 12,
+                    "forklift_entry": 13,
+                    "forklift_exit": 8,
+                    "bale_entry": 0,
+                    "bale_exit": 0,
+                    "last_non_forklift_primary_class": "bale"
+                },
+                "events": [
+                    {
+                        "frame_number": 70246,
+                        "timestamp": "2025-11-23T12:12:00.975536",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 0,
+                            "total": 1,
+                            "forklift_entry": 4,
+                            "forklift_exit": 2,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_70246_1_20251123_121200.jpg"
+                    },
+                    {
+                        "frame_number": 70282,
+                        "timestamp": "2025-11-23T12:12:03.126792",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 1,
+                            "total": 1,
+                            "forklift_entry": 4,
+                            "forklift_exit": 2,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_70282_1_20251123_121202.jpg"
+                    },
+                    {
+                        "frame_number": 70284,
+                        "timestamp": "2025-11-23T12:12:03.262797",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 2,
+                            "total": 2,
+                            "forklift_entry": 4,
+                            "forklift_exit": 2,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_70284_2_20251123_121203.jpg"
+                    },
+                    {
+                        "frame_number": 71212,
+                        "timestamp": "2025-11-23T12:12:54.842565",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 3,
+                            "total": 3,
+                            "forklift_entry": 5,
+                            "forklift_exit": 3,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_71212_3_20251123_121254.jpg"
+                    },
+                    {
+                        "frame_number": 71214,
+                        "timestamp": "2025-11-23T12:12:55.110298",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 4,
+                            "total": 4,
+                            "forklift_entry": 5,
+                            "forklift_exit": 3,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_71214_4_20251123_121254.jpg"
+                    },
+                    {
+                        "frame_number": 72172,
+                        "timestamp": "2025-11-23T12:13:48.641884",
+                        "counts": {
+                            "primary": 2,
+                            "secondary": 4,
+                            "total": 4,
+                            "forklift_entry": 6,
+                            "forklift_exit": 4,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_72172_4_20251123_121348.jpg"
+                    },
+                    {
+                        "frame_number": 72224,
+                        "timestamp": "2025-11-23T12:13:51.487146",
+                        "counts": {
+                            "primary": 2,
+                            "secondary": 6,
+                            "total": 6,
+                            "forklift_entry": 6,
+                            "forklift_exit": 4,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_72224_6_20251123_121351.jpg"
+                    },
+                    {
+                        "frame_number": 72956,
+                        "timestamp": "2025-11-23T12:14:32.128772",
+                        "counts": {
+                            "primary": 3,
+                            "secondary": 6,
+                            "total": 6,
+                            "forklift_entry": 7,
+                            "forklift_exit": 5,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_72956_6_20251123_121432.jpg"
+                    },
+                    {
+                        "frame_number": 73000,
+                        "timestamp": "2025-11-23T12:14:34.909718",
+                        "counts": {
+                            "primary": 3,
+                            "secondary": 7,
+                            "total": 7,
+                            "forklift_entry": 7,
+                            "forklift_exit": 5,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_73000_7_20251123_121434.jpg"
+                    },
+                    {
+                        "frame_number": 73004,
+                        "timestamp": "2025-11-23T12:14:35.185669",
+                        "counts": {
+                            "primary": 3,
+                            "secondary": 8,
+                            "total": 8,
+                            "forklift_entry": 7,
+                            "forklift_exit": 5,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_73004_8_20251123_121435.jpg"
+                    },
+                    {
+                        "frame_number": 73846,
+                        "timestamp": "2025-11-23T12:15:22.205611",
+                        "counts": {
+                            "primary": 4,
+                            "secondary": 8,
+                            "total": 8,
+                            "forklift_entry": 7,
+                            "forklift_exit": 6,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_73846_8_20251123_121522.jpg"
+                    },
+                    {
+                        "frame_number": 74924,
+                        "timestamp": "2025-11-23T12:16:22.081774",
+                        "counts": {
+                            "primary": 5,
+                            "secondary": 8,
+                            "total": 8,
+                            "forklift_entry": 8,
+                            "forklift_exit": 6,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_74924_8_20251123_121621.jpg"
+                    },
+                    {
+                        "frame_number": 74926,
+                        "timestamp": "2025-11-23T12:16:22.237675",
+                        "counts": {
+                            "primary": 6,
+                            "secondary": 8,
+                            "total": 8,
+                            "forklift_entry": 8,
+                            "forklift_exit": 6,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_74926_8_20251123_121622.jpg"
+                    },
+                    {
+                        "frame_number": 75826,
+                        "timestamp": "2025-11-23T12:17:12.768555",
+                        "counts": {
+                            "primary": 7,
+                            "secondary": 8,
+                            "total": 8,
+                            "forklift_entry": 9,
+                            "forklift_exit": 6,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_75826_8_20251123_121712.jpg"
+                    },
+                    {
+                        "frame_number": 76674,
+                        "timestamp": "2025-11-23T12:18:05.276402",
+                        "counts": {
+                            "primary": 7,
+                            "secondary": 9,
+                            "total": 9,
+                            "forklift_entry": 10,
+                            "forklift_exit": 6,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_76674_9_20251123_121805.jpg"
+                    },
+                    {
+                        "frame_number": 77648,
+                        "timestamp": "2025-11-23T12:19:06.772986",
+                        "counts": {
+                            "primary": 7,
+                            "secondary": 10,
+                            "total": 10,
+                            "forklift_entry": 11,
+                            "forklift_exit": 6,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_77648_10_20251123_121906.jpg"
+                    },
+                    {
+                        "frame_number": 78948,
+                        "timestamp": "2025-11-23T12:20:27.335161",
+                        "counts": {
+                            "primary": 8,
+                            "secondary": 10,
+                            "total": 10,
+                            "forklift_entry": 12,
+                            "forklift_exit": 6,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_78948_10_20251123_122027.jpg"
+                    },
+                    {
+                        "frame_number": 78956,
+                        "timestamp": "2025-11-23T12:20:28.011980",
+                        "counts": {
+                            "primary": 9,
+                            "secondary": 10,
+                            "total": 10,
+                            "forklift_entry": 12,
+                            "forklift_exit": 6,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_78956_10_20251123_122027.jpg"
+                    },
+                    {
+                        "frame_number": 80846,
+                        "timestamp": "2025-11-23T12:22:22.806049",
+                        "counts": {
+                            "primary": 10,
+                            "secondary": 10,
+                            "total": 10,
+                            "forklift_entry": 13,
+                            "forklift_exit": 6,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_80846_10_20251123_122222.jpg"
+                    },
+                    {
+                        "frame_number": 80886,
+                        "timestamp": "2025-11-23T12:22:25.387116",
+                        "counts": {
+                            "primary": 10,
+                            "secondary": 12,
+                            "total": 12,
+                            "forklift_entry": 13,
+                            "forklift_exit": 6,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_80886_12_20251123_122225.jpg"
+                    },
+                    {
+                        "frame_number": 82020,
+                        "timestamp": "2025-11-23T12:23:34.624383",
+                        "counts": {
+                            "primary": 11,
+                            "secondary": 12,
+                            "total": 12,
+                            "forklift_entry": 13,
+                            "forklift_exit": 7,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_82020_12_20251123_122334.jpg"
+                    }
+                ]
+            },
+            "timestamp": 1763900809.5539095
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/12.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-23T12:27:11.425215",
+                "end_time": "2025-11-23T12:29:50.550436",
+                "processing_time_seconds": 159.109557390213,
+                "frames_processed": 3435,
+                "effective_frames": 1144,
+                "counts": {
+                    "primary": 0,
+                    "secondary": 0,
+                    "total": 0,
+                    "forklift_entry": 1,
+                    "forklift_exit": 3,
+                    "bale_entry": 0,
+                    "bale_exit": 0,
+                    "last_non_forklift_primary_class": ""
+                },
+                "events": []
+            },
+            "timestamp": 1763901008.7708378
+        },
+        {
+            "data": {
+                "video_input": "video_source/pending/12.mp4",
+                "model_path": "best_ncnn_model",
+                "start_time": "2025-11-23T12:29:57.952625",
+                "end_time": "2025-11-23T12:30:35.267424",
+                "processing_time_seconds": 37.30478286743164,
+                "frames_processed": 804,
+                "effective_frames": 267,
+                "counts": {
+                    "primary": 1,
+                    "secondary": 0,
+                    "total": 1,
+                    "forklift_entry": 0,
+                    "forklift_exit": 1,
+                    "bale_entry": 0,
+                    "bale_exit": 0,
+                    "last_non_forklift_primary_class": "bale"
+                },
+                "events": [
+                    {
+                        "frame_number": 45,
+                        "timestamp": "2025-11-23T12:30:00.788633",
+                        "counts": {
+                            "primary": 1,
+                            "secondary": 0,
+                            "total": 1,
+                            "forklift_entry": 0,
+                            "forklift_exit": 0,
+                            "bale_entry": 0,
+                            "bale_exit": 0,
+                            "last_non_forklift_primary_class": "bale"
+                        },
+                        "snapshot_path": "result/snapshot_45_1_20251123_123000.jpg"
+                    }
+                ]
+            },
+            "timestamp": 1763901052.8181665
         }
     ]
 }

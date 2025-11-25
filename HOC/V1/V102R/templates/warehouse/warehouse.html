@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+{% block title %}انبار ها{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>انبار ها</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'add_warehouse' %}" class="btn btn-primary">افزودن انبار</a>
+        </div>
+    </div>
+    <div class="row">
+        {% if warehouses %}
+        {% for warehouse in warehouses %}
+        {% if not warehouse.Is_Deleted %}
+            <div class="col-lg-3">
+                <a href="{% url 'view_warehouse' warehouse.id %}" class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ warehouse.name }}</h5>
+                    </div>
+                </a>
+                <a href="{% url 'edit_warehouse' warehouse.id %}" class="btn btn-warning">ویرایش</a>
+                <a href="{% url 'delete_warehouse' warehouse.id %}" class="btn btn-danger">حذف</a>
+            </div>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <p>هیچ انباری یافت نشد</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

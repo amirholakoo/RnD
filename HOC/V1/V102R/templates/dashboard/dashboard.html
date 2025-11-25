@@ -37,6 +37,19 @@
 {% block content %}
 <div class="container-fluid p-3 mt-5">
     <div class="row">
+        {% if warehouses %}
+        {% for warehouse in warehouses %}
+            <div class="col-lg-3 mb-4">
+                <a href="{% url 'view_warehouse' warehouse.id %}" class="warehouses card shadow-sm border-0 p-3 text-center">
+                    <h5>{{ warehouse.name }} <span class="badge bg-primary text-white">{{ warehouse.warehouse_vision.all.count }} ویژن</span></h5>
+                    <p>{{ warehouse.description }}</p>
+                    <p>{{ warehouse.location }}</p>
+                </a>
+            </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class="row">
         <div class="col-lg-6">
             <div class="start">
                 <div class="btn btn-info w-100 mb-4 text-center">

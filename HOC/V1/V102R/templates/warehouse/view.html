@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+{% block title %}{{ warehouse.name }}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>{{ warehouse.name }}</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="/dashboard" class="btn btn-secondary">بازگشت</a>
+            <a href="{% url 'edit_warehouse' warehouse.id %}" class="btn btn-warning">ویرایش</a>
+            <a href="{% url 'delete_warehouse' warehouse.id %}" class="btn btn-danger">حذف</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <p>{{ warehouse.description }}</p>
+            <p>{{ warehouse.location }}</p>
+        </div>
+        <div class="col-lg-6">
+            <p>{{ warehouse.warehouse_vision.all.count }} ویژن</p>
+
+            {% for vision in warehouse.warehouse_vision.all %}
+            <a href="{% url 'view_vision' vision.vision.id %}" class="btn btn-primary">{{ vision.vision.name }}</a>
+            <p>{{ vision.vision.server_ip }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
