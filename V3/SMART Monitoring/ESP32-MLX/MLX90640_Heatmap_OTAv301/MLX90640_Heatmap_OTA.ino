@@ -30,7 +30,7 @@
 
 // WiFi Config
 const char* WIFI_SSID = "VPN1";
-const char* WIFI_PASS = "09126141426";
+const char* WIFI_PASS = "XXX";
 const char* OTA_HOSTNAME = "esp32-mlx-thermal";
 const char* OTA_PASSWORD = "mlx90640";  // CHANGE THIS!
 
