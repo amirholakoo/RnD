@@ -1,0 +1,18 @@
+{% extends 'base/base.html' %}
+{% block title %}material{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>material</h1>
+            <h2>{{ material.name }}</h2>
+            <p>{{ material.description }}</p>
+            <p>{{ material.supplier_name }}</p>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'edit_material' material.id %}" class="btn btn-warning">ویرایش</a>
+            <a href="{% url 'delete_material' material.id %}" class="btn btn-danger">حذف</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

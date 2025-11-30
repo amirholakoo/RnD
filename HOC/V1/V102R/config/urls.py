@@ -6,9 +6,10 @@ urlpatterns = [
     path('widgets/', include('AM_Calendar.urls')),
     path('warehouse/', include('Warehouse.urls')),
     path('visions/', include('Visions.urls')),
-    # path('trucks/', include('Trucks.urls')),
+    path('trucks/', include('Trucks.urls')),
     # path('shipments/', include('Shipments.urls')),
     path('dashboard/', include('Dashboard.urls')),
     path('receive_data/', Receive_Data, name="receive_data"),
     path('material/', include('Material.urls')),
+    path('forklift/', include('Forklift.urls')),
 ]

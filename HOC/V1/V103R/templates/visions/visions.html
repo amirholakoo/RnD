@@ -1,0 +1,62 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% block title %}Visions{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>Visions</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'add_vision' %}" class="btn btn-primary">افزودن Vision</a>
+        </div>
+    </div>
+    <div class="row">
+        {% if visions %}
+        {% for vision in visions %}
+        {% if not vision.Is_Deleted %}
+            <div class="col-lg-3">
+                <a href="{% url 'view_vision' vision.id %}" class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ vision.name }} ({{ vision.warehouse.name }})</h5>
+                    </div>
+                </a>
+                <a href="{% url 'edit_vision' vision.id %}" class="btn btn-warning">ویرایش</a>
+                <a href="{% url 'delete_vision' vision.id %}" class="btn btn-danger">حذف</a>
+            </div>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <p>هیچ Visionی یافت نشد</p>
+        </div>
+        {% endif %}
+    </div>
+    {% if vision_data %}
+    <div class="row mt-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Vision</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Count</th>
+                    <th>timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vision_data in vision_data %}
+                <tr>
+                    <td>{{ vision_data.vision.name }}</td>
+                    <td>{{ vision_data.name }}</td>
+                    <td>{{ vision_data.vision.warehouse.name }}</td>
+                    <td>{{ vision_data.count }}</td>
+                    <td>{% to_jalali vision_data.CreationDateTime %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% block title %}تخلیه شده{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row my-4">
+        <div class="col-lg-6 text-right">
+            <h1>افزودن آمار جدید</h1>
+        </div>
+        <div class="col-lg-6 text-left">
+            <a href="{% url 'forklift_panel' %}" class="btn btn-secondary">بازگشت</a>
+        </div>
+    </div>
+    <div class="row">
+        <form class="w-100" action="{% url 'unload' %}" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="license_number">شماره پلاک</label>
+                        <select name="license_number_id" id="license_number_id" class="form-control">
+                            {% for truck in trucks %}
+                            {% if truck.Is_Deleted == False %}
+                                <option value="{{ truck.id }}">{{ truck.License_plate_number }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="unload_location">محل تخلیه</label>
+                        <select name="unload_location_id" id="unload_location_id" class="form-control">
+                            {% for warehouse in warehouses %}
+                            {% if warehouse.Is_Deleted == False %}
+                                <option value="{{ warehouse.id }}">{{ warehouse.name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="quantity">واحد</label>
+                        <select name="unit" id="unit" class="form-control">
+                            {% for unit in units %}
+                            {% if warehouse.Is_Deleted == False %}
+                                <option value="{{ unit.name }}">{{ unit.name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="quantity">مقدار</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" placeholder="مقدار را وارد کنید">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="quantity">کیفیت</label>
+                        <input type="text" class="form-control" id="quality" name="quality" placeholder="کیفیت را وارد کنید">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="forklift_driver_name">نام راننده لیفت تراک</label>
+                        <select name="forklift_driver_name_id" id="forklift_driver_name_id" class="form-control">
+                            {% for forklift_driver in forklift_drivers %}
+                            {% if forklift_driver.Is_Deleted == False %}
+                                <option value="{{ forklift_driver.id }}">{{ forklift_driver.name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">افزودن</button>
+        </form>
+    </div>
+    <hr>
+    <h2 class="text-center w-100 p-3 bg-light rounded mb-4">تشخیصات vision</h2>
+    {% if vision_detections %}
+    {% for detection in vision_detections %}
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card text-center">
+                <div class="card-header">
+                    <h5>بازه زمانی تشخیص ({{ detection.name }})</h5>
+                </div>
+                <div class="card-body">
+                    <p>از <span class="bg-primary p-2 rounded text-white" style="font-size: 14px;">{% to_jalali detection.start_time %}</span> تا <span class="bg-danger p-2 rounded text-white" style="font-size: 14px;">{% to_jalali detection.end_time %}</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <form class="w-100" action="{% url 'unload' %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="license_number">شماره پلاک</label>
+                            <select name="license_number_id" id="license_number_id" class="form-control">
+                                {% for truck in trucks %}
+                                {% if truck.Is_Deleted == False %}
+                                    <option value="{{ truck.id }}">{{ truck.License_plate_number }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="unload_location">محل تخلیه</label>
+                            <select name="unload_location_id" id="unload_location_id" class="form-control">
+                                {% for warehouse in warehouses %}
+                                {% if warehouse.Is_Deleted == False %}
+                                    <option value="{{ warehouse.id }}" {% if warehouse.id == detection.vision.warehouse_id %}selected{% endif %}>{{ warehouse.name }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="quantity">واحد</label>
+                            <select name="unit" id="unit" class="form-control">
+                                {% for unit in units %}
+                                {% if warehouse.Is_Deleted == False %}
+                                    <option value="{{ unit.name }}">{{ unit.name }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="quantity">مقدار</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" placeholder="مقدار را وارد کنید" value="{{detection.count}}">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="quantity">کیفیت</label>
+                            <input type="text" class="form-control" id="quality" name="quality" placeholder="کیفیت را وارد کنید">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="forklift_driver_name">نام راننده لیفت تراک</label>
+                            <select name="forklift_driver_name_id" id="forklift_driver_name_id" class="form-control">
+                                {% for forklift_driver in forklift_drivers %}
+                                {% if forklift_driver.Is_Deleted == False %}
+                                    <option value="{{ forklift_driver.id }}">{{ forklift_driver.name }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">افزودن</button>
+            </form>
+        </div>
+    </div>
+    <hr>
+    {% endfor %}
+    {%  endif %}
+</div>
+{% endblock %}

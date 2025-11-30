@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+{% block title %}Trucks{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>Trucks</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'add_truck' %}" class="btn btn-primary">افزودن Truck</a>
+        </div>
+    </div>
+    <div class="row">
+        {% if trucks %}
+        {% for truck in trucks %}
+        {% if not truck.Is_Deleted %}
+            <div class="col-lg-3">
+                <a href="{% url 'view_truck' truck.id %}" class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ truck.License_plate_number }}</h5>
+                    </div>
+                </a>
+                <a href="{% url 'edit_truck' truck.id %}" class="btn btn-warning">ویرایش</a>
+                <a href="{% url 'delete_truck' truck.id %}" class="btn btn-danger">حذف</a>
+            </div>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <p>هیچ Truckی یافت نشد</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -66,10 +66,7 @@ def start_monitor_thread():
         print("License number monitor thread started")
 
 def dashboard(request):
-    global visions_data
     context = {
         "warehouses": Warehouse.objects.all(),
-        "visions_data": visions_data["visions_data"][-50:],
-        "Is_Start": Is_Start,
     }
     return render(request, 'dashboard/dashboard.html', context)

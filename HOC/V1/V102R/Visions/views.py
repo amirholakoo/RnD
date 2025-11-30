@@ -19,10 +19,11 @@ def visions(request):
 def add(request):
     if request.method == 'POST':
         name = request.POST.get('name')
+        vision_id = request.POST.get('vision_id')
         description = request.POST.get('description')
         server_ip = request.POST.get('server_ip')
         try:
-            vision = Vision(name=name, description=description, server_ip=server_ip)
+            vision = Vision(name=name, vision_id=vision_id, description=description, server_ip=server_ip)
             vision.save()
             messages.success(request, 'Vision با موفقیت افزوده شد')
             return redirect('visions')
@@ -35,10 +36,12 @@ def edit(request, vision_id):
     vision = get_object_or_404(Vision, id=vision_id)
     if request.method == 'POST':
         name = request.POST.get('name')
+        vision_id = request.POST.get('vision_id')
         description = request.POST.get('description')
         server_ip = request.POST.get('server_ip')
         try:
             vision.name = name
+            vision.vision_id = vision_id
             vision.description = description
             vision.server_ip = server_ip
             vision.save()
@@ -83,21 +86,23 @@ def Receive_Data(request):
             
             print("_________",ip_address,"_________",data)
 
-            vision = Vision.objects.filter(vision_id=data["vision_id"]).last()
+            try:
+                vision = Vision.objects.filter(vision_id=data["vision_id"]).last()
+            except:
+                vision = Vision.objects.all().first()
             if not vision:
                 vision = Vision(name=f"vision{Vision.objects.count() + 1}",vision_id=data["vision_id"],server_ip=ip_address)
                 vision.save()
-            vision_data = VisionData(vision=vision, data=data)
+            try:
+                vision_data = VisionData(vision=vision, data=data,name=json.loads(data["event"])["class_name"],count=int(json.loads(data["event"])["counts"]["live"]))
+            except:
+                vision_data = VisionData(vision=vision, data=data)
             vision_data.save()
             print("data received from device successfully", vision)
-            return JsonResponse({'status': 'ok'})
-        except json.JSONDecodeError as e:
-            print(f"Error parsing JSON data: {e}")
-            return JsonResponse({'status': 'error', 'message': 'Invalid JSON data'}, status=400)
+            return JsonResponse({'status': 'ok', 'message': 'Data received from device successfully'})
         except Exception as e:
             print(f"Error processing data: {e}")
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-    return JsonResponse({'status': 'error', 'message': 'Only POST allowed'}, status=405)
 
 
 @csrf_exempt
@@ -115,7 +120,7 @@ def start_vision():
     global Is_Start
     if not Is_Start:
         try:
-            start =requests.post("http://172.16.0.223:6007/start-vision-monitor")
+            start =requests.post("http://172.16.0.223:6007/start")
         except:
             start = None
         if start is not None:

@@ -1,0 +1,42 @@
+{% extends 'base/base.html' %}
+{% block title %}افزودن material{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>افزودن material</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'materials' %}" class="btn btn-secondary">بازگشت</a>
+        </div>
+    </div>
+    <div class="row">
+        <form action="{% url 'add_material' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">نام material</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="نام material را وارد کنید" required>
+            </div>
+            <div class="form-group">
+                <label for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات material را وارد کنید"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="supplier_name">نام تامین کننده</label>
+                <input type="text" class="form-control" id="supplier_name" name="supplier_name" placeholder="نام تامین کننده را وارد کنید">
+            </div>
+            {% if material_types %}
+            <div class="form-group">
+                <label for="material_type">نوع material</label>
+                <select class="form-control" id="material_type" name="material_type">
+                    {% for material_type in material_types %}
+                    <option value="{{ material_type.id }}">{{ material_type.material_type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+            <button type="submit" class="btn btn-primary mt-3">افزودن</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
