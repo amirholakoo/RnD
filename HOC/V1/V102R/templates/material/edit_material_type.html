@@ -1,0 +1,32 @@
+{% extends 'base/base.html' %}
+{% block title %}ویرایش نوع material{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+                <h1>ویرایش نوع material</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'material_types' %}" class="btn btn-secondary">بازگشت</a>
+        </div>
+    </div>
+    <div class="row">
+        <form action="{% url 'edit_material_type' material_type.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="material_type">نوع material</label>
+                <input type="text" class="form-control" id="material_type" name="material_type" placeholder="نوع material را وارد کنید" value="{{ material_type.material_type }}">
+            </div>
+            <div class="form-group">
+                <label for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات نوع material را وارد کنید">{{ material_type.description }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="supplier_name">نام تامین کننده</label>
+                <input type="text" class="form-control" id="supplier_name" name="supplier_name" placeholder="نام تامین کننده نوع material را وارد کنید" value="{{ material_type.supplier_name }}">
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">ویرایش</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

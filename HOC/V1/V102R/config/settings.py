@@ -47,9 +47,10 @@ INSTALLED_APPS = [
     'Warehouse',
     'Visions',
     'Material',
-    # 'Trucks',
+    'Trucks',
     # 'Shipments',
     'Dashboard',
+    'Forklift',
 ]
 
 MIDDLEWARE = [

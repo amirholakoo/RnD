@@ -1,0 +1,86 @@
+{% extends 'base/base.html' %}
+{% block title %}پنل forklift{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row my-4">
+        <div class="col-lg-6 text-right">
+            <h1>پنل forklift</h1>
+        </div>
+        <div class="col-lg-6 text-left">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">بازگشت</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-2 text-right">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">تخلیه</h5>
+                    <a href="{% url 'unload' %}" class="btn btn-primary">مشاهده</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 text-right">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">بارگیری</h5>
+                    <a href="" class="btn btn-primary">مشاهده</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 text-right">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">مصرف شده</h5>
+                    <a href="" class="btn btn-primary">مشاهده</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 text-right">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">جابجا شده</h5>
+                    <a href="" class="btn btn-primary">مشاهده</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 text-right">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">برگشت داده شده</h5>
+                    <a href="" class="btn btn-primary">مشاهده</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <h2 class="text-center w-100 p-3 bg-light rounded mb-4">لیست تخلیه ها</h2>
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table table-bordered">
+                <tr class="text-center">
+                    <th>شماره پلاک</th>
+                    <th>محل تخلیه</th>
+                    <th>مقدار</th>
+                    <th>کیفیت</th>
+                    <th>راننده لیفت تراک</th>
+                    <th>عملیات</th>
+                </tr>
+                {% for unload in unloads %}
+                <tr class="text-center">
+                    <td>{{ unload.license_number.License_plate_number }}</td>
+                    <td>{{ unload.unload_location.name }}</td>
+                    <td>{{ unload.quantity }}</td>
+                    <td>{{ unload.quality }}</td>
+                    <td>{{ unload.forklift_driver_name.name }}</td>
+                    <td>
+                        <a href="{% url 'edit_unload' unload.id %}" class="btn btn-warning">ویرایش</a>
+                        <a href="{% url 'delete_unload' unload.id %}" class="btn btn-danger">حذف</a>
+                        <a href="{% url 'view_unload' unload.id %}" class="btn btn-info">مشاهده</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

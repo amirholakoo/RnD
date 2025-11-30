@@ -1,0 +1,18 @@
+{% extends 'base/base.html' %}
+{% block title %}نوع material{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>نوع material</h1>
+            <h2>{{ material_type.material_type }}</h2>
+            <p>{{ material_type.description }}</p>
+            <p>{{ material_type.supplier_name }}</p>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'edit_material_type' material_type.id %}" class="btn btn-warning">ویرایش</a>
+            <a href="{% url 'delete_material_type' material_type.id %}" class="btn btn-danger">حذف</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

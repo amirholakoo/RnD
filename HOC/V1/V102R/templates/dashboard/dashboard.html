@@ -3,197 +3,20 @@
 {% load static %}
 {% block title %}Dashboard{% endblock %}
 {% block Link %}
-<style>
-    .vision-card {
-        transition: transform 0.2s, box-shadow 0.2s;
-        border-left: 4px solid #007bff !important;
-    }
-    .vision-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
-    }
-    .count-box {
-        transition: transform 0.2s;
-    }
-    .count-box:hover {
-        transform: scale(1.05);
-    }
-    .event-item {
-        background: #f8f9fa;
-        transition: background 0.2s;
-    }
-    .event-item:hover {
-        background: #e9ecef;
-    }
-    .card-header {
-        font-weight: 600;
-    }
-    .stats-row {
-        border-top: 1px solid #dee2e6;
-        padding-top: 1rem;
-    }
-</style>
 {% endblock %}
 {% block content %}
 <div class="container-fluid p-3 mt-5">
     <div class="row">
-        {% if warehouses %}
-        {% for warehouse in warehouses %}
-            <div class="col-lg-3 mb-4">
-                <a href="{% url 'view_warehouse' warehouse.id %}" class="warehouses card shadow-sm border-0 p-3 text-center">
-                    <h5>{{ warehouse.name }} <span class="badge bg-primary text-white">{{ warehouse.warehouse_vision.all.count }} ویژن</span></h5>
-                    <p>{{ warehouse.description }}</p>
-                    <p>{{ warehouse.location }}</p>
-                </a>
-            </div>
-        {% endfor %}
-        {% endif %}
-    </div>
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="start">
-                <div class="btn btn-info w-100 mb-4 text-center">
-                    <a href="{% url 'start_vision_api' %}">درخواست شروع دستی ویژن</a>
-                </div>
-                {% if Is_Start %}
-                <div class="btn btn-success w-100 mb-4 text-center">
-                    وضعیت:
-                    <h6>شروع شده است</h6>
-                </div>
-                {% else %}
-                <div class="btn btn-danger w-100 mb-4 text-center">
-                    وضعیت:
-                    <h6>شروع نشده است</h6>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="logs btn btn-info w-100 mb-4 text-center">
-                <h5>داده های ویژن</h5>
-            </div>
-            {% if visions_data %}
-            <div class="row">
-                {% for vision in visions_data reversed %}
-                <div class="col-lg-6 col-md-12 mb-4">
-                    <div class="card shadow-sm border-0 vision-card">
-                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0">
-                                <i class="fas fa-video"></i> پردازش ویدیو
-                            </h6>
-                            <small>{% to_jalali vision.timestamp %}</small>
-                        </div>
-                        <div class="card-body">
-                            <!-- Video Info -->
-                            <div class="mb-3">
-                                <strong class="text-muted d-block mb-1">ویدیو:</strong>
-                                <span class="badge bg-secondary fs-6">{{ vision.data.video_input|default:"نامشخص" }}</span>
-                            </div>
-                            
-                            <!-- Counts - Prominent Display -->
-                            <div class="row mb-3 count-box">
-                                <div class="col-4 text-center px-1">
-                                    <div class="p-3 bg-primary text-white rounded shadow-sm">
-                                        <small class="d-block mb-1">Primary</small>
-                                        <h3 class="mb-0 fw-bold">{{ vision.data.counts.primary|default:0 }}</h3>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-center px-1">
-                                    <div class="p-3 bg-warning text-white rounded shadow-sm">
-                                        <small class="d-block mb-1">Secondary</small>
-                                        <h3 class="mb-0 fw-bold">{{ vision.data.counts.secondary|default:0 }}</h3>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-center px-1">
-                                    <div class="p-3 bg-success text-white rounded shadow-sm">
-                                        <small class="d-block mb-1">Total</small>
-                                        <h3 class="mb-0 fw-bold">{{ vision.data.counts.total|default:0 }}</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Processing Stats -->
-                            <div class="mb-3 stats-row">
-                                <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                                    <span class="text-muted"><i class="fas fa-clock"></i> زمان پردازش:</span>
-                                    <strong class="text-primary">{{ vision.data.processing_time_seconds|floatformat:2 }} ثانیه</strong>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                                    <span class="text-muted"><i class="fas fa-film"></i> فریم‌های پردازش شده:</span>
-                                    <strong>{{ vision.data.frames_processed|default:0 }}</strong>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-muted"><i class="fas fa-check-circle"></i> فریم‌های مؤثر:</span>
-                                    <strong class="text-success">{{ vision.data.effective_frames|default:0 }}</strong>
-                                </div>
-                            </div>
-                            
-                            <!-- Time Range -->
-                            <div class="mb-3 p-3 bg-light rounded border">
-                                <div class="mb-2">
-                                    <small class="text-muted d-block mb-1"><i class="fas fa-play"></i> شروع:</small>
-                                    <small class="text-dark">{{ vision.data.start_time|default:"-" }}</small>
-                                </div>
-                                <div>
-                                    <small class="text-muted d-block mb-1"><i class="fas fa-stop"></i> پایان:</small>
-                                    <small class="text-dark">{{ vision.data.end_time|default:"-" }}</small>
-                                </div>
-                            </div>
-                            
-                            <!-- Events -->
-                            {% if vision.data.events %}
-                            <div class="mb-2">
-                                <strong class="text-muted d-block mb-2">
-                                    <i class="fas fa-list"></i> رویدادها ({{ vision.data.events|length }}):
-                                </strong>
-                                <div class="mt-2" style="max-height: 250px; overflow-y: auto;">
-                                    {% for event in vision.data.events %}
-                                    <div class="border rounded p-2 mb-2 event-item">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <span class="badge bg-info">فریم {{ event.frame_number }}</span>
-                                        </div>
-                                        <small class="text-muted d-block">
-                                            <i class="fas fa-calendar-alt"></i> {{ event.timestamp }}
-                                        </small>
-                                        {% if event.snapshot_path %}
-                                        <small class="text-primary d-block mt-1">
-                                            <i class="fas fa-image"></i> {{ event.snapshot_path }}
-                                        </small>
-                                        {% endif %}
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {% else %}
-                            <div class="alert alert-secondary mb-0 py-2 text-center">
-                                <small><i class="fas fa-info-circle"></i> هیچ رویدادی ثبت نشده است</small>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="alert alert-info">هیچ داده ای ثبت نشده است</div>
-            {% endif %}
-        </div>
-        <div class="col-lg-6 mt-4">
-            <div class="logs btn btn-info w-100 mb-4 text-center">
-                <h5>لاگ ها</h5>
-            </div>
-            <div class="card shadow-sm" dir="ltr">
-                {% if logs %}
+        <div class="col-lg-3">
+            <div class="card text-center">
                 <div class="card-body">
-                    <pre class="mb-0" style="max-height: 400px; overflow-y: auto;">{{ logs }}</pre>
+                    <h5 class="card-title">پنل forklift</h5>
+                    <p class="card-text">پنل forklift</p>
+                    <a href="{% url 'forklift_panel' %}" class="btn btn-primary">مشاهده</a>
                 </div>
-                {% else %}
-                <div class="alert alert-info">هیچ داده ای ثبت نشده است</div>
-                {% endif %}
             </div>
         </div>
+        <div class="col-lg-3"></div>
     </div>
 </div>
 {% endblock %}

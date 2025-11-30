@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+{% block title %}material{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>material</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'add_material' %}" class="btn btn-primary">افزودن material</a>
+        </div>
+    </div>
+    <div class="row">
+        {% if materials %}
+        {% for material in materials %}
+        {% if not material.Is_Deleted %}
+            <div class="col-lg-3">
+                <a href="{% url 'view_material' material.id %}" class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ material.name }}</h5>
+                    </div>
+                </a>
+                <a href="{% url 'edit_material' material.id %}" class="btn btn-warning">ویرایش</a>
+                <a href="{% url 'delete_material' material.id %}" class="btn btn-danger">حذف</a>
+            </div>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <p>هیچ materialی یافت نشد</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
