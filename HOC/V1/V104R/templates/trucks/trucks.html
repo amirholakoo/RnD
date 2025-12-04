@@ -1,0 +1,59 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% block title %}کامیون ها{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row my-4">
+        <div class="col-lg-6">
+            <h1>کامیون ها</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'add_truck' %}" class="btn btn-primary">افزودن کامیون</a>
+        </div>
+    </div>
+    {% if trucks %}
+    <div class="row mt-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>شماره پلاک</th>
+                    <th>نوع کامیون</th>
+                    <th>رنگ</th>
+                    <th>وضعیت</th>
+                    <th>مکان</th>
+                    <th>نام راننده</th>
+                    <th>تلفن</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for truck in trucks %}
+                {% if not truck.Is_Deleted %}
+                <tr>
+                    <td><a href="{% url 'view_truck' truck.id %}">{{ truck.name }}</a></td>
+                    <td>{{ truck.License_plate_number }}</td>
+                    <td>{{ truck.Truck_type }}</td>
+                    <td>{{ truck.Truck_color }}</td>
+                    <td>{{ truck.status }}</td>
+                    <td>{{ truck.location }}</td>
+                    <td>{{ truck.driver_name }}</td>
+                    <td>{{ truck.phone }}</td>
+                    <td>
+                        <a href="{% url 'edit_truck' truck.id %}" class="btn btn-warning">ویرایش</a>
+                        <a href="{% url 'delete_truck' truck.id %}" class="btn btn-danger">حذف</a>
+                        <a href="{% url 'view_truck' truck.id %}" class="btn btn-info">مشاهده</a>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="col-12">
+            <p>هیچ کامیونی یافت نشد</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

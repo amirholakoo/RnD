@@ -1,0 +1,83 @@
+{% extends 'base/base.html' %}
+{% block title %}ویرایش تخلیه{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 text-right">
+            <h1>ویرایش تخلیه</h1>
+        </div>
+        <div class="col-lg-6 text-left">
+            <a href="{% url 'forklift_panel' %}" class="btn btn-secondary">بازگشت</a>
+        </div>
+    </div>
+    <div class="row">
+        <form class="w-100" action="{% url 'edit_unload' unload.id %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ unload.id }}">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="license_number">شماره پلاک</label>
+                        <select name="license_number_id" id="license_number_id" class="form-control">
+                            {% for truck in trucks %}
+                            {% if truck.Is_Deleted == False %}
+                                <option value="{{ truck.id }}" {% if unload.license_number.id == truck.id %}selected{% endif %}>{{ truck.License_plate_number }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="unload_location">محل تخلیه</label>
+                        <select name="unload_location_id" id="unload_location_id" class="form-control">
+                            {% for warehouse in warehouses %}
+                            {% if warehouse.Is_Deleted == False %}
+                                <option value="{{ warehouse.id }}" {% if unload.unload_location.id == warehouse.id %}selected{% endif %}>{{ warehouse.name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="quantity">واحد</label>
+                        <select name="unit" id="unit" class="form-control">
+                            {% for unit in units %}
+                            {% if warehouse.Is_Deleted == False %}
+                                <option value="{{ unit.name }}" {% if unload.unit.id == unit.id %}selected{% endif %}>{{ unit.name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="quantity">مقدار</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" placeholder="مقدار را وارد کنید" value="{{ unload.quantity }}">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="quantity">کیفیت</label>
+                        <input type="text" class="form-control" id="quality" name="quality" placeholder="کیفیت را وارد کنید" value="{{ unload.quality }}">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="forklift_driver_name">نام راننده لیفت تراک</label>
+                        <select name="forklift_driver_name_id" id="forklift_driver_name_id" class="form-control">
+                            {% for forklift_driver in forklift_drivers %}
+                            {% if forklift_driver.Is_Deleted == False %}
+                                <option value="{{ forklift_driver.id }}" {% if unload.forklift_driver_name.id == forklift_driver.id %}selected{% endif %}>{{ forklift_driver.name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">ویرایش</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

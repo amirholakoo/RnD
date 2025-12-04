@@ -1,0 +1,50 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% block title %}مشتریان{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row my-4">
+        <div class="col-lg-6">
+            <h1>مشتریان</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'add_customer' %}" class="btn btn-primary">افزودن مشتری</a>
+        </div>
+    </div>
+    {% if customers %}
+    <div class="row mt-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>شماره تلفن</th>
+                    <th>آدرس</th>
+                    <th>ایمیل</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td><a href="{% url 'view_customer' customer.id %}">{{ customer.name }}</a></td>
+                    <td>{{ customer.phone }}</td>
+                    <td>{{ customer.address }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>
+                        <a href="{% url 'edit_customer' customer.id %}" class="btn btn-warning">ویرایش</a>
+                        <a href="{% url 'delete_customer' customer.id %}" class="btn btn-danger">حذف</a>
+                        <a href="{% url 'view_customer' customer.id %}" class="btn btn-info">مشاهده</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="col-12">
+            <p>هیچ مشتری ای یافت نشد</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

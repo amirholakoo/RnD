@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %}
+{% block title %}افزودن مشتری{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row my-4">
+        <div class="col-lg-6">
+            <h1>افزودن مشتری</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'customers' %}" class="btn btn-secondary">بازگشت</a>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form" action="{% url 'add_customer' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">نام</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="نام را وارد کنید">
+            </div>
+            <div class="form-group">
+                <label for="phone">شماره تلفن</label>
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="شماره تلفن را وارد کنید">
+            </div>
+            <div class="form-group">
+                <label for="address">آدرس</label>
+                <input type="text" class="form-control" id="address" name="address" placeholder="آدرس را وارد کنید">
+            </div>
+            <div class="form-group">
+                <label for="email">ایمیل</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="ایمیل را وارد کنید">
+            </div>
+            <div class="form-group">
+                <label for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات را وارد کنید"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">افزودن</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

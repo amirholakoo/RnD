@@ -1,0 +1,53 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% block title %}مواد{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row my-4">
+        <div class="col-lg-6">
+            <h1>مواد</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'add_material' %}" class="btn btn-primary">افزودن ماده</a>
+        </div>
+    </div>
+    {% if materials %}
+    <div class="row mt-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>نوع ماده</th>
+                    <th>نام تامین کننده</th>
+                    <th>توضیحات</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for material in materials %}
+                {% if not material.Is_Deleted %}
+                <tr>
+                    <td><a href="{% url 'view_material' material.id %}">{{ material.name }}</a></td>
+                    <td>{% if material.material_type %}{{ material.material_type.material_type }}{% endif %}</td>
+                    <td>{{ material.supplier_name }}</td>
+                    <td>{{ material.description }}</td>
+                    <td>{% if material.Is_Active %}فعال{% else %}غیرفعال{% endif %}</td>
+                    <td>
+                        <a href="{% url 'edit_material' material.id %}" class="btn btn-warning">ویرایش</a>
+                        <a href="{% url 'delete_material' material.id %}" class="btn btn-danger">حذف</a>
+                        <a href="{% url 'view_material' material.id %}" class="btn btn-info">مشاهده</a>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="col-12">
+            <p>هیچ ماده ای یافت نشد</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

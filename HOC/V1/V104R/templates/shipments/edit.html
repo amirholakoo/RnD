@@ -1,0 +1,204 @@
+{% extends 'base/base.html' %}
+{% block title %}ویرایش مرسوله{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row my-4">
+        <div class="col-lg-6">
+            <h1>ویرایش مرسوله</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'shipments' %}" class="btn btn-secondary">بازگشت</a>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form" action="{% url 'edit_shipment' shipment.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">نام مرسوله</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="نام مرسوله را وارد کنید" value="{{ shipment.name }}">
+            </div>
+            <div class="form-group">
+                <label for="Truck">شماره پلاک</label>
+                <select class="form-control" id="Truck" name="Truck">
+                    {% for Truck in trucks %}
+                    <option value="{{ Truck.id }}" {% if shipment.Truck.id == Truck.id %} selected{% endif %}>{{ Truck.License_plate_number }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="shipment_type">نوع مرسوله</label>
+                <select class="form-control" id="shipment_type" name="shipment_type">
+                    <option value="1" {% if shipment.shipment_type == 1 %} selected{% endif %}>ورودی</option>
+                    <option value="2" {% if shipment.shipment_type == 2 %} selected{% endif %}>خروجی</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="status">وضعیت</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="1" {% if shipment.status == 1 %} selected{% endif %}>ثبت شده</option>
+                    <option value="2" {% if shipment.status == 2 %} selected{% endif %}>در حال بارگیری/تخلیه</option>
+                    <option value="3" {% if shipment.status == 3 %} selected{% endif %}>بارگیری/تخلیه شده</option>
+                    <option value="4" {% if shipment.status == 4 %} selected{% endif %}>اداره</option>
+                    <option value="5" {% if shipment.status == 5 %} selected{% endif %}>تحویل داده شده</option>
+                    <option value="6" {% if shipment.status == 6 %} selected{% endif %}>لغو شده</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Customer">مشتری</label>
+                <select class="form-control" id="Customer" name="Customer">
+                    <option value="">انتخاب کنید</option>
+                    {% for customer in customers %}
+                    <option value="{{ customer.id }}" {% if shipment.Customer and shipment.Customer.id == customer.id %} selected{% endif %}>{{ customer.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Supplier">تامین کننده</label>
+                <select class="form-control" id="Supplier" name="Supplier">
+                    <option value="">انتخاب کنید</option>
+                    {% for supplier in suppliers %}
+                    <option value="{{ supplier.id }}" {% if shipment.Supplier and shipment.Supplier.id == supplier.id %} selected{% endif %}>{{ supplier.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="material">ماده</label>
+                <select class="form-control" id="material" name="material">
+                    {% for material in materials %}
+                    <option value="{{ material.id }}" {% if shipment.material and shipment.material.id == material.id %} selected{% endif %}>{{ material.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="weight1_time">زمان وزن 1</label>
+                <input type="text" class="form-control" id="weight1_time" name="weight1_time" placeholder="زمان وزن 1 را وارد کنید" value="{{ shipment.weight1_time }}">
+            </div>
+            <div class="form-group">
+                <label for="weight2_time">زمان وزن 2</label>
+                <input type="text" class="form-control" id="weight2_time" name="weight2_time" placeholder="زمان وزن 2 را وارد کنید" value="{{ shipment.weight2_time }}">
+            </div>
+            <div class="form-group">
+                <label for="location">انبار</label>
+                <select class="form-control" id="location" name="location">
+                    {% for warehouse in warehouses %}
+                    <option value="{{ warehouse.id }}" {% if shipment.location.id == warehouse.id %} selected{% endif %}>{{ warehouse.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="receive_date">تاریخ دریافت</label>
+                <input type="text" class="form-control" id="receive_date" name="receive_date" placeholder="تاریخ دریافت را وارد کنید" value="{{ shipment.receive_date }}">
+            </div>
+            <div class="form-group">
+                <label for="exit_time">زمان خروج</label>
+                <input type="text" class="form-control" id="exit_time" name="exit_time" placeholder="زمان خروج را وارد کنید" value="{{ shipment.exit_time }}">
+            </div>
+            <div class="form-group">
+                <label for="unload_location_warehouse">مکان خارج شدن (انبار)</label>
+                <select class="form-control" id="unload_location_warehouse" name="unload_location_warehouse">
+                    <option value="">انتخاب کنید</option>
+                    {% for warehouse in warehouses %}
+                    <option value="{{ warehouse.id }}" {% if shipment.unload_location == warehouse.name %} selected{% endif %}>{{ warehouse.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="unload_location">مکان خارج شدن (متن)</label>
+                <input type="text" class="form-control" id="unload_location" name="unload_location" placeholder="مکان خارج شدن را وارد کنید" value="{{ shipment.unload_location }}">
+            </div>
+            <div class="form-group">
+                <label for="unit">واحد</label>
+                <input type="text" class="form-control" id="unit" name="unit" placeholder="واحد را وارد کنید" value="{{ shipment.unit }}">
+            </div>
+            <div class="form-group">
+                <label for="quantity">مقدار</label>
+                <input type="text" class="form-control" id="quantity" name="quantity" placeholder="مقدار را وارد کنید" value="{{ shipment.quantity }}">
+            </div>
+            <div class="form-group">
+                <label for="quality">کیفیت</label>
+                <input type="text" class="form-control" id="quality" name="quality" placeholder="کیفیت را وارد کنید" value="{{ shipment.quality }}">
+            </div>
+            <div class="form-group">
+                <label for="penalty">موانع</label>
+                <input type="text" class="form-control" id="penalty" name="penalty" placeholder="موانع را وارد کنید" value="{{ shipment.penalty }}">
+            </div>
+            <div class="form-group">
+                <label for="weight2">وزن 2</label>
+                <input type="text" class="form-control" id="weight2" name="weight2" placeholder="وزن 2 را وارد کنید" value="{{ shipment.weight2 }}">
+            </div>
+            <div class="form-group">
+                <label for="net_weight">وزن خالی</label>
+                <input type="text" class="form-control" id="net_weight" name="net_weight" placeholder="وزن خالی را وارد کنید" value="{{ shipment.net_weight }}">
+            </div>
+            <div class="form-group">
+                <label for="list_of_reels">لیست رول ها</label>
+                <input type="text" class="form-control" id="list_of_reels" name="list_of_reels" placeholder="لیست رول ها را وارد کنید" value="{{ shipment.list_of_reels }}">
+            </div>
+            <div class="form-group">
+                <label for="profile_name">نام پروفایل</label>
+                <input type="text" class="form-control" id="profile_name" name="profile_name" placeholder="نام پروفایل را وارد کنید" value="{{ shipment.profile_name }}">
+            </div>
+            <div class="form-group">
+                <label for="width">عرض</label>
+                <input type="text" class="form-control" id="width" name="width" placeholder="عرض را وارد کنید" value="{{ shipment.width }}">
+            </div>
+            <div class="form-group">
+                <label for="sales_id">شماره فروش</label>
+                <input type="text" class="form-control" id="sales_id" name="sales_id" placeholder="شماره فروش را وارد کنید" value="{{ shipment.sales_id }}">
+            </div>
+            <div class="form-group">
+                <label for="price_per_kg">قیمت برای کیلوگرم</label>
+                <input type="text" class="form-control" id="price_per_kg" name="price_per_kg" placeholder="قیمت برای کیلوگرم را وارد کنید" value="{{ shipment.price_per_kg }}">
+            </div>
+            <div class="form-group">
+                <label for="total_price">قیمت کل</label>
+                <input type="text" class="form-control" id="total_price" name="total_price" placeholder="قیمت کل را وارد کنید" value="{{ shipment.total_price }}">
+            </div>
+            <div class="form-group">
+                <label for="extra_cost">هزینه اضافی</label>
+                <input type="text" class="form-control" id="extra_cost" name="extra_cost" placeholder="هزینه اضافی را وارد کنید" value="{{ shipment.extra_cost }}">
+            </div>
+            <div class="form-group">
+                <label for="vat">مالیات</label>
+                <input type="text" class="form-control" id="vat" name="vat" placeholder="مالیات را وارد کنید" value="{{ shipment.vat }}">
+            </div>
+            <div class="form-group">
+                <label for="invoice_status">وضعیت فاکتور</label>
+                <select class="form-control" id="invoice_status" name="invoice_status">
+                    <option value="NA" {% if shipment.invoice_status == 'NA' %} selected{% endif %}>NA</option>
+                    <option value="Sent" {% if shipment.invoice_status == 'Sent' %} selected{% endif %}>Sent</option>
+                    <option value="Received" {% if shipment.invoice_status == 'Received' %} selected{% endif %}>Received</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="payment_status">وضعیت پرداخت</label>
+                <select class="form-control" id="payment_status" name="payment_status">
+                    <option value="Terms" {% if shipment.payment_status == 'Terms' %} selected{% endif %}>Terms</option>
+                    <option value="Paid" {% if shipment.payment_status == 'Paid' %} selected{% endif %}>Paid</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="document_info">اطلاعات سند</label>
+                <input type="text" class="form-control" id="document_info" name="document_info" placeholder="اطلاعات سند را وارد کنید" value="{{ shipment.document_info }}">
+            </div>
+            <div class="form-group">
+                <label for="comments">نظرات</label>
+                <textarea class="form-control" id="comments" name="comments" placeholder="توضیحات را وارد کنید">{{ shipment.comments }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="document_info">اطلاعات سند</label>
+                <textarea class="form-control" id="document_info" name="document_info" placeholder="اطلاعات سند را وارد کنید">{{ shipment.document_info }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="cancellation_reason">علت لغو</label>
+                <textarea class="form-control" id="cancellation_reason" name="cancellation_reason" placeholder="علت لغو را وارد کنید">{{ shipment.cancellation_reason }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات را وارد کنید">{{ shipment.description }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">ویرایش</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
