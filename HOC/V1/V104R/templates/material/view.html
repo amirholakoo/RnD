@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% block title %}{{ material.name }}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row my-4">
+        <div class="col-lg-6">
+            <h1>{{ material.name }}</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'materials' %}" class="btn btn-secondary">بازگشت</a>
+            <a href="{% url 'edit_material' material.id %}" class="btn btn-warning">ویرایش</a>
+            <a href="{% url 'delete_material' material.id %}" class="btn btn-danger">حذف</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table table-bordered">
+                <tr>
+                    <th>نام</th>
+                    <td>{{ material.name }}</td>
+                </tr>
+                <tr>
+                    <th>نوع ماده</th>
+                    <td>{% if material.material_type %}{{ material.material_type.material_type }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>نام تامین کننده</th>
+                    <td>{{ material.supplier_name }}</td>
+                </tr>
+                <tr>
+                    <th>توضیحات</th>
+                    <td>{{ material.description }}</td>
+                </tr>
+                <tr>
+                    <th>وضعیت</th>
+                    <td>{% if material.Is_Active %}فعال{% else %}غیرفعال{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>زمان ساخت</th>
+                    <td>{% to_jalali material.CreationDateTime %}</td>
+                </tr>
+                <tr>
+                    <th>آخرین آپدیت</th>
+                    <td>{% to_jalali material.LastUpdate %}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

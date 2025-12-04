@@ -44,7 +44,12 @@ def device_info_json(request,sensor_id):
     for x in data:
         index = 0
         if not x.sensor.sensor_type == "status":
-            for key, value in json.loads(x.data.replace("'",'"')).items():
+            try:
+                target_data = json.loads(x.data.replace("'",'"')).items()
+            except:
+                print(x.data)
+                continue
+            for key, value in target_data:
                 try:
                     value = float(value)
                 except:
@@ -184,7 +189,12 @@ def chart_info_json(request,sensor_id):
             ai_index = 0
             index = 0
             if not x.sensor.sensor_type == "status":
-                for key, value in json.loads(x.data.replace("'",'"')).items():
+                try:
+                    target_data = json.loads(x.data.replace("'",'"')).items()
+                except:
+                    print(x.data)
+                    continue
+                for key, value in target_data:
                     try:
                         value = float(value)
                     except:

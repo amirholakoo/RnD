@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% block title %}مرسوله ها{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row my-4">
+        <div class="col-lg-6">
+            <h1>مرسوله ها</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'add_shipment' %}" class="btn btn-primary">افزودن مرسوله</a>
+        </div>
+    </div>
+    {% if shipments %}
+    <div class="row mt-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>مرسوله</th>
+                    <th>مکان</th>
+                    <th>تاریخ دریافت</th>
+                    <th>وزن 1</th>
+                    <th>وزن 2</th>
+                    <th>خروج</th>
+                    <th>نوع مرسوله</th>
+                    <th>راننده</th>
+                    <th>مشتری</th>
+                    <th>تامین کننده</th>
+                    <th>ماده</th>
+                    <th>واحد</th>
+                    <th>مقدار</th>
+                    <th>کیفیت</th>
+                    <th>پیکان</th>
+                    <th>وزن خالی</th>
+                    <th>لیست رله ها</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for shipment in shipments %}
+                <tr>
+                    <td><a href="{% url 'view_shipment' shipment.id %}">{{ shipment.name }}</a></td>
+                    <td>{% if shipment.location %}{{ shipment.location.name }}{% endif %}</td>
+                    <td>{% to_jalali shipment.receive_date %}</td>
+                    <td>{{ shipment.weight1 }}</td>
+                    <td>{{ shipment.weight2 }}</td>
+                    <td>{{ shipment.exit_time }}</td>
+                    <td>{% if shipment.shipment_type == 1 %}ورودی{% else %}خروجی{% endif %}</td>
+                    <td>{% if shipment.Truck %}{{ shipment.Truck.License_plate_number }}{% endif %}</td>
+                    <td>{% if shipment.Customer %}{{ shipment.Customer.name }}{% endif %}</td>
+                    <td>{% if shipment.Supplier %}{{ shipment.Supplier.name }}{% endif %}</td>
+                    <td>{% if shipment.material %}{{ shipment.material.name }}{% endif %}</td>
+                    <td>{{ shipment.unit }}</td>
+                    <td>{{ shipment.quantity }}</td>
+                    <td>{{ shipment.quality }}</td>
+                    <td>{{ shipment.penalty }}</td>
+                    <td>{{ shipment.net_weight }}</td>
+                    <td>{{ shipment.list_of_reels }}</td>
+                    <td>
+                        <a href="{% url 'edit_shipment' shipment.id %}" class="btn btn-warning">ویرایش</a>
+                        <a href="{% url 'delete_shipment' shipment.id %}" class="btn btn-danger">حذف</a>
+                        <a href="{% url 'view_shipment' shipment.id %}" class="btn btn-info">مشاهده</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="col-12">
+            <p>هیچ مرسوله ای یافت نشد</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base/base.html' %}
+{% block title %}افزودن Truck{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>افزودن Truck</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'trucks' %}" class="btn btn-secondary">بازگشت</a>
+        </div>
+    </div>
+    <div class="row">
+        <form class="w-100" action="{% url 'add_truck' %}" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="name">نام Truck</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="نام Truck را وارد کنید" required>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="License_plate_number">شماره پلاک</label>
+                        <input type="text" class="form-control" id="License_plate_number" name="License_plate_number" placeholder="شماره پلاک را وارد کنید">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="Truck_type">نوع Truck</label>
+                        <input type="text" class="form-control" id="Truck_type" name="Truck_type" placeholder="نوع Truck را وارد کنید">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="phone">تلفن همراه</label>
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="تلفن همراه را وارد کنید">
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="Truck_color">رنگ Truck</label>
+                        <input type="text" class="form-control" id="Truck_color" name="Truck_color" placeholder="رنگ Truck را وارد کنید">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="driver_name">نام راننده</label>
+                        <input type="text" class="form-control" id="driver_name" name="driver_name" placeholder="نام راننده را وارد کنید">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="driver_doc">شناسه راننده</label>
+                        <input type="text" class="form-control" id="driver_doc" name="driver_doc" placeholder="شناسه راننده را وارد کنید">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="description">توضیحات</label>
+                        <textarea class="form-control" id="description" name="description" placeholder="توضیحات Truck را وارد کنید"></textarea>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">افزودن</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

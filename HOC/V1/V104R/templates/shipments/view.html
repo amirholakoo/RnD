@@ -1,0 +1,175 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% block title %}{{ shipment.name }}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row my-4">
+        <div class="col-lg-6">
+            <h1>{{ shipment.name }}</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'shipments' %}" class="btn btn-secondary">بازگشت</a>
+            <a href="{% url 'edit_shipment' shipment.id %}" class="btn btn-warning">ویرایش</a>
+            <a href="{% url 'delete_shipment' shipment.id %}" class="btn btn-danger">حذف</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table table-bordered">
+                <tr>
+                    <th>نام</th>
+                    <td>{{ shipment.name }}</td>
+                </tr>
+                <tr>
+                    <th>وضعیت</th>
+                    <td>
+                        {% if shipment.status == 1 %}ثبت شده
+                        {% elif shipment.status == 2 %}در حال بارگیری/تخلیه
+                        {% elif shipment.status == 3 %}بارگیری/تخلیه شده
+                        {% elif shipment.status == 4 %}اداره
+                        {% elif shipment.status == 5 %}تحویل داده شده
+                        {% elif shipment.status == 6 %}لغو شده
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>مکان</th>
+                    <td>{% if shipment.location %}{{ shipment.location.name }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>تاریخ دریافت</th>
+                    <td>{% to_jalali shipment.receive_date %}</td>
+                </tr>
+                <tr>
+                    <th>زمان وزن 1</th>
+                    <td>{{ shipment.weight1_time }}</td>
+                </tr>
+                <tr>
+                    <th>زمان وزن 2</th>
+                    <td>{{ shipment.weight2_time }}</td>
+                </tr>
+                <tr>
+                    <th>زمان خروج</th>
+                    <td>{{ shipment.exit_time }}</td>
+                </tr>
+                <tr>
+                    <th>نوع مرسوله</th>
+                    <td>{% if shipment.shipment_type == 1 %}ورودی{% else %}خروجی{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>شماره پلاک</th>
+                    <td>{% if shipment.Truck %}{{ shipment.Truck.License_plate_number }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>مشتری</th>
+                    <td>{% if shipment.Customer %}{{ shipment.Customer.name }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>تامین کننده</th>
+                    <td>{% if shipment.Supplier %}{{ shipment.Supplier.name }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>ماده</th>
+                    <td>{% if shipment.material %}{{ shipment.material.name }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>وزن 1</th>
+                    <td>{{ shipment.weight1 }}</td>
+                </tr>
+                <tr>
+                    <th>وزن 2</th>
+                    <td>{{ shipment.weight2 }}</td>
+                </tr>
+                <tr>
+                    <th>وزن خالی</th>
+                    <td>{{ shipment.net_weight }}</td>
+                </tr>
+                <tr>
+                    <th>مکان خارج شدن</th>
+                    <td>{{ shipment.unload_location }}</td>
+                </tr>
+                <tr>
+                    <th>واحد</th>
+                    <td>{{ shipment.unit }}</td>
+                </tr>
+                <tr>
+                    <th>مقدار</th>
+                    <td>{{ shipment.quantity }}</td>
+                </tr>
+                <tr>
+                    <th>کیفیت</th>
+                    <td>{{ shipment.quality }}</td>
+                </tr>
+                <tr>
+                    <th>پیکان</th>
+                    <td>{{ shipment.penalty }}</td>
+                </tr>
+                <tr>
+                    <th>لیست رول ها</th>
+                    <td>{{ shipment.list_of_reels }}</td>
+                </tr>
+                <tr>
+                    <th>نام پروفایل</th>
+                    <td>{{ shipment.profile_name }}</td>
+                </tr>
+                <tr>
+                    <th>عرض</th>
+                    <td>{{ shipment.width }}</td>
+                </tr>
+                <tr>
+                    <th>شماره فروش</th>
+                    <td>{{ shipment.sales_id }}</td>
+                </tr>
+                <tr>
+                    <th>قیمت برای کیلوگرم</th>
+                    <td>{{ shipment.price_per_kg }}</td>
+                </tr>
+                <tr>
+                    <th>قیمت کل</th>
+                    <td>{{ shipment.total_price }}</td>
+                </tr>
+                <tr>
+                    <th>هزینه اضافی</th>
+                    <td>{{ shipment.extra_cost }}</td>
+                </tr>
+                <tr>
+                    <th>مالیات</th>
+                    <td>{{ shipment.vat }}</td>
+                </tr>
+                <tr>
+                    <th>وضعیت فاکتور</th>
+                    <td>{{ shipment.invoice_status }}</td>
+                </tr>
+                <tr>
+                    <th>وضعیت پرداخت</th>
+                    <td>{{ shipment.payment_status }}</td>
+                </tr>
+                <tr>
+                    <th>اطلاعات سند</th>
+                    <td>{{ shipment.document_info }}</td>
+                </tr>
+                <tr>
+                    <th>نظرات</th>
+                    <td>{{ shipment.comments }}</td>
+                </tr>
+                <tr>
+                    <th>علت لغو</th>
+                    <td>{{ shipment.cancellation_reason }}</td>
+                </tr>
+                <tr>
+                    <th>توضیحات</th>
+                    <td>{{ shipment.description }}</td>
+                </tr>
+                <tr>
+                    <th>زمان ساخت</th>
+                    <td>{% to_jalali shipment.CreationDateTime %}</td>
+                </tr>
+                <tr>
+                    <th>آخرین آپدیت</th>
+                    <td>{% to_jalali shipment.LastUpdate %}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

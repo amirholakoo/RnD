@@ -1,0 +1,57 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% block title %}{{ warehouse.name }}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row my-4">
+        <div class="col-lg-6">
+            <h1>{{ warehouse.name }}</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'warehouses' %}" class="btn btn-secondary">بازگشت</a>
+            <a href="{% url 'edit_warehouse' warehouse.id %}" class="btn btn-warning">ویرایش</a>
+            <a href="{% url 'delete_warehouse' warehouse.id %}" class="btn btn-danger">حذف</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table table-bordered">
+                <tr>
+                    <th>نام</th>
+                    <td>{{ warehouse.name }}</td>
+                </tr>
+                <tr>
+                    <th>مکان</th>
+                    <td>{{ warehouse.location }}</td>
+                </tr>
+                <tr>
+                    <th>توضیحات</th>
+                    <td>{{ warehouse.description }}</td>
+                </tr>
+                <tr>
+                    <th>تعداد ویژن</th>
+                    <td>{{ warehouse.warehouse_vision.all.count }}</td>
+                </tr>
+                {% if warehouse.warehouse_vision.all %}
+                <tr>
+                    <th>ویژن ها</th>
+                    <td>
+                        {% for vision in warehouse.warehouse_vision.all %}
+                        <a href="{% url 'view_vision' vision.vision.id %}" class="btn btn-primary">{{ vision.vision.name }}</a>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <th>زمان ساخت</th>
+                    <td>{% to_jalali warehouse.CreationDateTime %}</td>
+                </tr>
+                <tr>
+                    <th>آخرین آپدیت</th>
+                    <td>{% to_jalali warehouse.LastUpdate %}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base/base.html" %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+{% block Link %}
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row my-4">
+        <div class="col-lg-12 text-center mb-4">
+            <h3>آمار کل</h3>
+        </div>
+        {% for detection in vision_detections %}
+        <div class="col-lg-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">{{ detection.vision.warehouse.name }}</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for name, count in detection.items %}
+                        {% if name != "vision" %}
+                            <li class="list-group-item">{{ name }}: {{ count }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <hr>
+    <div class="row my-4">
+        <div class="col-lg-12 text-center mb-4">
+            <h3>آمار 24 ساعت قبل</h3>
+        </div>
+        {% for detection in vision_detections_24h %}
+        <div class="col-lg-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">{{ detection.vision.warehouse.name }}</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for name, count in detection.items %}
+                        {% if name != "vision" %}
+                            <li class="list-group-item">{{ name }}: {{ count }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">پنل forklift</h5>
+                    <p class="card-text">پنل forklift</p>
+                    <a href="{% url 'forklift_panel' %}" class="btn btn-primary">مشاهده</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3"></div>
+    </div>
+</div>
+{% endblock %}

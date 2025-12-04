@@ -1,0 +1,47 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% block title %}راننده لیفت تراک ها{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row my-4">
+        <div class="col-lg-6">
+            <h1>راننده لیفت تراک ها</h1>
+        </div>
+        <div class="col-lg-6">
+            <a href="{% url 'add_forklift_driver' %}" class="btn btn-primary">افزودن راننده لیفت تراک</a>
+        </div>
+    </div>
+    {% if forklift_drivers %}
+    <div class="row mt-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>شماره تلفن</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for forklift_driver in forklift_drivers %}
+                {% if not forklift_driver.Is_Deleted %}
+                <tr>
+                    <td><a href="{% url 'view_forklift_driver' forklift_driver.id %}">{{ forklift_driver.name }}</a></td>
+                    <td>{{ forklift_driver.phone }}</td>
+                    <td>
+                        <a href="{% url 'edit_forklift_driver' forklift_driver.id %}" class="btn btn-warning">ویرایش</a>
+                        <a href="{% url 'delete_forklift_driver' forklift_driver.id %}" class="btn btn-danger">حذف</a>
+                        <a href="{% url 'view_forklift_driver' forklift_driver.id %}" class="btn btn-info">مشاهده</a>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="col-12">
+            <p>هیچ راننده لیفت تراکی یافت نشد</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
