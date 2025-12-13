@@ -163,7 +163,6 @@ def chart_info_json(request,sensor_id):
                     max_value = item['max_value']
                     filter_type = item['type']
                     target_filter_data.append(item)
-
         now = time.time()
         filter_time = 60*60*24*7 if filter_by_week else 60*60*24*30 if filter_by_month else 60*60*24 if filter_by_daily else 60*60
         offset = False if filter_time == 3600 or "ai" in (sensor.device.name).lower() else 60*60
@@ -215,7 +214,7 @@ def chart_info_json(request,sensor_id):
                             if offset:
                                 diff = float(x.CreationDateTime) - chart_data[index]["time"]
                                 if chart_data[index]["time"] + offset < float(x.CreationDateTime):
-                                    if not diff > offset:
+                                    if not diff >= offset*2:
                                         if min_value or max_value:
                                             if not min_value:
                                                 min_value = float(value)
@@ -229,21 +228,34 @@ def chart_info_json(request,sensor_id):
                                                 chart_data[index]["time"] = float(x.CreationDateTime)
                                                 chart_data[index]["s"].append(float(x.CreationDateTime))
 
-                                            else:
-                                                chart_data[index]["data"].append(float(f'{value:.2f}'))
-                                                chart_data[index]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %d %b - %H:%M")))
-                                                chart_data[index]["time"] = float(x.CreationDateTime)
-                                                chart_data[index]["s"].append(float(x.CreationDateTime))
+                                        else:
+                                            chart_data[index]["data"].append(float(f'{value:.2f}'))
+                                            chart_data[index]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %d %b - %H:%M")))
+                                            chart_data[index]["time"] = float(x.CreationDateTime)
+                                            chart_data[index]["s"].append(float(x.CreationDateTime))
                                     else:
                                         for i in range(1,int(diff/offset)):
                                             chart_data[index]["data"].append(None)
                                             chart_data[index]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(chart_data[index]["time"] + offset))).strftime(" %d %b - %H:%M")))
                                             chart_data[index]["time"] = float(chart_data[index]["time"] + offset)
-                                            chart_data[index]["s"].append(float(chart_data[index]["time"] + offset))
-                                        chart_data[index]["data"].append(float(f'{value:.2f}'))
-                                        chart_data[index]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %d %b - %H:%M")))
-                                        chart_data[index]["time"] = float(x.CreationDateTime)
-                                        chart_data[index]["s"].append(float(x.CreationDateTime))
+                                            chart_data[index]["s"].append(float(chart_data[index]["time"]))
+                                        if min_value or max_value:
+                                            if not min_value:
+                                                min_value = float(value)
+                                                min_set = True
+                                            if not max_value:
+                                                max_set = True
+                                                max_value = float(value)
+                                            if float(value) >= float(min_value) and float(value) <= float(max_value):
+                                                chart_data[index]["data"].append(float(f'{value:.2f}'))
+                                                chart_data[index]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %d %b - %H:%M")))
+                                                chart_data[index]["time"] = float(x.CreationDateTime)
+                                                chart_data[index]["s"].append(float(x.CreationDateTime))
+                                        else:
+                                            chart_data[index]["data"].append(float(f'{value:.2f}'))
+                                            chart_data[index]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %d %b - %H:%M")))
+                                            chart_data[index]["time"] = float(x.CreationDateTime)
+                                            chart_data[index]["s"].append(float(x.CreationDateTime))
                             else:
                                 if min_value or max_value:
                                     if not min_value:

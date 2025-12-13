@@ -1,0 +1,72 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}{{ customer.name }}{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'Customer/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i>i</i>
+            {{ customer.name }}
+        </h1>
+        <div class="action-btns">
+            <a href="{% url 'customers' %}" class="btn btn-secondary">
+                <i>i</i>
+                بازگشت
+            </a>
+            <a href="{% url 'edit_customer' customer.id %}" class="btn btn-warning">
+                <i>i</i>
+                ویرایش
+            </a>
+            <a href="{% url 'delete_customer' customer.id %}" class="btn btn-danger">
+                <i>i</i>
+                حذف
+            </a>
+        </div>
+    </div>
+
+    <div class="detail-wrapper">
+        <div class="detail-header">
+            <h2 class="detail-title">
+                <i>i</i>
+                اطلاعات مشتری
+            </h2>
+        </div>
+        <div class="detail-body">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">نام</span>
+                    <span class="detail-value">{{ customer.name }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">شماره تلفن</span>
+                    <span class="detail-value">{{ customer.phone|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">ایمیل</span>
+                    <span class="detail-value">{{ customer.email|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">آدرس</span>
+                    <span class="detail-value">{{ customer.address|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">توضیحات</span>
+                    <span class="detail-value">{{ customer.description|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">زمان ایجاد</span>
+                    <span class="detail-value">{% to_jalali customer.CreationDateTime %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">آخرین بروزرسانی</span>
+                    <span class="detail-value">{% to_jalali customer.LastUpdate %}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
