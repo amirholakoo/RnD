@@ -91,6 +91,9 @@ def check_license_numbers():
     check_interval = 10
     while True:
         try:
+            shipment_details = requests.post(f"http://81.163.7.71:8000/myapp/api/getShipmentDetails2ByLicenseNumber",params={"license_number": "35ی645ایران11"})
+            shipment_details =shipment_details.json()
+            print(shipment_details)
             response = requests.get(url, timeout=10)
             response.raise_for_status()
             
@@ -109,13 +112,14 @@ def check_license_numbers():
                     print("check..")
                     shipment = Shipment.objects.filter(Is_Deleted=False).filter(Truck=truck).filter(CreationDateTime__gte=time.time()-4000).first()
                     print(shipment)
-                    if not shipment:
+                    if shipment:
                         print("shipment not found",truck.id)
                         shipment = Shipment(Truck=truck)
                         shipment.save()
                         try:
                             shipment_details = requests.post(f"http://81.163.7.71:8000/myapp/api/getShipmentDetails2ByLicenseNumber",params={"license_number": license_number})
                             shipment_details =shipment_details.json()
+                            print(shipment_details)
                             customer = Customer(name=shipment_details["customer_name"])
                             customer.save()
                             shipment.Customer = customer

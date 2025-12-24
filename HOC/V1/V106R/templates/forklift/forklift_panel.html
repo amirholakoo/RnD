@@ -1,0 +1,175 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}پنل Forklift{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'forklift/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            پنل Forklift
+        </h1>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+            <svg width="12" height="11" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.5 3H6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 0.5L6.5 3L4 5.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="panel-grid">
+        <a href="{% url 'unload' %}" class="panel-card unloading">
+            <img src="{% static 'base/img/unloading.png' %}" alt="تخلیه">
+            <h3 class="panel-card-title">تخلیه</h3>
+        </a>
+        <a href="#" class="panel-card loading">
+            <img src="{% static 'base/img/loading.png' %}" alt="بارگیری">
+            <h3 class="panel-card-title">بارگیری</h3>
+        </a>
+        <a href="#" class="panel-card consumed">
+            <img src="{% static 'base/img/consumed.png' %}" alt="مصرف شده">
+            <h3 class="panel-card-title">مصرف شده</h3>
+        </a>
+        <a href="#" class="panel-card moved">
+            <img src="{% static 'base/img/moved.png' %}" alt="جابجا شده">
+            <h3 class="panel-card-title">جابجا شده</h3>
+        </a>
+        <a href="#" class="panel-card returned">
+            <img src="{% static 'base/img/returned.png' %}" alt="برگشت داده شده">
+            <h3 class="panel-card-title">برگشت داده شده</h3>
+        </a>
+    </div>
+    <div class="divider"></div>
+
+    <h3 class="section-title">
+        <svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.23 6.2463C13.3958 6.45302 13.4876 6.72159 13.4876 7.00006C13.4876 7.27853 13.3958 7.5471 13.23 7.75382C12.18 9.02509 9.78997 11.5001 6.99997 11.5001C4.20997 11.5001 1.81997 9.02509 0.769968 7.75382C0.604128 7.5471 0.512329 7.27853 0.512329 7.00006C0.512329 6.72159 0.604128 6.45302 0.769968 6.2463C1.81997 4.97503 4.20997 2.5 6.99997 2.5C9.78997 2.5 12.18 4.97503 13.23 6.2463Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7 9C8.10457 9 9 8.10457 9 7C9 5.89543 8.10457 5 7 5C5.89543 5 5 5.89543 5 7C5 8.10457 5.89543 9 7 9Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        تشخیصات ویژن
+    </h3>
+    {% if vision_detections %}
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>تعداد</th>
+                    <th>انبار</th>
+                    <th>مقصد</th>
+                    <th>نوع</th>
+                    <th>زمان</th>
+                    <th>زمان</th>
+                    <th>خطا</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detection in vision_detections %}
+                <tr>
+                    <td>{{ detection.class_name }}</td>
+                    <td>{{ detection.count }}</td>
+                    <td>{{ detection.vision.warehouse.name }}</td>
+                    <td>{{ detection.destenation.name }}</td>
+                    <td>{{ detection.get_Type_display }}</td>
+                    <td>{{ detection.time_text }}</td>
+                    <td>{{ detection.time }}</td>
+                    <td><span class="{% if detection.mismatch_count < 0 %}btn btn-danger p-2{% else %}btn btn-success p-2{% endif %}">{{ detection.mismatch_count }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state my-4">
+        <i>i</i>
+        <h3 class="empty-state-title">تشخیصات ویژن ثبت نشده</h3>
+        <p class="empty-state-text">هنوز هیچ تشخیصات ویژن ثبت نشده است</p>
+    </div>
+    {% endif %}
+    <div class="divider"></div>
+
+    <h3 class="section-title">
+        <i></i>
+        لیست تخلیه‌ها
+    </h3>
+
+    {% if unloads %}
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>شماره پلاک</th>
+                    <th>محل تخلیه</th>
+                    <th>مقدار</th>
+                    <th>کیفیت</th>
+                    <th>واحد</th>
+                    <th>راننده لیفتراک</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for unload in unloads %}
+                <tr>
+                    <td>{{ unload.license_number.License_plate_number }}</td>
+                    <td>{{ unload.unload_location.name }}</td>
+                    <td>{{ unload.quantity }}</td>
+                    <td>{{ unload.quality }}</td>
+                    <td>{{ unload.unit.name }}</td>
+                    <td>{{ unload.forklift_driver_name.name }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{% url 'view_unload' unload.id %}" class="btn btn-sm btn-info" title="مشاهده">
+                                <svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13.23 6.2463C13.3958 6.45302 13.4876 6.72159 13.4876 7.00006C13.4876 7.27853 13.3958 7.5471 13.23 7.75382C12.18 9.02509 9.78997 11.5001 6.99997 11.5001C4.20997 11.5001 1.81997 9.02509 0.769968 7.75382C0.604128 7.5471 0.512329 7.27853 0.512329 7.00006C0.512329 6.72159 0.604128 6.45302 0.769968 6.2463C1.81997 4.97503 4.20997 2.5 6.99997 2.5C9.78997 2.5 12.18 4.97503 13.23 6.2463Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M7 9C8.10457 9 9 8.10457 9 7C9 5.89543 8.10457 5 7 5C5.89543 5 5 5.89543 5 7C5 8.10457 5.89543 9 7 9Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                            <a href="{% url 'edit_unload' unload.id %}" class="btn btn-sm btn-warning" title="ویرایش">
+                                <svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0_1222_41922)">
+                                    <path d="M6.92572 13.2018L3.92572 13.4618L4.18572 10.4618L10.4257 4.26181C10.5189 4.16657 10.6301 4.09089 10.7529 4.03922C10.8756 3.98755 11.0075 3.96094 11.1407 3.96094C11.2739 3.96094 11.4058 3.98755 11.5286 4.03922C11.6514 4.09089 11.7626 4.16657 11.8557 4.26181L13.1257 5.54181C13.2194 5.63478 13.2938 5.74538 13.3446 5.86724C13.3954 5.9891 13.4215 6.1198 13.4215 6.25181C13.4215 6.38382 13.3954 6.51453 13.3446 6.63639C13.2938 6.75825 13.2194 6.86885 13.1257 6.96181L6.92572 13.2018Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M0.841689 3.97204C0.490759 3.91098 0.490759 3.40721 0.841688 3.34616C2.11305 3.12497 3.12423 2.15661 3.40019 0.896007L3.42134 0.799378C3.49726 0.452545 3.99111 0.450386 4.07006 0.796542L4.09574 0.909152C4.38191 2.16381 5.39337 3.12399 6.6612 3.34456C7.01392 3.40592 7.01392 3.91227 6.6612 3.97363C5.39337 4.1942 4.38191 5.15438 4.09574 6.40904L4.07006 6.52165C3.99111 6.86781 3.49726 6.86565 3.42134 6.51881L3.40019 6.42219C3.12423 5.16158 2.11305 4.19322 0.841689 3.97204Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </g>
+                                    <defs>
+                                    <clipPath id="clip0_1222_41922">
+                                    <rect width="14" height="14" fill="white"/>
+                                    </clipPath>
+                                    </defs>
+                                </svg>
+                            </a>
+                            <a href="{% url 'delete_unload' unload.id %}" class="btn btn-sm btn-danger" title="حذف">
+                                <svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0_1222_37750)">
+                                    <path d="M1 3.5H13" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2.5 3.5H11.5V12.5C11.5 12.7652 11.3946 13.0196 11.2071 13.2071C11.0196 13.3946 10.7652 13.5 10.5 13.5H3.5C3.23478 13.5 2.98043 13.3946 2.79289 13.2071C2.60536 13.0196 2.5 12.7652 2.5 12.5V3.5Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M4.5 3.5V3C4.5 2.33696 4.76339 1.70107 5.23223 1.23223C5.70107 0.763392 6.33696 0.5 7 0.5C7.66304 0.5 8.29893 0.763392 8.76777 1.23223C9.23661 1.70107 9.5 2.33696 9.5 3V3.5" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M5.5 6.50146V10.503" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M8.5 6.50146V10.503" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </g>
+                                    <defs>
+                                    <clipPath id="clip0_1222_37750">
+                                    <rect width="14" height="14" fill="white"/>
+                                    </clipPath>
+                                    </defs>
+                                </svg>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i>i</i>
+        <h3 class="empty-state-title">تخلیه‌ای ثبت نشده</h3>
+        <p class="empty-state-text">هنوز هیچ عملیات تخلیه‌ای ثبت نشده است</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

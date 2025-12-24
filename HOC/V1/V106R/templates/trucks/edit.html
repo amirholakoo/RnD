@@ -1,0 +1,81 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}ویرایش کامیون{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'trucks/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            ویرایش کامیون
+        </h1>
+        <a href="{% url 'trucks' %}" class="btn btn-secondary">
+            <svg width="12" height="11" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.5 3H6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 0.5L6.5 3L4 5.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="form-wrapper">
+        <form action="{% url 'edit_truck' truck.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="name">نام کامیون</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="نام کامیون را وارد کنید" value="{{ truck.name }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="License_plate_number">شماره پلاک</label>
+                    <input type="text" class="form-control" id="License_plate_number" name="License_plate_number" placeholder="شماره پلاک را وارد کنید" value="{{ truck.License_plate_number }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="Truck_type">نوع کامیون</label>
+                    <input type="text" class="form-control" id="Truck_type" name="Truck_type" placeholder="نوع کامیون را وارد کنید" value="{{ truck.Truck_type }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="Truck_color">رنگ کامیون</label>
+                    <input type="text" class="form-control" id="Truck_color" name="Truck_color" placeholder="رنگ کامیون را وارد کنید" value="{{ truck.Truck_color }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="status">وضعیت</label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="Free" {% if truck.status == 'Free' %}selected{% endif %}>آزاد</option>
+                        <option value="Busy" {% if truck.status == 'Busy' %}selected{% endif %}>مشغول</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="location">مکان</label>
+                    <input type="text" class="form-control" id="location" name="location" placeholder="مکان را وارد کنید" value="{{ truck.location }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="driver_name">نام راننده</label>
+                    <input type="text" class="form-control" id="driver_name" name="driver_name" placeholder="نام راننده را وارد کنید" value="{{ truck.driver_name }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="driver_doc">شناسه راننده</label>
+                    <input type="text" class="form-control" id="driver_doc" name="driver_doc" placeholder="شناسه راننده را وارد کنید" value="{{ truck.driver_doc }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="phone">تلفن همراه</label>
+                    <input type="text" class="form-control" id="phone" name="phone" placeholder="تلفن همراه را وارد کنید" value="{{ truck.phone }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="description">توضیحات</label>
+                    <textarea class="form-control" id="description" name="description" placeholder="توضیحات را وارد کنید">{{ truck.description }}</textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i>i</i>
+                    ذخیره تغییرات
+                </button>
+                <a href="{% url 'trucks' %}" class="btn btn-outline">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

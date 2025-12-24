@@ -1,0 +1,66 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}رانندگان لیفتراک{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'forklift/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i>i</i>
+            رانندگان لیفتراک
+        </h1>
+        <a href="{% url 'add_forklift_driver' %}" class="btn btn-primary">
+            <i>i</i>
+            افزودن راننده
+        </a>
+    </div>
+
+    {% if forklift_drivers %}
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>شماره تلفن</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for forklift_driver in forklift_drivers %}
+                {% if not forklift_driver.Is_Deleted %}
+                <tr>
+                    <td>
+                        <a href="{% url 'view_forklift_driver' forklift_driver.id %}">{{ forklift_driver.name }}</a>
+                    </td>
+                    <td>{{ forklift_driver.phone|default:"-" }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{% url 'view_forklift_driver' forklift_driver.id %}" class="btn btn-sm btn-info" title="مشاهده">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'edit_forklift_driver' forklift_driver.id %}" class="btn btn-sm btn-warning" title="ویرایش">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'delete_forklift_driver' forklift_driver.id %}" class="btn btn-sm btn-danger" title="حذف">
+                                <i>i</i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i>i</i>
+        <h3 class="empty-state-title">راننده‌ای یافت نشد</h3>
+        <p class="empty-state-text">برای افزودن راننده جدید از دکمه بالا استفاده کنید</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

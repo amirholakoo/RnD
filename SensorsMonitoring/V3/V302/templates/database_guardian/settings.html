@@ -1,0 +1,311 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}تنظیمات دیتابیس{% endblock %}
+
+{% block Link %}
+<link rel="stylesheet" href="{% static 'database_guardian/css/style.css' %}?v=1.0">
+{% endblock %}
+
+{% block content %}
+<div class="guardian-container mt-5 bg-white">
+    <div class="guardian-header">
+        <h1>
+            <svg class="ml-2" width="28" height="28" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_1222_37816)">
+                <path d="M7.92 13.21L7.33 13.44C7.11723 13.5198 6.88277 13.5198 6.67 13.44L6.08 13.21C4.58558 12.6241 3.30196 11.6022 2.396 10.2772C1.49003 8.95211 1.00363 7.38516 1 5.78V3C2.13249 3.1614 3.28755 3.01437 4.3435 2.57439C5.39944 2.13442 6.31717 1.41779 7 0.5C8.25 2.32 10.32 3.18 13 3V5.78C12.9964 7.38516 12.51 8.95211 11.604 10.2772C10.698 11.6022 9.41442 12.6241 7.92 13.21Z" stroke="green" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+                <defs>
+                <clipPath id="clip0_1222_37816">
+                <rect width="14" height="14" fill="white"/>
+                </clipPath>
+                </defs>
+            </svg>
+            Database Guardian</h1>
+        <p>مدیریت و نظارت بر دیتابیس‌های سیستم</p>
+    </div>
+
+    <div class="guardian-grid">
+        <!-- Current Status Card -->
+        <div class="g-card">
+            <div class="g-card-header">
+                <div class="g-card-icon purple">
+                    <svg width="18" height="18" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_1222_32234)">
+                        <path d="M1.23999 6.54006L12.74 1.31006" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10.59 0.5L12.74 1.31L11.94 3.46" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13.25 13.5H10.75V6.5C10.75 6.36739 10.8027 6.24021 10.8964 6.14645C10.9902 6.05268 11.1174 6 11.25 6H12.75C12.8826 6 13.0098 6.05268 13.1036 6.14645C13.1973 6.24021 13.25 6.36739 13.25 6.5V13.5Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8.25 13.5H5.75V8C5.75 7.86739 5.80268 7.74021 5.89645 7.64645C5.99021 7.55268 6.11739 7.5 6.25 7.5H7.75C7.88261 7.5 8.00979 7.55268 8.10355 7.64645C8.19732 7.74021 8.25 7.86739 8.25 8V13.5Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M3.25 13.5H0.75V9.5C0.75 9.36739 0.802679 9.24021 0.896447 9.14645C0.990215 9.05268 1.11739 9 1.25 9H2.75C2.88261 9 3.00979 9.05268 3.10355 9.14645C3.19732 9.24021 3.25 9.36739 3.25 9.5V13.5Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+                        <defs>
+                        <clipPath id="clip0_1222_32234">
+                        <rect width="14" height="14" fill="white"/>
+                        </clipPath>
+                        </defs>
+                        </svg>
+                </div>
+                <div>
+                    <div class="g-card-title">وضعیت فعلی</div>
+                    <div class="g-card-subtitle">آمار دیتابیس در حال استفاده</div>
+                </div>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-value">{{ current_db.name|default:"default" }}</div>
+                    <div class="stat-label">دیتابیس فعلی</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">{{ current_db.year|default:"—" }}</div>
+                    <div class="stat-label">سال</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">{{ current_db.size_mb|floatformat:1|default:"0" }} MB</div>
+                    <div class="stat-label">حجم</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">{{ current_db.records_count|default:"0" }}</div>
+                    <div class="stat-label">رکوردها</div>
+                </div>
+            </div>
+            
+            {% if config.max_size_mb > 0 %}
+            <div class="usage-bar">
+                <div class="usage-bar-label">
+                    <span>میزان استفاده</span>
+                    <span>{{ current_db.size_mb|floatformat:1|default:"0" }} / {{ config.max_size_mb }} MB</span>
+                </div>
+                <div class="usage-bar-track">
+                    <div class="usage-bar-fill" style="width: {% widthratio current_db.size_mb config.max_size_mb 100 %}%"></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Rotation Settings Card -->
+        <div class="g-card">
+            <div class="g-card-header">
+                <div class="g-card-icon green">
+                    <svg width="18" height="18" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_1222_45785)">
+                        <path d="M6 4.74C9.03757 4.74 11.5 3.79084 11.5 2.62C11.5 1.44916 9.03757 0.5 6 0.5C2.96243 0.5 0.5 1.44916 0.5 2.62C0.5 3.79084 2.96243 4.74 6 4.74Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M11.5 6.00012V2.62012" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M0.5 2.62012V9.38012C0.5 10.4227 2.44092 11.2573 5 11.4564" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6 8.08C3 8.12 0.5 7.17 0.5 6" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13.3999 11.3685L12.5589 12.0041L11.9232 11.1631" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12.5124 11.9409C12.6512 11.6742 12.7454 11.3784 12.784 11.0623C12.9564 9.64838 11.9499 8.36233 10.5359 8.18989C10.0884 8.13531 9.6537 8.19882 9.26306 8.35598" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7.04492 10.1706L7.88592 9.53491L8.52158 10.3759" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7.93219 9.59863C7.79334 9.86538 7.69914 10.1611 7.66059 10.4772C7.48815 11.8912 8.49462 13.1772 9.90861 13.3497C10.3562 13.4043 10.7909 13.3407 11.1815 13.1836" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+                        <defs>
+                        <clipPath id="clip0_1222_45785">
+                        <rect width="14" height="14" fill="white"/>
+                        </clipPath>
+                        </defs>
+                    </svg>                    
+                </div>
+                <div>
+                    <div class="g-card-title">
+                        تنظیمات تعویض</div>
+                    <div class="g-card-subtitle">پیکربندی نحوه آرشیو دیتابیس</div>
+                </div>
+            </div>
+            
+            <form id="configForm">
+                <div class="g-form-group">
+                    <label class="g-form-label">حالت تعویض</label>
+                    <select class="g-form-select" name="rotation_mode" id="rotation_mode">
+                        <option value="yearly" {% if config.rotation_mode == 'yearly' %}selected{% endif %}>سالانه</option>
+                        <option value="monthly" {% if config.rotation_mode == 'monthly' %}selected{% endif %}>ماهانه</option>
+                        <option value="manual" {% if config.rotation_mode == 'manual' %}selected{% endif %}>دستی</option>
+                    </select>
+                </div>
+                
+                <div class="g-form-row">
+                    <div class="g-form-group">
+                        <label class="g-form-label">حداکثر حجم (MB)</label>
+                        <input type="number" class="g-form-input" name="max_size_mb" id="max_size_mb" value="{{ config.max_size_mb }}" placeholder="0 = نامحدود">
+                    </div>
+                    <div class="g-form-group">
+                        <label class="g-form-label">نگهداری لاگ (هر سنسور)</label>
+                        <input type="number" class="g-form-input" name="keep_logs_count" id="keep_logs_count" value="{{ config.keep_logs_count }}">
+                    </div>
+                </div>
+                
+                <label class="g-toggle">
+                    <span class="g-toggle-text">تعویض خودکار</span>
+                    <input type="checkbox" name="auto_rotate" id="auto_rotate" {% if config.auto_rotate %}checked{% endif %}>
+                    <span class="g-toggle-switch"></span>
+                </label>
+                
+                <div class="g-btn-group">
+                    <button type="submit" class="g-btn g-btn-primary">ذخیره</button>
+                    <button type="button" class="g-btn g-btn-danger" onclick="rotateNow()">تعویض الان</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Database List Card -->
+        <div class="g-card" style="grid-column: span 2;">
+            <div class="g-card-header">
+                <div class="g-card-icon blue">
+                    <svg width="18" height="18" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_1222_45683)">
+                        <path d="M7 5.5C10.5899 5.5 13.5 4.38071 13.5 3C13.5 1.61929 10.5899 0.5 7 0.5C3.41015 0.5 0.5 1.61929 0.5 3C0.5 4.38071 3.41015 5.5 7 5.5Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M0.5 3V11C0.5 12.38 3.41 13.5 7 13.5C10.59 13.5 13.5 12.38 13.5 11V3" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13.5 7C13.5 8.38 10.59 9.5 7 9.5C3.41 9.5 0.5 8.38 0.5 7" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+                        <defs>
+                        <clipPath id="clip0_1222_45683">
+                        <rect width="14" height="14" fill="white"/>
+                        </clipPath>
+                        </defs>
+                    </svg>
+                </div>
+                <div>
+                    <div class="g-card-title">لیست دیتابیس‌ها</div>
+                    <div class="g-card-subtitle">انتخاب دیتابیس‌های قابل مشاهده در داشبورد</div>
+                </div>
+            </div>
+            
+            <form id="selectionForm">
+                <div class="db-list">
+                    {% for db in databases %}
+                    <div class="db-item">
+                        <input type="checkbox" class="db-item-check" name="selected_db" value="{{ db.name }}" 
+                            {% if db.name in selected_dbs or db.is_current %}checked{% endif %}>
+                        <div class="db-item-info">
+                            <div class="db-item-name">{{ db.name }}</div>
+                            <div class="db-item-meta">{{ db.year }}{% if db.month %}/{{ db.month }}{% endif %}{% if db.day %}/{{ db.day }}{% endif %}</div>
+                        </div>
+                        <div>
+                            {% if db.is_current %}
+                            <span class="db-badge current">فعلی</span>
+                            {% elif db.status == 'active' %}
+                            <span class="db-badge active">فعال</span>
+                            {% else %}
+                            <span class="db-badge archived">آرشیو</span>
+                            {% endif %}
+                        </div>
+                        <div class="db-item-stats">
+                            <div class="db-item-size">{{ db.size_mb|floatformat:1 }} MB</div>
+                            <div class="db-item-records">{{ db.records_count }} رکورد</div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg width="18" height="18" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#clip0_1222_45683)">
+                                <path d="M7 5.5C10.5899 5.5 13.5 4.38071 13.5 3C13.5 1.61929 10.5899 0.5 7 0.5C3.41015 0.5 0.5 1.61929 0.5 3C0.5 4.38071 3.41015 5.5 7 5.5Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M0.5 3V11C0.5 12.38 3.41 13.5 7 13.5C10.59 13.5 13.5 12.38 13.5 11V3" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13.5 7C13.5 8.38 10.59 9.5 7 9.5C3.41 9.5 0.5 8.38 0.5 7" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                </g>
+                                <defs>
+                                <clipPath id="clip0_1222_45683">
+                                <rect width="14" height="14" fill="white"/>
+                                </clipPath>
+                                </defs>
+                            </svg>
+                        </div>
+                        <div>هیچ دیتابیسی ثبت نشده</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if databases %}
+                <div class="g-btn-group">
+                    <button type="submit" class="g-btn g-btn-primary">ذخیره انتخاب</button>
+                    <button type="button" class="g-btn g-btn-outline" onclick="selectAll()">انتخاب همه</button>
+                    <button type="button" class="g-btn g-btn-outline" onclick="selectNone()">حذف همه</button>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block Script %}
+<script>
+document.getElementById('configForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const data = {
+        rotation_mode: document.getElementById('rotation_mode').value,
+        max_size_mb: document.getElementById('max_size_mb').value,
+        keep_logs_count: document.getElementById('keep_logs_count').value,
+        auto_rotate: document.getElementById('auto_rotate').checked
+    };
+    
+    fetch('{% url "database_guardian:save_config" %}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(res => {
+        if(res.status === 'ok') {
+            showAlert('تنظیمات با موفقیت ذخیره شد', 'success');
+        } else {
+            showAlert('خطا: ' + res.message, 'error');
+        }
+    });
+});
+
+document.getElementById('selectionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const checkboxes = document.querySelectorAll('input[name="selected_db"]:checked');
+    const selected = Array.from(checkboxes).map(cb => cb.value);
+    
+    fetch('{% url "database_guardian:save_selection" %}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({selected_databases: selected})
+    })
+    .then(r => r.json())
+    .then(res => {
+        if(res.status === 'ok') {
+            showAlert('انتخاب دیتابیس ذخیره شد', 'success');
+        } else {
+            showAlert('خطا: ' + res.message, 'error');
+        }
+    });
+});
+
+function rotateNow() {
+    if(!confirm('آیا از ایجاد دیتابیس جدید مطمئن هستید؟\nاین عمل قابل برگشت نیست.')) return;
+    
+    fetch('{% url "database_guardian:rotate" %}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+    })
+    .then(r => r.json())
+    .then(res => {
+        if(res.status === 'ok') {
+            showAlert(res.message, 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showAlert('خطا: ' + res.message, 'error');
+        }
+    });
+}
+
+function selectAll() {
+    document.querySelectorAll('input[name="selected_db"]').forEach(cb => cb.checked = true);
+}
+
+function selectNone() {
+    document.querySelectorAll('input[name="selected_db"]').forEach(cb => cb.checked = false);
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.getElementById('Alert');
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    alertDiv.innerHTML = `<div class="alert ${alertClass} m-3">${message}</div>`;
+    setTimeout(() => alertDiv.innerHTML = '', 3000);
+}
+</script>
+{% endblock %}

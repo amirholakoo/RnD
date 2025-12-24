@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}{{ vision.name }}{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'visions/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            {{ vision.name }}
+        </h1>
+        <div class="action-btns">
+            <a href="{% url 'visions' %}" class="btn btn-secondary">
+                <svg width="12" height="11" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.5 3H6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4 0.5L6.5 3L4 5.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                بازگشت
+            </a>
+            <a href="{% url 'edit_vision' vision.id %}" class="btn btn-warning">
+                <i>i</i>
+                ویرایش
+            </a>
+            <a href="{% url 'delete_vision' vision.id %}" class="btn btn-danger">
+                <i>i</i>
+                حذف
+            </a>
+        </div>
+    </div>
+
+    <div class="detail-wrapper">
+        <div class="detail-header">
+            <h2 class="detail-title">
+                <i>i</i>
+                اطلاعات Vision
+            </h2>
+        </div>
+        <div class="detail-body">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">نام</span>
+                    <span class="detail-value">{{ vision.name }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">شناسه Vision</span>
+                    <span class="detail-value">{{ vision.vision_id|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">انبار</span>
+                    <span class="detail-value">{% if vision.warehouse %}{{ vision.warehouse.name }}{% else %}-{% endif %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">آدرس سرور</span>
+                    <span class="detail-value">{{ vision.server_ip|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">توضیحات</span>
+                    <span class="detail-value">{{ vision.description|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">زمان ایجاد</span>
+                    <span class="detail-value">{% to_jalali vision.CreationDateTime %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">آخرین بروزرسانی</span>
+                    <span class="detail-value">{% to_jalali vision.LastUpdate %}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

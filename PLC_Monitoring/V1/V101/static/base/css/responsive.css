@@ -1,0 +1,133 @@
+@media only screen and (min-width: 1920px) {}
+
+@media (max-width: 1400px) {
+    
+}
+
+@media (max-width: 1200px) {
+    
+}
+
+@media (max-width: 992px) {
+    .settings_popup,
+    .datatable_popup {
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 768px) {
+    .settings_popup,
+    .datatable_popup {
+        max-width: 98%;
+        max-height: 90vh;
+    }
+    .popup-body {
+        padding: 16px;
+    }
+    .crud-form {
+        grid-template-columns: 1fr;
+    }
+    .crud-form .form-group:first-child {
+        grid-column: 1;
+    }
+    .form-actions {
+        grid-column: 1;
+        flex-direction: column;
+    }
+    .form-actions button {
+        width: 100%;
+    }
+    header {
+        padding: 0 16px;
+        height: 56px;
+    }
+    .header-nav {
+        gap: 4px;
+    }
+    .nav-item {
+        padding: 8px 12px;
+        gap: 6px;
+    }
+    .nav-item span {
+        display: none;
+    }
+    .logo-icon {
+        width: 36px;
+        height: 36px;
+    }
+    .title-main {
+        font-size: 13px;
+    }
+    .title-sub {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-group.full-width {
+        grid-column: 1;
+    }
+    .collapse-content.active {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .popup-header h5 {
+        font-size: 14px;
+    }
+    #settings_keys_table th,
+    #plc_keys_datatable th,
+    #settings_keys_table td,
+    #plc_keys_datatable td,
+    #plc_table th,
+    #plc_table td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    .action-btns {
+        flex-direction: column;
+        gap: 4px;
+    }
+    .action-btn {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+    .collapse-header {
+        padding: 12px;
+    }
+    .collapse-header h6 {
+        font-size: 13px;
+    }
+    .status-badge {
+        padding: 3px 8px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings_popup,
+    .datatable_popup {
+        width: 100%;
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+    header {
+        padding: 0 12px;
+    }
+    .header-title {
+        display: none;
+    }
+    .header-logo {
+        gap: 0;
+    }
+    .nav-item {
+        padding: 8px 10px;
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 450px) {
+    
+}

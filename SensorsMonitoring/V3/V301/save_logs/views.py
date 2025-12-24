@@ -60,26 +60,27 @@ def post_data(request):
                     sensor.save()
 
             if IS_AI:
-                for key, value in latest_data["data"].items():
-                    target_values = value[:3]
-                    creation_time = time.time()+3600
-                    now = time.time()
+                print(latest_data["data"][:3])
+                creation_time = time.time()+3600
+                for data in latest_data["data"][:3]:
+                    print(data)
                     last_log = SensorLogs.objects.filter(sensor=sensor).last()
-                    if last_log:
-                        if creation_time - last_log.CreationDateTime >= 3300:
-                            for x in target_values:
-                                new_log = SensorLogs(sensor=sensor,CreationDateTime=creation_time,data={"temperature":x})
-                                new_log.save()
-                                new_log.LastUpdate = creation_time
-                                new_log.save()
-                                creation_time += 3600
-                    else:
-                        for x in target_values:
-                            new_log = SensorLogs(sensor=sensor,CreationDateTime=creation_time,data={"temperature":x})
-                            new_log.save()
-                            new_log.LastUpdate = creation_time
-                            new_log.save()
-                            creation_time += 3600
+                    # if last_log:
+                    #     print(creation_time - last_log.CreationDateTime)
+                    #     if creation_time - last_log.CreationDateTime >= 600:
+                    #         print("hoooooooooo")
+                    #         new_log = SensorLogs(sensor=sensor,CreationDateTime=creation_time,data=data)
+                    #         new_log.save()
+                    #         new_log.LastUpdate = creation_time
+                    #         new_log.save()
+                    #         creation_time += 3600
+                    # else:
+                    print("ahhhhhhhhh")
+                    new_log = SensorLogs(sensor=sensor,CreationDateTime=creation_time,data=data)
+                    new_log.save()
+                    new_log.LastUpdate = creation_time
+                    new_log.save()
+                    creation_time += 3600
             else:
                 new_log = SensorLogs(sensor=sensor,data=latest_data["data"])
                 new_log.save()

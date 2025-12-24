@@ -1,0 +1,55 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}افزودن مشتری{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'Customer/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i>i</i>
+            افزودن مشتری
+        </h1>
+        <a href="{% url 'customers' %}" class="btn btn-secondary">
+            <i>i</i>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="form-wrapper">
+        <form action="{% url 'add_customer' %}" method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="name">نام</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="نام را وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="phone">شماره تلفن</label>
+                    <input type="text" class="form-control" id="phone" name="phone" placeholder="شماره تلفن را وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="email">ایمیل</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="ایمیل را وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="address">آدرس</label>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="آدرس را وارد کنید">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات را وارد کنید"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i>i</i>
+                    افزودن
+                </button>
+                <a href="{% url 'customers' %}" class="btn btn-outline">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
