@@ -32,56 +32,52 @@ def dashboard(request):
     return render(request, 'dashboard/dashboard.html', context)
 
 def device_info_json(request,sensor_id):
-    # sensor = Device_Sensor.objects.get(id=sensor_id)
-    # data = SensorLogs.objects.filter(sensor=sensor)
     sensor = Device_Sensor.objects.get(id=sensor_id)
     data = SensorLogs.objects.filter(sensor=sensor)
-
     now = time.time()
+    if "range" in request.GET:
+        filter_time = request.GET.get('range')
+        filter_time = 24*60*60 * int(filter_time)
+        data = data.filter(CreationDateTime__gte=now - filter_time)
+    
+    # timestamp, temperature, humidity
     offset = 60*60
     chart_data = []
-    #average_data = []
+    last_keys = []
     for x in data:
-        index = 0
         if not x.sensor.sensor_type == "status":
             try:
                 target_data = json.loads(x.data.replace("'",'"')).items()
             except:
-                print(x.data)
                 continue
+
+            final_data = {}
+            final_data["timestamp"] = float(x.CreationDateTime)
             for key, value in target_data:
                 try:
                     value = float(value)
                 except:
                     value = None
                 if not key == "timestamp" and not key == "type" and value != "" and value is not None:
-                    if key not in [x["type"] for x in chart_data]:
-                        #average_data.append({"type":key,"average":value,"index":1})
-                        chart_data.append({"type":key,"data":[],"timestamps":[],"time":float(x.LastUpdate)})
+                    try:
+                        first_key, first_value = next(iter(target_data))
+                        if not last_keys:
+                            last_keys = [key for key,value in target_data]
+                        
+                        if not first_key in last_keys:
+                            print(last_keys,"__________",key)
+                            x.delete()
+                            continue
+                    except:
+                        pass
+                    if chart_data:
+                        if chart_data[-1]["timestamp"] + offset < float(x.LastUpdate):
+                            final_data[key] = float(f'{value:.2f}')
                     else:
-                        if offset:
-                            if chart_data[index]["time"] + offset < float(x.LastUpdate): 
-                            #avg = (average_data[index]["average"] / average_data[index]["index"])
-                                chart_data[index]["data"].append(float(f'{value:.2f}'))
-                                chart_data[index]["timestamps"].append(float(x.CreationDateTime))
-                                chart_data[index]["time"] = float(x.LastUpdate)
-                        else:
-                            chart_data[index]["data"].append(float(f'{value:.2f}'))
-                            chart_data[index]["timestamps"].append(float(x.CreationDateTime))
-
-                        # average_data[index]["average"] = valuez
-                        # average_data[index]["index"] = 1
-                            # print(average_data[index]["type"],value,average_data[index]["average"],average_data[index]["index"],average_data[index]["average"] / average_data[index]["index"])
-                        # else:
-                        #     # print(average_data[index]["type"],value,average_data[index]["average"],average_data[index]["index"],average_data[index]["average"] / average_data[index]["index"])
-                        #     # open("average_data.txt","a").write(f"{average_data[index]['type']} {value} {average_data[index]['average']} {average_data[index]['index']} {average_data[index]['average'] / average_data[index]['index']}\n")
-                        #     average_data[index]["average"] += value
-                        #     average_data[index]["index"] += 1
-                    index += 1
-                #time.sleep(0.01)
-    chart_data = [x for x in chart_data if x["data"]]
+                        final_data[key] = float(f'{value:.2f}')
+            if len(final_data) > 1:
+                chart_data.append(final_data)
     return JsonResponse(list(chart_data),safe=False)
-    return JsonResponse(list(data.values()),safe=False)
 
 def device_info(request,device_id,sensor_id):
     device = Device.objects.get(id=device_id)
@@ -184,6 +180,7 @@ def chart_info_json(request,sensor_id):
         chart_data = []
         min_set = False
         max_set = False
+        last_keys = []
         for x in data:
             ai_index = 0
             index = 0
@@ -199,7 +196,18 @@ def chart_info_json(request,sensor_id):
                     except:
                         value = None
                     if not key == "timestamp" and not key == "type" and value != "" and value is not None:
-
+                        
+                        try:
+                            first_key, first_value = next(iter(target_data))
+                            if not last_keys:
+                                last_keys = [key for key,value in target_data]
+                            
+                            if not first_key in last_keys:
+                                print(last_keys,"__________",key)
+                                x.delete()
+                                continue
+                        except:
+                            pass
                         if key not in [x["type"] for x in chart_data]:
                             chart_data.append({"type":key,"data":[value],"ai_data":[],"timestamps":[str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(x.CreationDateTime))).strftime(" %d %b - %H:%M"))],"time":float(x.CreationDateTime),"s":[float(x.CreationDateTime)]})
                         else:
@@ -282,54 +290,62 @@ def chart_info_json(request,sensor_id):
                         index += 1
         chart_data = [x for x in chart_data if x["data"] and len(x["data"]) > 10]
         if has_ai and chart_data and not filter_time == 3600:
-            index=0
-            ai_index=0
-            for x in chart_data[0]["data"]:
-                if ai_index < ai_data.count():
-                    difference = chart_data[0]["s"][index] - ai_data[ai_index].CreationDateTime
-                    if difference > 3600:
-                        ai_index += 1
-                    t1 = datetime.datetime.fromtimestamp(chart_data[0]["s"][index])
-                    t2 = datetime.datetime.fromtimestamp(ai_data[ai_index].CreationDateTime)
-                    # Same logic applies:
-                    IS_SAME = (
-                        t1.year == t2.year and
-                        t1.month == t2.month and
-                        t1.day == t2.day and
-                        t1.hour == t2.hour
-                    )
-                    if not IS_SAME:
-                        try:
-                            t2 = datetime.datetime.fromtimestamp(ai_data[ai_index+1].CreationDateTime)
-                            IS_SAME_2 = (
-                                t1.year == t2.year and
-                                t1.month == t2.month and
-                                t1.day == t2.day and
-                                t1.hour == t2.hour
-                            )
-                            if IS_SAME_2:
-                                IS_SAME = True
-                            else:
+            chart_data_index = 0
+            for item in chart_data:
+                index=0
+                ai_index=0
+                for x in item["data"]:
+                    if ai_index < ai_data.count():
+                        difference = item["s"][index] - ai_data[ai_index].CreationDateTime
+                        if difference > 3600:
+                            ai_index += 1
+                        t1 = datetime.datetime.fromtimestamp(item["s"][index])
+                        t2 = datetime.datetime.fromtimestamp(ai_data[ai_index].CreationDateTime)
+                        # Same logic applies:
+                        IS_SAME = (
+                            t1.year == t2.year and
+                            t1.month == t2.month and
+                            t1.day == t2.day and
+                            t1.hour == t2.hour
+                        )
+                        if not IS_SAME:
+                            try:
+                                t2 = datetime.datetime.fromtimestamp(ai_data[ai_index+1].CreationDateTime)
+                                IS_SAME_2 = (
+                                    t1.year == t2.year and
+                                    t1.month == t2.month and
+                                    t1.day == t2.day and
+                                    t1.hour == t2.hour
+                                )
+                                if IS_SAME_2:
+                                    IS_SAME = True
+                                else:
+                                    IS_SAME = False
+                            except:
                                 IS_SAME = False
-                        except:
-                            IS_SAME = False
-                        
-                    check_index = index
-                    if IS_SAME or chart_data[0]["s"][index] > ai_data[ai_index].CreationDateTime: #(difference <= 1800 and difference >= 0) or (difference >= -1800 and difference <= 0):
-                        ai_target_data = json.loads(ai_data[ai_index].data.replace("'",'"'))
-                        chart_data[0]["ai_data"].append(float(ai_target_data[chart_data[0]["type"]]))
+                            
+                        check_index = index
+                        if IS_SAME or item["s"][index] > ai_data[ai_index].CreationDateTime: #(difference <= 1800 and difference >= 0) or (difference >= -1800 and difference <= 0):
+                            ai_target_data = json.loads(ai_data[ai_index].data.replace("'",'"'))
+                            if item["type"] in ai_target_data:
+                                item["ai_data"].append(float(ai_target_data[item["type"]]))
+                            else:
+                                item["ai_data"].append(None)
+                            ai_index += 1
+                        else:
+                            item["ai_data"].append(None)
+                        index += 1
+                if ai_index < ai_data.count():
+                    for x in range(ai_data.count()-(ai_index)):
+                        if not ai_data[ai_index].CreationDateTime < item["s"][-1]:
+                            ai_target_data = json.loads(ai_data[ai_index].data.replace("'",'"'))
+                            item["data"].append(None)
+                            if item["type"] in ai_target_data:
+                                item["ai_data"].append(float(ai_target_data[item["type"]]))
+                            else:
+                                item["ai_data"].append(None)
+                            item["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(ai_data[ai_index].CreationDateTime))).strftime(" %d %b %H:%M:%S")))
                         ai_index += 1
-                    else:
-                        chart_data[0]["ai_data"].append(None)
-                    index += 1
-            if ai_index < ai_data.count():
-                for x in range(ai_data.count()-(ai_index)):
-                    if not ai_data[ai_index].CreationDateTime < chart_data[0]["s"][-1]:
-                        ai_target_data = json.loads(ai_data[ai_index].data.replace("'",'"'))
-                        chart_data[0]["data"].append(None)
-                        chart_data[0]["ai_data"].append(float(ai_target_data[chart_data[0]["type"]]))
-                        chart_data[0]["timestamps"].append(str(jdatetime.datetime.fromgregorian(datetime=datetime.datetime.fromtimestamp(float(ai_data[ai_index].CreationDateTime))).strftime(" %d %b %H:%M:%S")))
-                    ai_index += 1
         for x in chart_data:
             if target_filter_data:
                 for item in target_filter_data:
@@ -921,3 +937,10 @@ def export_data(request, sensor_id):
         import traceback
         traceback.print_exc()
         return JsonResponse({'status': 'error', 'message': str(e)})
+
+
+# for x in SensorLogs.objects.filter(sensor__id=8):
+#     data = json.loads(x.data.replace("'",'"')).items()
+#     for key,value in data:
+#         if key == "status" and value == "200"
+#             print(value)

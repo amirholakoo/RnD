@@ -1,0 +1,193 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}{{ shipment.name }}{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'shipments/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            {{ shipment.name }}
+        </h1>
+        <div class="action-btns">
+            <a href="{% url 'shipments' %}" class="btn btn-secondary">
+                <svg width="12" height="11" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.5 3H6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4 0.5L6.5 3L4 5.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                بازگشت
+            </a>
+            <a href="{% url 'edit_shipment' shipment.id %}" class="btn btn-warning">
+                <i>i</i>
+                ویرایش
+            </a>
+            <a href="{% url 'delete_shipment' shipment.id %}" class="btn btn-danger">
+                <i>i</i>
+                حذف
+            </a>
+        </div>
+    </div>
+
+    <div class="detail-wrapper">
+        <div class="detail-header">
+            <h2 class="detail-title">
+                <i>i</i>
+                اطلاعات اصلی
+            </h2>
+        </div>
+        <div class="detail-body">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">نام</span>
+                    <span class="detail-value">{{ shipment.name }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">وضعیت</span>
+                    <span class="detail-value">
+                        {% if shipment.status == 1 %}ثبت شده
+                        {% elif shipment.status == 2 %}در حال بارگیری/تخلیه
+                        {% elif shipment.status == 3 %}بارگیری/تخلیه شده
+                        {% elif shipment.status == 4 %}اداره
+                        {% elif shipment.status == 5 %}تحویل داده شده
+                        {% elif shipment.status == 6 %}لغو شده
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">نوع مرسوله</span>
+                    <span class="detail-value">
+                        {% if shipment.shipment_type == 1 %}
+                        <span class="badge badge-success">ورودی</span>
+                        {% else %}
+                        <span class="badge badge-info">خروجی</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">مکان</span>
+                    <span class="detail-value">{% if shipment.location %}{{ shipment.location.name }}{% else %}-{% endif %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">شماره پلاک</span>
+                    <span class="detail-value">{% if shipment.Truck %}{{ shipment.Truck.License_plate_number }}{% else %}-{% endif %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">ماده</span>
+                    <span class="detail-value">{% if shipment.material %}{{ shipment.material.name }}{% else %}-{% endif %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">مشتری</span>
+                    <span class="detail-value">{% if shipment.Customer %}{{ shipment.Customer.name }}{% else %}-{% endif %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">تامین‌کننده</span>
+                    <span class="detail-value">{% if shipment.Supplier %}{{ shipment.Supplier.name }}{% else %}-{% endif %}</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3 class="section-title"><i>i</i> زمان‌ها</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">تاریخ دریافت</span>
+                    <span class="detail-value">{% to_jalali shipment.receive_date %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">زمان وزن ۱</span>
+                    <span class="detail-value">{{ shipment.weight1_time|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">زمان وزن ۲</span>
+                    <span class="detail-value">{{ shipment.weight2_time|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">زمان خروج</span>
+                    <span class="detail-value">{{ shipment.exit_time|default:"-" }}</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3 class="section-title"><i>i</i> وزن و مقدار</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">وزن ۱</span>
+                    <span class="detail-value">{{ shipment.weight1|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">وزن ۲</span>
+                    <span class="detail-value">{{ shipment.weight2|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">وزن خالص</span>
+                    <span class="detail-value">{{ shipment.net_weight|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">واحد</span>
+                    <span class="detail-value">{{ shipment.unit.name|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">مقدار</span>
+                    <span class="detail-value">{{ shipment.quantity|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">کیفیت</span>
+                    <span class="detail-value">{{ shipment.quality|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">محل تخلیه</span>
+                    <span class="detail-value">{{ shipment.unload_location|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">پیکان</span>
+                    <span class="detail-value">{{ shipment.penalty|default:"-" }}</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3 class="section-title"><i>i</i> اطلاعات مالی</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">قیمت هر کیلو</span>
+                    <span class="detail-value">{{ shipment.price_per_kg|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">قیمت کل</span>
+                    <span class="detail-value">{{ shipment.total_price|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">هزینه اضافی</span>
+                    <span class="detail-value">{{ shipment.extra_cost|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">مالیات</span>
+                    <span class="detail-value">{{ shipment.vat|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">وضعیت فاکتور</span>
+                    <span class="detail-value">{{ shipment.invoice_status|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">وضعیت پرداخت</span>
+                    <span class="detail-value">{{ shipment.payment_status|default:"-" }}</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3 class="section-title"><i>i</i> اطلاعات سیستمی</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">زمان ایجاد</span>
+                    <span class="detail-value">{% to_jalali shipment.CreationDateTime %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">آخرین بروزرسانی</span>
+                    <span class="detail-value">{% to_jalali shipment.LastUpdate %}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

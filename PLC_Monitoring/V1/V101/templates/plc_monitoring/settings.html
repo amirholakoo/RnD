@@ -1,0 +1,128 @@
+{% load static %}
+<section class="settings">
+    <div class="popup-header">
+        <h5>تنظیمات</h5>
+        <button type="button" class="popup-close-btn" onclick="toggleSettingsPopup()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 13L13 1M13 13L1 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </div>
+    <div class="popup-body">
+        <!-- PLC CRUD Collapsible -->
+        <div class="collapse-section">
+            <div class="collapse-header" onclick="toggleCollapse('plc_section')">
+                <h6>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    مدیریت دستگاه‌ها (PLC)
+                </h6>
+                <svg class="collapse-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="collapse-content" id="plc_section">
+                <form id="plc_form" class="crud-form">
+                    <input type="hidden" name="id" id="plc_id">
+                    <div class="form-group">
+                        <label for="device_id_input">شناسه دستگاه</label>
+                        <input type="text" name="device_id" id="device_id_input" placeholder="شناسه یکتا" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="plc_name_input">نام دستگاه</label>
+                        <input type="text" name="name" id="plc_name_input" placeholder="نام دستگاه">
+                    </div>
+                    <div class="form-group">
+                        <label for="ip_address_input">آدرس IP</label>
+                        <input type="text" name="ip_address" id="ip_address_input" placeholder="192.168.1.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="location_input">موقعیت</label>
+                        <input type="text" name="location" id="location_input" placeholder="محل نصب">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="description_input">توضیحات</label>
+                        <textarea name="description" id="description_input" rows="2" placeholder="توضیحات دستگاه"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="Is_Known" id="is_known_input">
+                            <span>دستگاه شناخته شده</span>
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="plc_submit_btn">افزودن</button>
+                        <button type="button" class="btn-secondary" onclick="resetPLCForm()">انصراف</button>
+                    </div>
+                </form>
+                <div class="list-section">
+                    <h6>لیست دستگاه‌ها</h6>
+                    <div class="table-wrapper">
+                        <table id="plc_table">
+                            <thead>
+                                <tr>
+                                    <th>شناسه</th>
+                                    <th>نام</th>
+                                    <th>IP</th>
+                                    <th>موقعیت</th>
+                                    <th>وضعیت</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLC Keys CRUD Collapsible -->
+        <div class="collapse-section">
+            <div class="collapse-header" onclick="toggleCollapse('keys_section')">
+                <h6>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 2L19 4M11.3891 11.6109C12.3844 12.6062 13 13.9812 13 15.5C13 18.5376 10.5376 21 7.5 21C4.46243 21 2 18.5376 2 15.5C2 12.4624 4.46243 10 7.5 10C9.01878 10 10.3938 10.6156 11.3891 11.6109ZM11.3891 11.6109L15.5 7.5M15.5 7.5L18.5 10.5L22 7L19 4M15.5 7.5L19 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    مدیریت کلیدها
+                </h6>
+                <svg class="collapse-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="collapse-content" id="keys_section">
+                <form id="plc_keys_form" class="crud-form">
+                    <input type="hidden" name="id" id="key_id">
+                    <div class="form-group">
+                        <label for="key_input">کلید</label>
+                        <input type="text" name="key" id="key_input" placeholder="نام کلید" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="value_input">مقدار</label>
+                        <input type="text" name="value" id="value_input" placeholder="مقدار کلید">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="key_submit_btn">افزودن</button>
+                        <button type="button" class="btn-secondary" onclick="resetKeyForm()">انصراف</button>
+                    </div>
+                </form>
+                <div class="list-section">
+                    <h6>لیست کلیدها</h6>
+                    <p dir="ltr">transform structure: key=value;key=value;...</p>
+                    <div class="table-wrapper">
+                        <table id="settings_keys_table">
+                            <thead>
+                                <tr>
+                                    <th>کلید</th>
+                                    <th>مقدار</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

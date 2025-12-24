@@ -1,0 +1,76 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}انواع مواد{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'material/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i>i</i>
+            انواع مواد
+        </h1>
+        <a href="{% url 'add_material_type' %}" class="btn btn-primary">
+            <i>i</i>
+            افزودن نوع ماده
+        </a>
+    </div>
+
+    {% if material_types %}
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>نوع ماده</th>
+                    <th>تامین‌کننده</th>
+                    <th>توضیحات</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for material_type in material_types %}
+                {% if not material_type.Is_Deleted %}
+                <tr>
+                    <td>
+                        <a href="{% url 'view_material_type' material_type.id %}">{{ material_type.material_type }}</a>
+                    </td>
+                    <td>{{ material_type.supplier_name|default:"-" }}</td>
+                    <td>{{ material_type.description|default:"-" }}</td>
+                    <td>
+                        {% if material_type.Is_Active %}
+                        <span class="badge badge-success">فعال</span>
+                        {% else %}
+                        <span class="badge badge-danger">غیرفعال</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{% url 'view_material_type' material_type.id %}" class="btn btn-sm btn-info" title="مشاهده">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'edit_material_type' material_type.id %}" class="btn btn-sm btn-warning" title="ویرایش">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'delete_material_type' material_type.id %}" class="btn btn-sm btn-danger" title="حذف">
+                                <i>i</i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i>i</i>
+        <h3 class="empty-state-title">نوع ماده‌ای یافت نشد</h3>
+        <p class="empty-state-text">برای افزودن نوع ماده جدید از دکمه بالا استفاده کنید</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
