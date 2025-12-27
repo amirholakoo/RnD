@@ -152,6 +152,28 @@ def Receive_Data(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
+# check if vision data are same as shipment data
+
+UNIT_KEYWORDS = {
+    "آخال": "akhal",
+    "نشاسته": "fructose",
+    "سولفات": "sulfate",
+    "پک": "pack",
+    "akd": "akd",
+}
+
+def is_same_as(vision_data, unit_name):
+    is_same = False
+
+    result = re.sub(r'(آخال|نشاسته|سولفات|پک|akd)|.', r'\1', unit_name.lower())
+    
+    print("result:",result)
+    if result in UNIT_KEYWORDS:
+        is_same = True
+    return is_same
+
+
+
 def organizing_vision_detections(vision_data):
     try:
         data = vision_data.data
@@ -230,12 +252,12 @@ def organizing_vision_detections(vision_data):
                 
                 # Find shipment
                 if not organized_data.class_name == "forklift":
-                    print("shipment not found")
                     shipment = Shipment.objects.filter(Q(CreationDateTime__gte=organized_data.start_time - 3600) & Q(CreationDateTime__lte=organized_data.start_time + 3600)).last()
                     if shipment:
-                        print("shipment found")
-                        organized_data.shipment = shipment
-                        print("shipment found and saved")
+                        print("shipment found",is_same_as(organized_data.class_name, shipment.unit.name))
+                        if is_same_as(organized_data.class_name, shipment.unit.name):
+                            organized_data.shipment = shipment
+                            print("shipment found and saved")
 
                 # Find Type
                 if organized_data.shipment:

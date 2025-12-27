@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
-import json, threading, time, requests
+import json, threading, time, requests, re
 from django.contrib import messages
 from django.shortcuts import redirect
 from Shipments.models import Shipment
@@ -113,54 +113,58 @@ def check_license_numbers():
                         print("shipment not found",truck.id)
                         shipment = Shipment(Truck=truck)
                         shipment.save()
-                        try:
-                            
-                            # shipment_details = requests.post(f"http://81.163.7.71:8000/myapp/api/getShipmentDetails2ByLicenseNumber",params={"license_number": license_number})
-                            # shipment_details =shipment_details.json()
-                            # print(shipment_details)
-                            # customer = Customer(name=shipment_details["customer_name"])
-                            # customer.save()
-                            # shipment.Customer = customer
-                            # shipment.list_of_reels = shipment_details["list_of_reels"]
-                            # shipment.weight1 = shipment_details["weight1"]
-                            # shipment.weight2 = shipment_details["weight2"]
-                            # shipment.net_weight = shipment_details["net_weight"]
-                            # if "unloaded_location" in shipment_details:
-                            #     if "tolid" in shipment_details["unloaded_location"].lower():
-                            #         shipment.location = Warehouse.objects.filter(name__icontains="تولید").first()
-                            #     elif "akhal" in shipment_details["unloaded_location"].lower():
-                            #         shipment.location = Warehouse.objects.filter(name__icontains="آخال").first()
-                            #     elif "sangin" in shipment_details["unloaded_location"].lower():
-                            #         shipment.location = Warehouse.objects.filter(name__icontains="سنگین").first()
-                            #     elif "khamir" in shipment_details["unloaded_location"].lower():
-                            #         shipment.location = Warehouse.objects.filter(name__icontains="خمیر").first()
-                            try:
-                                response = requests.get(
-                                    "http://81.163.7.71:8000/myapp/api/getUnitNamesBasedOnLicenseOfShipment",
-                                    params={"lic_number": license_number},
-                                    timeout=5
-                                )
-                                response.raise_for_status()
-
-                                unit_details = response.json()
-                                print(unit_details)
-
-                                last_unit = None
-
-                                for unit_name in unit_details["unit_names"]:
-                                    print(unit_name)
-                                    last_unit, _ = Unit.objects.get_or_create(name=unit_name)
-                                    print(last_unit)
-
-                                if last_unit:
-                                    shipment.unit = last_unit
-                                    shipment.save()
-
-                            except requests.RequestException as e:
-                                print("Request error:", e)
-                        except Exception as e:
-                            print(e)
                         print("shipment added",shipment.id)
+
+                    try:
+                        if not shipment.unit:
+                            response = requests.get(
+                                "http://81.163.7.71:8000/myapp/api/getUnitNamesBasedOnLicenseOfShipment",
+                                params={"lic_number": license_number},
+                                timeout=5
+                            )
+                            response.raise_for_status()
+
+                            unit_details = response.json()
+                            print(unit_details)
+
+                            last_unit = None
+
+                            for unit_name in unit_details["unit_names"]:
+                                print(unit_name)
+                                last_unit, _ = Unit.objects.get_or_create(name=unit_name)
+                                print(last_unit)
+
+                            if last_unit:
+                                shipment.unit = last_unit
+                                shipment.save()
+
+                    except requests.RequestException as e:
+                        print("Request error:", e)
+                        
+                    
+                    try:
+                        if not shipment.Customer:
+                            shipment_details = requests.post(f"http://81.163.7.71:8000/myapp/api/getShipmentDetails2ByLicenseNumber",params={"license_number": license_number})
+                            shipment_details =shipment_details.json()
+                            print(shipment_details)
+                            customer = Customer(name=shipment_details["customer_name"])
+                            customer.save()
+                            shipment.Customer = customer
+                            shipment.list_of_reels = shipment_details["list_of_reels"]
+                            shipment.weight1 = shipment_details["weight1"]
+                            shipment.weight2 = shipment_details["weight2"]
+                            shipment.net_weight = shipment_details["net_weight"]
+                            if "unloaded_location" in shipment_details:
+                                if "tolid" in shipment_details["unloaded_location"].lower():
+                                    shipment.location = Warehouse.objects.filter(name__icontains="تولید").first()
+                                elif "akhal" in shipment_details["unloaded_location"].lower():
+                                    shipment.location = Warehouse.objects.filter(name__icontains="آخال").first()
+                                elif "sangin" in shipment_details["unloaded_location"].lower():
+                                    shipment.location = Warehouse.objects.filter(name__icontains="سنگین").first()
+                                elif "khamir" in shipment_details["unloaded_location"].lower():
+                                    shipment.location = Warehouse.objects.filter(name__icontains="خمیر").first()
+                    except Exception as e:
+                        print(f"Error in getting shipment details: {e}")
             else:
                 print("no license numbers found")
             
