@@ -8,7 +8,7 @@ import time, jdatetime
 from django.http import JsonResponse
 from django.conf import settings
 from Warehouse.models import Warehouse
-import os, requests
+import os, requests, re
 from base.views import convert_to_unix_timestamp, convert_to_jalali
 from Shipments.models import Shipment
 from django.db.models import Q
@@ -156,22 +156,24 @@ def Receive_Data(request):
 
 UNIT_KEYWORDS = {
     "آخال": "akhal",
+    "بسته پرس": "akhal",
     "نشاسته": "fructose",
     "سولفات": "sulfate",
     "پک": "pack",
     "akd": "akd",
+    "سود": "sude"
 }
 
 def is_same_as(vision_data, unit_name):
     is_same = False
 
-    result = re.sub(r'(آخال|نشاسته|سولفات|پک|akd)|.', r'\1', unit_name.lower())
+    result = re.sub(r'(آخال|نشاسته|سولفات|پک|akd|بسته پرس|سود)|.', r'\1', unit_name.lower())
     
     print("result:",result)
     if result in UNIT_KEYWORDS:
-        is_same = True
+        if UNIT_KEYWORDS[result] == vision_data:
+            is_same = True
     return is_same
-
 
 
 def organizing_vision_detections(vision_data):
@@ -255,9 +257,10 @@ def organizing_vision_detections(vision_data):
                     shipment = Shipment.objects.filter(Q(CreationDateTime__gte=organized_data.start_time - 3600) & Q(CreationDateTime__lte=organized_data.start_time + 3600)).last()
                     if shipment:
                         print("shipment found",is_same_as(organized_data.class_name, shipment.unit.name))
-                        if is_same_as(organized_data.class_name, shipment.unit.name):
+                        if is_same_as(organized_data.class_name, shipment.unit.name) or (not shipment.unit and organized_data.Type == 2):
                             organized_data.shipment = shipment
                             print("shipment found and saved")
+
 
                 # Find Type
                 if organized_data.shipment:
