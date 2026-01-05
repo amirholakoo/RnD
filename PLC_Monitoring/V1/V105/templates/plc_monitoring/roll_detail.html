@@ -1,0 +1,444 @@
+{% extends "base/base.html" %}
+{% load to_jalali %}
+{% load static %}
+{% load plc_filters %}
+{% block content %}
+
+<div class="container-fluid px-4">
+    {% if roll %}
+    <!-- Roll Detail Header -->
+    <div class="roll-detail-header mb-4">
+        <div class="roll-detail-right">
+            <a href="{% url 'live_settings' %}?plc={{ roll.plc.id }}" class="btn-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                بازگشت
+            </a>
+            <div class="roll-detail-info">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span class="roll-detail-number">رول #{{ roll.roll_number|default:"-" }}</span>
+                {% if roll.plc %}
+                <span class="roll-detail-plc">{{ roll.plc.device_id }}{% if roll.plc.name %} - {{ roll.plc.name }}{% endif %}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="roll-detail-left">
+            <span class="last-update-label">آخرین بروزرسانی:</span>
+            <span id="last_update_time">{% to_jalali roll.LastUpdate %}</span>
+        </div>
+    </div>
+
+    <!-- Roll Info Section -->
+    <div class="roll-info-section mb-4">
+        <div class="section-header">
+            <h3 class="section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                    <polyline points="13 2 13 9 20 9"/>
+                </svg>
+                اطلاعات رول
+            </h3>
+        </div>
+        <div class="roll-info-grid">
+            <div class="roll-info-card">
+                <div class="roll-info-card-label">شماره رول</div>
+                <div class="roll-info-card-value highlight">{{ roll.roll_number|default:"-" }}</div>
+            </div>
+            <div class="roll-info-card">
+                <div class="roll-info-card-label">متراژ تولید شده</div>
+                <div class="roll-info-card-value">{{ roll.Printed_length|default:0 }}</div>
+            </div>
+            <div class="roll-info-card">
+                <div class="roll-info-card-label">پارگی‌ها</div>
+                <div class="roll-info-card-value">{{ roll.Paper_breaks|default:0 }}</div>
+            </div>
+            <div class="roll-info-card">
+                <div class="roll-info-card-label">تاریخ ایجاد</div>
+                <div class="roll-info-card-value" style="font-size: 16px;">{% to_jalali roll.CreationDateTime %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Roll Settings Section -->
+    <div class="roll-settings-section">
+        <div class="section-header">
+            <h3 class="section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                تنظیمات رول
+            </h3>
+        </div>
+        {% if roll.plc_setting %}
+        <div class="settings-grid-large">
+            {% for key, value in roll.plc_setting.items %}
+            <div class="setting-card" {% if key == 'st' and value == "m" %}style="background: linear-gradient(135deg, #f8f9fa 0%, #ffe9a6 100%); border: 1px solid #FFC107;"{% endif %} data-key="{{ key }}">
+                <div class="setting-card-key">{{ key|get_key_name }}</div>
+                <div class="setting-card-value">{{ value }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-settings-large">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p>تنظیماتی برای این رول ثبت نشده</p>
+            <span>اطلاعات تنظیمات در زمان ایجاد رول ذخیره نشده است</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Roll Logs Charts Section -->
+    <div class="roll-charts-section mt-4">
+        <div class="section-header">
+            <h3 class="section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                نمودار لاگ‌ها
+            </h3>
+            <div class="chart-controls">
+                <div class="interval-selector">
+                    <label for="roll_chart_interval">بازه:</label>
+                    <input type="number" id="roll_chart_interval" value="{{ current_interval }}" min="1" max="3600">
+                    <span>ثانیه</span>
+                    <button type="button" class="btn-apply-interval" onclick="applyInterval()">اعمال</button>
+                </div>
+                <button type="button" class="btn-chart-settings" onclick="toggleExcludedKeysPanel()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    تنظیمات
+                </button>
+            </div>
+        </div>
+        <!-- Excluded Keys Panel -->
+        <div id="excluded_keys_panel" class="excluded-keys-panel" style="display: none;">
+            <div class="excluded-keys-header text-center">
+                <span>انتحاب کلید هایی که نمایش داده <span style="color: #eb4b4b;">نمی‌شوند</span></span>
+                <small>کلیدهای انتخاب شده از نمودار حذف می‌شوند</small>
+            </div>
+            <div id="excluded_keys_list" class="excluded-keys-list"></div>
+        </div>
+        <div id="roll_charts_container"></div>
+    </div>
+    {% else %}
+    <!-- Roll Not Found -->
+    <div class="roll-not-found">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <h4>رول یافت نشد</h4>
+        <p>رول مورد نظر وجود ندارد یا حذف شده است</p>
+        <a href="/" class="btn-primary-link">بازگشت به داشبورد</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block Script %}
+{% if roll %}
+<script>
+const chartSeries = {{ chart_series|safe }};
+const keysWithStatus = {{ keys_with_status|safe }};
+const breakAnnotations = {{ break_annotations|safe }};
+const stoppedRanges = {{ stopped_ranges|safe }};
+const CHART_COLORS = ['#1B1464', '#00D9C0', '#5E8EFF', '#FF6B6B', '#FFC107', '#9C27B0', '#4CAF50', '#FF9800', '#E91E63', '#3F51B5'];
+
+// Build xaxis annotations for breaks (red)
+const breakXaxisAnnotations = breakAnnotations.map(ann => ({
+    x: ann.x,
+    borderColor: '#ff5c5c',
+    strokeDashArray: 0,
+    label: {
+        borderColor: '#ff5c5c',
+        style: {
+            color: '#fff',
+            background: '#ff5c5c',
+            fontSize: '10px',
+            fontFamily: 'Peyda, sans-serif',
+            padding: { left: 6, right: 6, top: 3, bottom: 3 }
+        },
+        text: ann.label,
+        position: 'bottom',
+        orientation: 'horizontal'
+    }
+}));
+
+// Build stopped ranges (light red shaded areas for is_running=false, > 5 min)
+const stoppedRangeAnnotations = stoppedRanges.map(range => ({
+    x: range.x,
+    x2: range.x2,
+    fillColor: '#ffebee',
+    opacity: 0.4,
+    borderColor: '#ffcdd2',
+    label: {
+        text: 'توقف',
+        borderColor: 'transparent',
+        style: {
+            color: '#c62828',
+            background: 'transparent',
+            fontSize: '9px',
+            fontFamily: 'Peyda, sans-serif',
+            padding: { left: 4, right: 4, top: 2, bottom: 2 }
+        },
+        position: 'bottom',
+        orientation: 'horizontal',
+        offsetY: 20
+    }
+}));
+
+// Toggle excluded keys panel
+function toggleExcludedKeysPanel() {
+    const panel = document.getElementById('excluded_keys_panel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+// Apply interval - reload page with new interval
+function applyInterval() {
+    const interval = parseInt(document.getElementById('roll_chart_interval').value) || 60;
+    const url = new URL(window.location.href);
+    url.searchParams.set('interval', interval);
+    window.location.href = url.toString();
+}
+
+// Render excluded keys list
+function renderExcludedKeysList() {
+    const container = document.getElementById('excluded_keys_list');
+    if (!keysWithStatus || keysWithStatus.length === 0) {
+        container.innerHTML = '<div class="no-keys-message">کلیدی برای نمایش وجود ندارد</div>';
+        return;
+    }
+    
+    container.innerHTML = keysWithStatus.map(item => `
+        <label class="excluded-key-item ${item.is_excluded ? 'excluded' : ''}">
+            <input type="checkbox" ${item.is_excluded ? 'checked' : ''} onchange="toggleKey('${item.key}', this)">
+            <span class="key-name">${item.fa_name}</span>
+            <span class="key-code">${item.key}</span>
+        </label>
+    `).join('');
+}
+
+// Toggle key excluded status
+async function toggleKey(key, checkbox) {
+    const item = checkbox.closest('.excluded-key-item');
+    item.classList.add('loading');
+    
+    try {
+        const formData = new FormData();
+        formData.append('key', key);
+        
+        const response = await fetch('/api/chart-excluded-keys/toggle/', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        if (result.status === 'ok') {
+            item.classList.toggle('excluded', result.action === 'added');
+            // Reload page to refresh charts
+            location.reload();
+        } else {
+            alert(result.message);
+            checkbox.checked = !checkbox.checked;
+        }
+    } catch (error) {
+        alert('خطا در ارتباط با سرور');
+        checkbox.checked = !checkbox.checked;
+    } finally {
+        item.classList.remove('loading');
+    }
+}
+
+// Initialize excluded keys list
+renderExcludedKeysList();
+
+// Convert unix timestamp to Jalali datetime string
+function toJalali(timestamp) {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    try {
+        return date.toLocaleDateString('fa-IR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } catch (e) {
+        return date.toLocaleString();
+    }
+}
+
+if (chartSeries && chartSeries.length > 0) {
+    const container = document.getElementById('roll_charts_container');
+    
+    // Create chart rows (2 charts per row)
+    for (let i = 0; i < chartSeries.length; i += 2) {
+        const row = document.createElement('div');
+        row.className = 'charts-row';
+        
+        // First chart in row
+        const chart1Wrapper = document.createElement('div');
+        chart1Wrapper.className = 'chart-wrapper';
+        chart1Wrapper.innerHTML = `
+            <div class="chart-header">
+                <span class="chart-title">${chartSeries[i].fa_name || chartSeries[i].name}</span>
+                <span class="chart-legend" style="--legend-color: ${CHART_COLORS[i % CHART_COLORS.length]}">
+                    <span class="legend-dot"></span>
+                    ${chartSeries[i].fa_name || chartSeries[i].name}
+                </span>
+            </div>
+            <div id="chart_${i}" class="chart-container"></div>
+        `;
+        row.appendChild(chart1Wrapper);
+        
+        // Second chart in row (if exists)
+        if (chartSeries[i + 1]) {
+            const chart2Wrapper = document.createElement('div');
+            chart2Wrapper.className = 'chart-wrapper';
+            chart2Wrapper.innerHTML = `
+                <div class="chart-header">
+                    <span class="chart-title">${chartSeries[i + 1].fa_name || chartSeries[i + 1].name}</span>
+                    <span class="chart-legend" style="--legend-color: ${CHART_COLORS[(i + 1) % CHART_COLORS.length]}">
+                        <span class="legend-dot"></span>
+                        ${chartSeries[i + 1].fa_name || chartSeries[i + 1].name}
+                    </span>
+                </div>
+                <div id="chart_${i + 1}" class="chart-container"></div>
+            `;
+            row.appendChild(chart2Wrapper);
+        }
+        
+        container.appendChild(row);
+    }
+    
+    // Render each chart
+    chartSeries.forEach((series, index) => {
+        const options = {
+            series: [{
+                name: series.fa_name || series.name,
+                data: series.data
+            }],
+            chart: {
+                type: 'area',
+                height: 280,
+                fontFamily: 'Peyda, sans-serif',
+                toolbar: { show: false },
+                zoom: { enabled: false },
+                background: 'transparent',
+                dropShadow: {
+                    enabled: true,
+                    color: CHART_COLORS[index % CHART_COLORS.length],
+                    top: 12,
+                    left: 0,
+                    blur: 12,
+                    opacity: 0.15
+                }
+            },
+            annotations: {
+                xaxis: [...stoppedRangeAnnotations, ...breakXaxisAnnotations]
+            },
+            colors: [CHART_COLORS[index % CHART_COLORS.length]],
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.4,
+                    opacityTo: 0.05,
+                    stops: [0, 90, 100]
+                }
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2
+            },
+            dataLabels: { enabled: false },
+            markers: {
+                size: 0,
+                hover: { size: 6, sizeOffset: 3 }
+            },
+            xaxis: {
+                type: 'datetime',
+                labels: {
+                    datetimeUTC: false,
+                    formatter: function(val) {
+                        return toJalali(val);
+                    },
+                    style: {
+                        fontSize: '11px',
+                        fontFamily: 'Peyda, sans-serif',
+                        colors: '#999'
+                    },
+                    rotate: -45,
+                    rotateAlways: false
+                },
+                axisBorder: { show: false },
+                axisTicks: { show: false },
+                crosshairs: {
+                    stroke: { color: CHART_COLORS[index % CHART_COLORS.length], width: 1, dashArray: 3 }
+                }
+            },
+            yaxis: {
+                labels: {
+                    formatter: function(val) {
+                        if (val === null || val === undefined) return '';
+                        return val.toLocaleString('fa-IR');
+                    },
+                    style: {
+                        fontSize: '12px',
+                        fontFamily: 'Peyda, sans-serif',
+                        colors: '#666'
+                    }
+                }
+            },
+            grid: {
+                borderColor: '#f0f0f0',
+                strokeDashArray: 4,
+                xaxis: { lines: { show: false } },
+                yaxis: { lines: { show: true } },
+                padding: { top: 0, right: 0, bottom: 0, left: 10 }
+            },
+            tooltip: {
+                theme: 'dark',
+                x: {
+                    formatter: function(val) {
+                        return toJalali(val);
+                    }
+                },
+                y: {
+                    formatter: function(val) {
+                        if (val === null || val === undefined) return '-';
+                        return val.toLocaleString('fa-IR');
+                    }
+                },
+                style: { fontFamily: 'Peyda, sans-serif' },
+                marker: { show: true }
+            }
+        };
+        
+        const chart = new ApexCharts(document.querySelector(`#chart_${index}`), options);
+        chart.render();
+    });
+} else {
+    document.getElementById('roll_charts_container').innerHTML = `
+        <div class="no-chart-data">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            <p>داده‌ای برای نمایش نمودار وجود ندارد</p>
+        </div>
+    `;
+}
+</script>
+{% endif %}
+{% endblock %}
+

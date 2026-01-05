@@ -1,0 +1,901 @@
+{% extends "base/base.html" %}
+{% load to_jalali %}
+{% load static %}
+{% load plc_filters %}
+{% block content %}
+
+<div class="container-fluid px-4">
+    {% if plc %}
+    <!-- PLC Info Header -->
+    <div class="plc-detail-header mb-4">
+        <div class="plc-detail-right">
+            <a href="/" class="btn-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                بازگشت
+            </a>
+            <div class="plc-detail-info">
+                <div class="plc-status-dot online"></div>
+                <span class="plc-detail-id">{{ plc.device_id }}</span>
+                {% if plc.name %}
+                <span class="plc-detail-name">{{ plc.name }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="plc-detail-left">
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                <span>زنده</span>
+            </div>
+            <span class="last-update-label">آخرین بروزرسانی:</span>
+            <span id="last_update_time">{% to_jalali plc.LastUpdate %}</span>
+        </div>
+    </div>
+
+    <!-- Live Settings Section -->
+    <div class="live-settings-single" id="settings_container" data-plc-id="{{ plc.id }}">
+        {% if plc.setting %}
+        <div class="settings-grid-large">
+            {% for key, value in plc.setting.items %}
+            {% if key == 'st' and value == "m" %}
+            <div class="setting-card" style="background: linear-gradient(135deg, #f8f9fa 0%, #ffe9a6 100%);
+            border: 1px solid #FFC107;" data-key="{{ key }}">
+                <div class="setting-card-key">{{ key|get_key_name }}</div>
+                <div class="setting-card-value">MAN</div>
+            </div>
+            {% elif key == 'st' and value == "a" %}
+            <div class="setting-card " style="background: rgba(76, 175, 80, 0.2);
+        border-color: #4caf50;" data-key="{{ key }}">
+                <div class="setting-card-key">{{ key|get_key_name }}</div>
+                <div class="setting-card-value">AUTO</div>
+            </div>
+            {% elif key == 'ru' and value == "1" %}
+            <div class="setting-card " style="background: rgba(76, 175, 80, 0.2);
+        border-color: #4caf50;" data-key="{{ key }}">
+                <div class="setting-card-key">{{ key|get_key_name }}</div>
+                <div class="setting-card-value">{{ value }}</div>
+            </div>
+            {% else %}
+            <div class="setting-card" data-key="{{ key }}">
+                <div class="setting-card-key">{{ key|get_key_name }}</div>
+                <div class="setting-card-value">{{ value }}</div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-settings-large">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p>هنوز تنظیماتی دریافت نشده</p>
+            <span>در انتظار دریافت داده از PLC...</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Historical Charts Section -->
+    <div class="historical-charts-section mt-4">
+        <div class="section-header">
+            <h3 class="section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                تاریخچه
+            </h3>
+            <div class="chart-controls">
+                <div class="interval-selector">
+                    <label for="chart_interval">بازه زمانی:</label>
+                    <input type="number" id="chart_interval" value="60" min="1" max="3600">
+                    <span>ثانیه</span>
+                </div>
+                <div class="time-range-selector">
+                    <button type="button" class="time-range-btn active" data-range="1h">۱ ساعت</button>
+                    <button type="button" class="time-range-btn" data-range="8h">۸ ساعت</button>
+                    <button type="button" class="time-range-btn" data-range="24h">۲۴ ساعت</button>
+                    <button type="button" class="time-range-btn" data-range="week">۱ هفته</button>
+                    <button type="button" class="time-range-btn" data-range="month">۱ ماه</button>
+                    <button type="button" class="time-range-btn" data-range="year">۱ سال</button>
+                    <button type="button" class="time-range-btn" data-range="custom" id="custom_range_btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        سفارشی
+                    </button>
+                </div>
+                <button type="button" class="export-xlsx-btn" id="export_xlsx_btn" title="خروجی اکسل">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    خروجی Excel
+                </button>
+                <button type="button" class="btn-chart-settings" id="btn_chart_settings">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    تنظیمات
+                </button>
+            </div>
+        </div>
+        <!-- Excluded Keys Panel -->
+        <div id="excluded_keys_panel" class="excluded-keys-panel" style="display: none;">
+            <div class="excluded-keys-header text-center">
+                <span>انتخاب کلید هایی که نمایش داده <span style="color: #eb4b4b;">نمی‌شوند</span></span>
+                <small>کلیدهای انتخاب شده از نمودار حذف می‌شوند</small>
+            </div>
+            <div id="excluded_keys_list" class="excluded-keys-list"></div>
+        </div>
+        <div id="historical_charts_container">
+            <div class="chart-loading">
+                <div class="spinner"></div>
+                <span>در حال بارگذاری...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Date Range Modal -->
+    <div class="custom-range-modal-overlay" id="custom_range_modal">
+        <div class="custom-range-modal custom-range-modal-wide">
+            <div class="custom-range-modal-header">
+                <h4>انتخاب بازه زمانی</h4>
+                <button type="button" class="modal-close-btn" id="close_custom_modal">&times;</button>
+            </div>
+            <div class="custom-range-modal-body">
+                <div class="date-selector-row">
+                    <div class="date-input-group">
+                        <label>از تاریخ:</label>
+                        <div class="date-picker-field" id="start_date_field" data-target="start">
+                            <span class="date-value" id="start_date_display">انتخاب کنید</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                        <input type="hidden" id="start_date" value="">
+                    </div>
+                    <div class="date-input-group">
+                        <label>تا تاریخ:</label>
+                        <div class="date-picker-field" id="end_date_field" data-target="end">
+                            <span class="date-value" id="end_date_display">انتخاب کنید</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                        <input type="hidden" id="end_date" value="">
+                    </div>
+                </div>
+                <div class="calendar-container" id="export_calendar_container">
+                    <p class="calendar-instruction" id="calendar_instruction">روی یکی از فیلدهای تاریخ کلیک کنید</p>
+                    <div class="calendar-wrapper" id="calendar_wrapper" style="display:none;">
+                        {% include 'AM_Calendar/calendar.html' %}
+                    </div>
+                </div>
+            </div>
+            <div class="custom-range-modal-footer">
+                <button type="button" class="btn-cancel" id="cancel_custom_range">انصراف</button>
+                <button type="button" class="btn-confirm" id="confirm_custom_range">تایید و خروجی</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rolls Table Section -->
+    <div class="rolls-section mt-4">
+        <div class="section-header">
+            <h3 class="section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                رول‌ها
+            </h3>
+            <span class="rolls-count">{% if paginator %}{{ paginator.count }}{% else %}0{% endif %} رول</span>
+        </div>
+        
+        <!-- Search Box -->
+        <div class="rolls-search-box">
+            <form method="get" action="" class="rolls-search-form">
+                <input type="hidden" name="plc" value="{{ plc.id }}">
+                <div class="search-input-wrapper">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <input type="text" name="search" placeholder="جستجو بر اساس شماره رول..." value="{{ search_query }}" class="rolls-search-input">
+                </div>
+                <button type="submit" class="rolls-search-btn">جستجو</button>
+                {% if search_query %}
+                <a href="?plc={{ plc.id }}" class="rolls-clear-btn">پاک کردن</a>
+                {% endif %}
+            </form>
+        </div>
+        
+        {% if rolls %}
+        <div class="table-responsive">
+            <table class="rolls-table">
+                <thead>
+                    <tr>
+                        <th>شماره رول</th>
+                        <th>متراژ تولید شده</th>
+                        <th>پارگی‌ها</th>
+                        <th>تاریخ ایجاد</th>
+                        <th>آخرین بروزرسانی</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for roll in rolls %}
+                    <tr class="roll-row-clickable" onclick="window.location.href='{% url 'roll_detail' roll.id %}'">
+                        <td class="roll-number">{{ roll.roll_number|default:"-" }}</td>
+                        <td>{{ roll.Printed_length|default:0 }}</td>
+                        <td>{{ roll.Paper_breaks|default:0 }}</td>
+                        <td>{% to_jalali roll.CreationDateTime %}</td>
+                        <td>{% to_jalali roll.LastUpdate %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if rolls.has_other_pages %}
+        <div class="rolls-pagination">
+            <div class="pagination-info">
+                صفحه {{ rolls.number }} از {{ rolls.paginator.num_pages }}
+            </div>
+            <div class="pagination-controls">
+                {% if rolls.has_previous %}
+                <a href="?plc={{ plc.id }}&page=1{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn" title="صفحه اول">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="13 17 18 12 13 7"/>
+                        <polyline points="6 17 11 12 6 7"/>
+                    </svg>
+                </a>
+                <a href="?plc={{ plc.id }}&page={{ rolls.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn" title="صفحه قبل">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </a>
+                {% else %}
+                <span class="pagination-btn disabled">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="13 17 18 12 13 7"/>
+                        <polyline points="6 17 11 12 6 7"/>
+                    </svg>
+                </span>
+                <span class="pagination-btn disabled">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </span>
+                {% endif %}
+                
+                <span class="pagination-current">{{ rolls.number }}</span>
+                
+                {% if rolls.has_next %}
+                <a href="?plc={{ plc.id }}&page={{ rolls.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn" title="صفحه بعد">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </a>
+                <a href="?plc={{ plc.id }}&page={{ rolls.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn" title="صفحه آخر">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="11 17 6 12 11 7"/>
+                        <polyline points="18 17 13 12 18 7"/>
+                    </svg>
+                </a>
+                {% else %}
+                <span class="pagination-btn disabled">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </span>
+                <span class="pagination-btn disabled">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="11 17 6 12 11 7"/>
+                        <polyline points="18 17 13 12 18 7"/>
+                    </svg>
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="no-rolls">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 12h8"/>
+            </svg>
+            {% if search_query %}
+            <p>رولی با شماره "{{ search_query }}" یافت نشد</p>
+            {% else %}
+            <p>هنوز رولی ثبت نشده</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <!-- No PLC Selected -->
+    <div class="no-plc-selected">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <h4>دستگاهی انتخاب نشده</h4>
+        <p>لطفاً از داشبورد روی یک دستگاه کلیک کنید</p>
+        <a href="/" class="btn-primary-link">بازگشت به داشبورد</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block Script %}
+{% if plc %}
+<script>
+const PLC_ID = {{ plc.id }};
+const KEY_TRANSLATIONS = {{ key_translations|safe }};
+const keysWithStatus = {{ keys_with_status|safe }};
+const CHART_COLORS = ['#1B1464', '#00D9C0', '#5E8EFF', '#FF6B6B', '#FFC107', '#9C27B0', '#4CAF50', '#FF9800', '#E91E63', '#3F51B5'];
+let historicalCharts = [];
+
+// Toggle excluded keys panel
+document.getElementById('btn_chart_settings').addEventListener('click', function() {
+    const panel = document.getElementById('excluded_keys_panel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+});
+
+// Render excluded keys list
+function renderExcludedKeysList() {
+    const container = document.getElementById('excluded_keys_list');
+    if (!keysWithStatus || keysWithStatus.length === 0) {
+        container.innerHTML = '<div class="no-keys-message">کلیدی برای نمایش وجود ندارد</div>';
+        return;
+    }
+    
+    container.innerHTML = keysWithStatus.map(item => `
+        <label class="excluded-key-item ${item.is_excluded ? 'excluded' : ''}">
+            <input type="checkbox" ${item.is_excluded ? 'checked' : ''} onchange="toggleKey('${item.key}', this)">
+            <span class="key-name">${item.fa_name}</span>
+            <span class="key-code">${item.key}</span>
+        </label>
+    `).join('');
+}
+
+// Toggle key excluded status
+async function toggleKey(key, checkbox) {
+    const item = checkbox.closest('.excluded-key-item');
+    item.classList.add('loading');
+    
+    try {
+        const formData = new FormData();
+        formData.append('key', key);
+        
+        const response = await fetch('/api/chart-excluded-keys/toggle/', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        if (result.status === 'ok') {
+            item.classList.toggle('excluded', result.action === 'added');
+            // Reload charts
+            loadHistoricalCharts(currentRange);
+        } else {
+            alert(result.message);
+            checkbox.checked = !checkbox.checked;
+        }
+    } catch (error) {
+        alert('خطا در ارتباط با سرور');
+        checkbox.checked = !checkbox.checked;
+    } finally {
+        item.classList.remove('loading');
+    }
+}
+
+// Initialize excluded keys list
+renderExcludedKeysList();
+
+// Convert unix timestamp to Jalali datetime string (format: "08:10 , شنبه, 7 دی")
+function toJalali(timestamp) {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    try {
+        const hour = date.toLocaleString('fa-IR', { hour: '2-digit', hour12: false });
+        const minute = date.toLocaleString('fa-IR', { minute: '2-digit' });
+        const dayName = date.toLocaleDateString('fa-IR', { weekday: 'long' });
+        const day = date.toLocaleDateString('fa-IR', { day: 'numeric' });
+        const month = date.toLocaleDateString('fa-IR', { month: 'long' });
+        return `${hour}:${minute} , ${dayName}, ${day} ${month}`;
+    } catch (e) {
+        return date.toLocaleString();
+    }
+}
+
+// Get current interval value
+function getInterval() {
+    return parseInt(document.getElementById('chart_interval').value) || 60;
+}
+
+// Load historical chart data
+async function loadHistoricalCharts(range = '1h') {
+    const container = document.getElementById('historical_charts_container');
+    const interval = getInterval();
+    
+    container.innerHTML = `
+        <div class="chart-loading">
+            <div class="spinner"></div>
+            <span>در حال بارگذاری...</span>
+        </div>
+    `;
+    
+    // Destroy existing charts
+    historicalCharts.forEach(chart => chart.destroy());
+    historicalCharts = [];
+    
+    try {
+        const response = await fetch(`/api/historical-chart/?plc=${PLC_ID}&range=${range}&interval=${interval}`);
+        const result = await response.json();
+        
+        if (result.status !== 'ok') {
+            container.innerHTML = `<div class="no-chart-data"><p>${result.message || 'خطا در بارگذاری'}</p></div>`;
+            return;
+        }
+        
+        const chartSeries = result.chart_series;
+        const rollAnnotations = result.roll_annotations;
+        const breakAnnotations = result.break_annotations || [];
+        const stoppedRanges = result.stopped_ranges || [];
+        
+        if (!chartSeries || chartSeries.length === 0) {
+            container.innerHTML = `
+                <div class="no-chart-data">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                    <p>داده‌ای برای نمایش در این بازه زمانی وجود ندارد</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = '';
+        
+        // Create chart rows (1 chart per row)
+        for (let i = 0; i < chartSeries.length; i++) {
+            const chartWrapper = document.createElement('div');
+            chartWrapper.className = 'chart-wrapper chart-wrapper-full';
+            chartWrapper.draggable = true;
+            chartWrapper.dataset.key = chartSeries[i].name;
+            chartWrapper.dataset.order = chartSeries[i].order_index || 0;
+            chartWrapper.innerHTML = `
+                <div class="chart-header">
+                    <div class="chart-header-right">
+                        <div class="chart-drag-handle" title="کشیدن برای تغییر ترتیب">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="5" r="1.5"/>
+                                <circle cx="15" cy="5" r="1.5"/>
+                                <circle cx="9" cy="12" r="1.5"/>
+                                <circle cx="15" cy="12" r="1.5"/>
+                                <circle cx="9" cy="19" r="1.5"/>
+                                <circle cx="15" cy="19" r="1.5"/>
+                            </svg>
+                        </div>
+                        <span class="chart-title">${chartSeries[i].fa_name || chartSeries[i].name}</span>
+                    </div>
+                    <span class="chart-legend" style="--legend-color: ${CHART_COLORS[i % CHART_COLORS.length]}">
+                        <span class="legend-dot"></span>
+                        ${chartSeries[i].fa_name || chartSeries[i].name}
+                    </span>
+                </div>
+                <div id="historical_chart_${i}" class="chart-container"></div>
+            `;
+            container.appendChild(chartWrapper);
+        }
+        
+        // Build xaxis annotations for roll markers (blue)
+        const rollXaxisAnnotations = rollAnnotations.map(ann => ({
+            x: ann.x,
+            borderColor: '#5e8eff',
+            strokeDashArray: 4,
+            label: {
+                borderColor: '#5e8eff',
+                style: {
+                    color: '#fff',
+                    background: '#5e8eff',
+                    fontSize: '11px',
+                    fontFamily: 'Peyda, sans-serif',
+                    padding: { left: 8, right: 8, top: 4, bottom: 4 }
+                },
+                text: ann.label,
+                position: 'top',
+                orientation: 'horizontal'
+            }
+        }));
+        
+        // Build xaxis annotations for breaks (red)
+        const breakXaxisAnnotations = breakAnnotations.map(ann => ({
+            x: ann.x,
+            borderColor: '#ff5c5c',
+            strokeDashArray: 0,
+            label: {
+                borderColor: '#ff5c5c',
+                style: {
+                    color: '#fff',
+                    background: '#ff5c5c',
+                    fontSize: '10px',
+                    fontFamily: 'Peyda, sans-serif',
+                    padding: { left: 6, right: 6, top: 3, bottom: 3 }
+                },
+                text: ann.label,
+                position: 'bottom',
+                orientation: 'horizontal'
+            }
+        }));
+        
+        // Combine line annotations
+        const xaxisAnnotations = [...rollXaxisAnnotations, ...breakXaxisAnnotations];
+        
+        // Build stopped ranges (gray shaded areas for is_running=false, > 5 min)
+        const stoppedRangeAnnotations = stoppedRanges.map(range => ({
+            x: range.x,
+            x2: range.x2,
+            fillColor: '#ffebee',
+            opacity: 0.4,
+            borderColor: '#ffcdd2',
+            label: {
+                text: 'توقف',
+                borderColor: 'transparent',
+                style: {
+                    color: '#c62828',
+                    background: 'transparent',
+                    fontSize: '9px',
+                    fontFamily: 'Peyda, sans-serif',
+                    padding: { left: 4, right: 4, top: 2, bottom: 2 }
+                },
+                position: 'bottom',
+                orientation: 'horizontal',
+                offsetY: 20
+            }
+        }));
+        
+        // Render charts
+        chartSeries.forEach((series, index) => {
+            const options = {
+                series: [{
+                    name: series.fa_name || series.name,
+                    data: series.data
+                }],
+                chart: {
+                    type: 'area',
+                    height: 280,
+                    fontFamily: 'Peyda, sans-serif',
+                    toolbar: { show: false },
+                    zoom: { enabled: false },
+                    background: 'transparent',
+                    dropShadow: {
+                        enabled: true,
+                        color: CHART_COLORS[index % CHART_COLORS.length],
+                        top: 12,
+                        left: 0,
+                        blur: 12,
+                        opacity: 0.15
+                    }
+                },
+                annotations: {
+                    xaxis: [...stoppedRangeAnnotations, ...breakXaxisAnnotations, ...rollXaxisAnnotations]
+                },
+                colors: [CHART_COLORS[index % CHART_COLORS.length]],
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.4,
+                        opacityTo: 0.05,
+                        stops: [0, 90, 100]
+                    }
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 2
+                },
+                dataLabels: { enabled: false },
+                markers: {
+                    size: 0,
+                    hover: { size: 6, sizeOffset: 3 }
+                },
+                xaxis: {
+                    type: 'datetime',
+                    labels: {
+                        datetimeUTC: false,
+                        formatter: function(val) {
+                            return toJalali(val);
+                        },
+                        style: {
+                            fontSize: '11px',
+                            fontFamily: 'Peyda, sans-serif',
+                            colors: '#999'
+                        },
+                        rotate: -45,
+                        rotateAlways: false
+                    },
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                    crosshairs: {
+                        stroke: { color: CHART_COLORS[index % CHART_COLORS.length], width: 1, dashArray: 3 }
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function(val) {
+                            if (val === null || val === undefined) return '';
+                            return val.toLocaleString('fa-IR');
+                        },
+                        style: {
+                            fontSize: '12px',
+                            fontFamily: 'Peyda, sans-serif',
+                            colors: '#666'
+                        }
+                    }
+                },
+                grid: {
+                    borderColor: '#f0f0f0',
+                    strokeDashArray: 4,
+                    xaxis: { lines: { show: false } },
+                    yaxis: { lines: { show: true } },
+                    padding: { top: 0, right: 0, bottom: 0, left: 10 }
+                },
+                tooltip: {
+                    theme: 'dark',
+                    x: {
+                        formatter: function(val) {
+                            return toJalali(val);
+                        }
+                    },
+                    y: {
+                        formatter: function(val) {
+                            if (val === null || val === undefined) return '-';
+                            return val.toLocaleString('fa-IR');
+                        }
+                    },
+                    style: { fontFamily: 'Peyda, sans-serif' },
+                    marker: { show: true }
+                }
+            };
+            
+            const chart = new ApexCharts(document.querySelector(`#historical_chart_${index}`), options);
+            chart.render();
+            historicalCharts.push(chart);
+        });
+        
+    } catch (error) {
+        container.innerHTML = `<div class="no-chart-data"><p>خطا در بارگذاری داده‌ها</p></div>`;
+    }
+}
+
+// Track current range
+let currentRange = '1h';
+
+// Time range button click handler
+document.querySelectorAll('.time-range-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.time-range-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentRange = this.dataset.range;
+        loadHistoricalCharts(currentRange);
+    });
+});
+
+// Interval change handler (with debounce)
+let intervalTimeout;
+document.getElementById('chart_interval').addEventListener('input', function() {
+    clearTimeout(intervalTimeout);
+    intervalTimeout = setTimeout(() => {
+        loadHistoricalCharts(currentRange);
+    }, 500);
+});
+
+// Drag and Drop for chart reordering
+let draggedChart = null;
+
+document.addEventListener('dragstart', function(e) {
+    const chartWrapper = e.target.closest('.chart-wrapper');
+    if (!chartWrapper) return;
+    
+    draggedChart = chartWrapper;
+    chartWrapper.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', chartWrapper.dataset.key);
+});
+
+document.addEventListener('dragend', function(e) {
+    const chartWrapper = e.target.closest('.chart-wrapper');
+    if (chartWrapper) {
+        chartWrapper.classList.remove('dragging');
+    }
+    document.querySelectorAll('.chart-wrapper').forEach(el => {
+        el.classList.remove('drag-over');
+    });
+    draggedChart = null;
+});
+
+document.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    const chartWrapper = e.target.closest('.chart-wrapper');
+    if (chartWrapper && chartWrapper !== draggedChart) {
+        e.dataTransfer.dropEffect = 'move';
+        
+        // Remove drag-over from all, add to current
+        document.querySelectorAll('.chart-wrapper').forEach(el => {
+            el.classList.remove('drag-over');
+        });
+        chartWrapper.classList.add('drag-over');
+    }
+});
+
+document.addEventListener('dragleave', function(e) {
+    const chartWrapper = e.target.closest('.chart-wrapper');
+    if (chartWrapper && !chartWrapper.contains(e.relatedTarget)) {
+        chartWrapper.classList.remove('drag-over');
+    }
+});
+
+document.addEventListener('drop', async function(e) {
+    e.preventDefault();
+    const targetWrapper = e.target.closest('.chart-wrapper');
+    if (!targetWrapper || !draggedChart || targetWrapper === draggedChart) return;
+    
+    targetWrapper.classList.remove('drag-over');
+    
+    const container = document.getElementById('historical_charts_container');
+    const charts = Array.from(container.querySelectorAll('.chart-wrapper'));
+    const draggedIndex = charts.indexOf(draggedChart);
+    const targetIndex = charts.indexOf(targetWrapper);
+    
+    // Move DOM element
+    if (draggedIndex < targetIndex) {
+        targetWrapper.after(draggedChart);
+    } else {
+        targetWrapper.before(draggedChart);
+    }
+    
+    // Collect new order and save
+    const newCharts = Array.from(container.querySelectorAll('.chart-wrapper'));
+    const orders = {};
+    newCharts.forEach((chart, index) => {
+        orders[chart.dataset.key] = index;
+    });
+    
+    // Save to server
+    container.classList.add('saving-order');
+    const formData = new FormData();
+    formData.append('orders', JSON.stringify(orders));
+    
+    try {
+        const response = await fetch('/api/plc-keys/order/bulk/', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        if (result.status !== 'ok') {
+            console.error('Error saving order:', result.message);
+        }
+    } catch (error) {
+        console.error('Error saving order:', error);
+    } finally {
+        container.classList.remove('saving-order');
+    }
+});
+
+// Export button click handler
+document.getElementById('export_xlsx_btn').addEventListener('click', function() {
+    const interval = getInterval();
+    const url = `/api/export/logs/?plc=${PLC_ID}&range=${currentRange}&interval=${interval}`;
+    window.location.href = url;
+});
+
+// Custom date range modal
+const customModal = document.getElementById('custom_range_modal');
+const customRangeBtn = document.getElementById('custom_range_btn');
+const closeModalBtn = document.getElementById('close_custom_modal');
+const cancelBtn = document.getElementById('cancel_custom_range');
+const confirmBtn = document.getElementById('confirm_custom_range');
+const calendarWrapper = document.getElementById('calendar_wrapper');
+const calendarInstruction = document.getElementById('calendar_instruction');
+const startDateField = document.getElementById('start_date_field');
+const endDateField = document.getElementById('end_date_field');
+
+let activeCalendarTarget = null; // 'start' or 'end'
+
+// Open modal
+customRangeBtn.addEventListener('click', function() {
+    customModal.classList.add('active');
+    // Reset state
+    activeCalendarTarget = null;
+    calendarWrapper.style.display = 'none';
+    calendarInstruction.style.display = 'block';
+    startDateField.classList.remove('active');
+    endDateField.classList.remove('active');
+});
+
+// Close modal
+function closeModal() {
+    customModal.classList.remove('active');
+    activeCalendarTarget = null;
+}
+closeModalBtn.addEventListener('click', closeModal);
+cancelBtn.addEventListener('click', closeModal);
+customModal.addEventListener('click', function(e) {
+    if (e.target === customModal) closeModal();
+});
+
+// Show calendar when clicking date fields
+startDateField.addEventListener('click', function() {
+    activeCalendarTarget = 'start';
+    calendarWrapper.style.display = 'block';
+    calendarInstruction.style.display = 'none';
+    startDateField.classList.add('active');
+    endDateField.classList.remove('active');
+});
+
+endDateField.addEventListener('click', function() {
+    activeCalendarTarget = 'end';
+    calendarWrapper.style.display = 'block';
+    calendarInstruction.style.display = 'none';
+    endDateField.classList.add('active');
+    startDateField.classList.remove('active');
+});
+
+// Listen for calendar day clicks
+document.addEventListener('click', function(e) {
+    const dayLabel = e.target.closest('.calendar_day');
+    if (dayLabel && activeCalendarTarget && !dayLabel.classList.contains('disable')) {
+        const dateVal = dayLabel.getAttribute('date-data'); // format: y-m-d
+        if (dateVal) {
+            // Convert y-m-d to y/m/d format
+            const formattedDate = dateVal.replace(/-/g, '/');
+            
+            if (activeCalendarTarget === 'start') {
+                document.getElementById('start_date').value = formattedDate;
+                document.getElementById('start_date_display').textContent = formattedDate;
+                startDateField.classList.add('selected');
+            } else if (activeCalendarTarget === 'end') {
+                document.getElementById('end_date').value = formattedDate;
+                document.getElementById('end_date_display').textContent = formattedDate;
+                endDateField.classList.add('selected');
+            }
+        }
+    }
+});
+
+// Confirm and export
+confirmBtn.addEventListener('click', function() {
+    const startDateStr = document.getElementById('start_date').value;
+    const endDateStr = document.getElementById('end_date').value;
+    
+    if (!startDateStr || !endDateStr) {
+        alert('لطفا هر دو تاریخ را انتخاب کنید');
+        return;
+    }
+    
+    const interval = getInterval();
+    const url = `/api/export/logs/?plc=${PLC_ID}&from_date=${startDateStr}&to_date=${endDateStr}&interval=${interval}`;
+    window.location.href = url;
+    closeModal();
+});
+
+// Initial load
+loadHistoricalCharts('1h');
+</script>
+<script src="{% static 'plc_monitoring/js/live_settings.js' %}?version={{version}}"></script>
+{% endif %}
+{% endblock %}
