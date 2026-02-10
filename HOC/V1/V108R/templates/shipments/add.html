@@ -1,0 +1,225 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}افزودن مرسوله{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'shipments/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            افزودن مرسوله
+        </h1>
+        <a href="{% url 'shipments' %}" class="btn btn-secondary">
+            <svg width="12" height="11" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.5 3H6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 0.5L6.5 3L4 5.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="form-wrapper">
+        <form action="{% url 'add_shipment' %}" method="post">
+            {% csrf_token %}
+            
+            <h3 class="section-title"><i>i</i> اطلاعات اصلی</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="name">نام مرسوله</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="نام مرسوله را وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="shipment_type">نوع مرسوله</label>
+                    <select class="form-control" id="shipment_type" name="shipment_type">
+                        <option value="1">ورودی</option>
+                        <option value="2">خروجی</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="Truck">شماره پلاک</label>
+                    <select class="form-control" id="Truck" name="Truck">
+                        {% for Truck in trucks %}
+                        <option value="{{ Truck.id }}">{{ Truck.License_plate_number }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="location">انبار</label>
+                    <select class="form-control" id="location" name="location">
+                        <option value="">انتخاب کنید</option>
+                        {% for warehouse in warehouses %}
+                        <option value="{{ warehouse.id }}">{{ warehouse.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="material">ماده</label>
+                    <select class="form-control" id="material" name="material">
+                        <option value="">انتخاب کنید</option>
+                        {% for material in materials %}
+                        <option value="{{ material.id }}">{{ material.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="Customer">مشتری</label>
+                    <select class="form-control" id="Customer" name="Customer">
+                        {% for customer in customers %}
+                        <option value="{{ customer.id }}">{{ customer.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="Supplier">تامین‌کننده</label>
+                    <select class="form-control" id="Supplier" name="Supplier">
+                        {% for supplier in suppliers %}
+                        <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3 class="section-title"><i>i</i> زمان‌ها</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="receive_date">تاریخ دریافت</label>
+                    <input type="text" class="form-control" id="receive_date" name="receive_date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="weight1_time">زمان وزن ۱</label>
+                    <input type="text" class="form-control" id="weight1_time" name="weight1_time">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="weight2_time">زمان وزن ۲</label>
+                    <input type="text" class="form-control" id="weight2_time" name="weight2_time">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="exit_time">زمان خروج</label>
+                    <input type="text" class="form-control" id="exit_time" name="exit_time">
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3 class="section-title"><i>i</i> وزن و مقدار</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="weight1">وزن ۱</label>
+                    <input type="number" class="form-control" id="weight1" name="weight1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="weight2">وزن ۲</label>
+                    <input type="number" class="form-control" id="weight2" name="weight2">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="net_weight">وزن خالص</label>
+                    <input type="number" class="form-control" id="net_weight" name="net_weight">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="unit">واحد</label>
+                    <select class="form-control" name="unit" id="unit">
+                        <option value="">انتخاب کنید</option>
+                        {% for unit in units %}
+                        <option value="{{unit.id}}">{{unit.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="quantity">مقدار</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="quality">کیفیت</label>
+                    <input type="text" class="form-control" id="quality" name="quality">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="unload_location">محل تخلیه</label>
+                    <input type="text" class="form-control" id="unload_location" name="unload_location">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="penalty">پیکان</label>
+                    <input type="text" class="form-control" id="penalty" name="penalty">
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3 class="section-title"><i>i</i> اطلاعات مالی</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="price_per_kg">قیمت هر کیلو</label>
+                    <input type="number" class="form-control" id="price_per_kg" name="price_per_kg">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="total_price">قیمت کل</label>
+                    <input type="number" class="form-control" id="total_price" name="total_price">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="extra_cost">هزینه اضافی</label>
+                    <input type="number" class="form-control" id="extra_cost" name="extra_cost">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="vat">مالیات</label>
+                    <input type="number" class="form-control" id="vat" name="vat">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="invoice_status">وضعیت فاکتور</label>
+                    <select class="form-control" id="invoice_status" name="invoice_status">
+                        <option value="1">صادر شده</option>
+                        <option value="2">صادر نشده</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="payment_status">وضعیت پرداخت</label>
+                    <select class="form-control" id="payment_status" name="payment_status">
+                        <option value="1">پرداخت شده</option>
+                        <option value="2">پرداخت نشده</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="sales_id">شناسه فروش</label>
+                    <input type="number" class="form-control" id="sales_id" name="sales_id">
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3 class="section-title"><i>i</i> اطلاعات تکمیلی</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="profile_name">نام پروفایل</label>
+                    <input type="text" class="form-control" id="profile_name" name="profile_name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="width">عرض</label>
+                    <input type="number" class="form-control" id="width" name="width">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="list_of_reels">لیست ریل‌ها</label>
+                <textarea class="form-control" id="list_of_reels" name="list_of_reels" placeholder="لیست ریل‌ها را وارد کنید"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="document_info">اطلاعات سند</label>
+                <textarea class="form-control" id="document_info" name="document_info" placeholder="اطلاعات سند را وارد کنید"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="comments">نظرات</label>
+                <textarea class="form-control" id="comments" name="comments" placeholder="نظرات را وارد کنید"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات را وارد کنید"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i>i</i>
+                    افزودن
+                </button>
+                <a href="{% url 'shipments' %}" class="btn btn-outline">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

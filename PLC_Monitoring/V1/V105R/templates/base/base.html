@@ -1,0 +1,123 @@
+{% load static %}
+<html lang="fa" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Seyed Amirmohammad Mousavi | 09014131719">
+        <meta name="theme-color" content="#5e8eff" >
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'base/img/apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'base/img/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'base/img/favicon-16x16.png' %}">
+        <link rel="manifest" href="{% static 'base/img/site.webmanifest' %}">
+        <link rel="icon" href="{% static 'base/img/favicon-32x32.png' %}" type="image/x-icon">
+        <link rel="stylesheet" href="{% static 'base/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'base/css/main.style.css' %}?version={{version}}" type="text/css">
+        <link rel="stylesheet" href="{% static 'plc_monitoring/css/style.css' %}?version={{version}}" type="text/css">
+        <script src="{% static 'base/js/apexcharts.js' %}"></script>
+        <title>{% block title %}{% endblock %}</title>
+        {% block Link %}{% endblock %}
+        <style>
+            @font-face {
+                font-family: Peyda;
+                font-style: normal;
+                font-weight: 900;
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Black.eot' %}");
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Black.eot?#iefix' %}") format("embedded-opentype"),
+                    url("{% static 'base/fonts/woff2/PeydaWeb-Black.woff2' %}") format("woff2"),
+                    url("{% static 'base/fonts/woff/PeydaWeb-Black.woff' %}") format("woff"),
+                    url("{% static 'base/fonts/ttf/Peyda.ttf' %}") format("truetype");
+            }
+        
+            @font-face {
+                font-family: Peyda;
+                font-style: normal;
+                font-weight: 700;
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Bold.eot' %}");
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Bold.eot?#iefix' %}") format("embedded-opentype"),
+                    url("{% static 'base/fonts/woff2/PeydaWeb-Bold.woff2' %}") format("woff2"),
+                    url("{% static 'base/fonts/woff/PeydaWeb-Bold.woff' %}") format("woff"),
+                    url("{% static 'base/fonts/ttf/Peyda.ttf' %}") format("truetype");
+            }
+        
+            @font-face {
+                font-family: Peyda;
+                font-style: normal;
+                font-weight: 400;
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Medium.eot' %}");
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Medium.eot?#iefix' %}") format("embedded-opentype"),
+                    url("{% static 'base/fonts/woff2/PeydaWeb-Medium.woff2' %}") format("woff2"),
+                    url("{% static 'base/fonts/woff/PeydaWeb-Medium.woff' %}") format("woff"),
+                    url("{% static 'base/fonts/ttf/Peyda.ttf' %}") format("truetype");
+            }
+        
+            @font-face {
+                font-family: Peyda;
+                font-style: normal;
+                font-weight: 100;
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Regular.eot' %}");
+                src: url("{% static 'base/fonts/eot/PeydaWeb-Regular.eot?#iefix' %}") format("embedded-opentype"),
+                    url("{% static 'base/fonts/woff2/PeydaWeb-Regular.woff2' %}") format("woff2"),
+                    url("{% static 'base/fonts/woff/PeydaWeb-Regular.woff' %}") format("woff"),
+                    url("{% static 'base/fonts/ttf/Peyda.ttf' %}") format("truetype");
+            }
+        </style>
+    </head>
+    <body> 
+        <div id="Alert" class="alert_parent"></div>
+        {% include "base/header.html" %}
+        <div class="progressbar" id="progressbar">
+            <div class="progress bg-white p-4 rounded shadow d-flex align-items-center">
+                <h6 class="m-3">لطفا صبر کنید</h6>
+                <div class="loader"></div>
+            </div>
+        </div>
+        {% block content %}{% endblock %}
+        <div class="popup-overlay" id="settings_overlay" onclick="toggleSettingsPopup()"></div>
+        <div class="settings_popup" id="settings_popup">
+            {% include "plc_monitoring/settings.html" %}
+        </div>
+        <div class="popup-overlay" id="datatable_overlay" onclick="toggleDataTablePopup()"></div>
+        <div class="datatable_popup" id="datatable_popup">
+            <div class="popup-header">
+                <h5>جدول کلیدهای PLC</h5>
+                <button type="button" class="popup-close-btn" onclick="toggleDataTablePopup()">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 13L13 1M13 13L1 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="popup-body">
+                <div class="filter-section">
+                    <select id="filter_plc" onchange="loadDataTable()">
+                        <option value="">همه دستگاه‌ها</option>
+                    </select>
+                </div>
+                <p dir="ltr">transform structure: key=value;key=value;...</p>
+                <div class="datatable-wrapper">
+                    <table id="plc_keys_datatable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>نام (EN)</th>
+                                <th>نام (FA)</th>
+                                <th>کلید</th>
+                                <th>مقدار</th>
+                                <th>تاریخ ایجاد</th>
+                                <th>آخرین بروزرسانی</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% block footer %}{% endblock %}
+        {% block Script %}{% endblock %}
+        <script src="{% static 'base/js/jquery-3.6.0.min.js' %}"></script>
+        <script src="{% static 'base/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'base/js/jquery.ajax.min.js' %}"></script>
+        <script src="{% static 'base/js/jalaali.min.js' %}"></script>
+        <script src="{% static 'base/js/main.js' %}?version={{version}}"></script>
+        <script src="{% static 'base/js/plc_keys.js' %}?version={{version}}"></script>
+    </body>
+</html>

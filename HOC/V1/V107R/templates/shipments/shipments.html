@@ -1,0 +1,82 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}مرسوله‌ها{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'shipments/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i>i</i>
+            مرسوله‌ها
+        </h1>
+        <a href="{% url 'add_shipment' %}" class="btn btn-primary">
+            <i>i</i>
+            افزودن مرسوله
+        </a>
+    </div>
+
+    {% if shipments %}
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>مکان</th>
+                    <th>تاریخ</th>
+                    <th>نوع</th>
+                    <th>کامیون</th>
+                    <th>ماده</th>
+                    <th>واحد</th>
+                    <th>مقدار</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for shipment in shipments %}
+                <tr>
+                    <td>
+                        <a href="{% url 'view_shipment' shipment.id %}">{{ shipment.name }}</a>
+                    </td>
+                    <td>{% if shipment.location %}{{ shipment.location.name }}{% else %}-{% endif %}</td>
+                    <td>{% to_jalali shipment.receive_date %}</td>
+                    <td>
+                        {% if shipment.shipment_type == 1 %}
+                        <span class="badge badge-success">ورودی</span>
+                        {% else %}
+                        <span class="badge badge-info">خروجی</span>
+                        {% endif %}
+                    </td>
+                    <td>{% if shipment.Truck %}{{ shipment.Truck.License_plate_number }}{% else %}-{% endif %}</td>
+                    <td>{% if shipment.material %}{{ shipment.material.name }}{% else %}-{% endif %}</td>
+                    <td>{% if shipment.unit %}{{ shipment.unit.name }}{% else %}-{% endif %}</td>
+                    <td>{{ shipment.quantity|default:"-" }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{% url 'view_shipment' shipment.id %}" class="btn btn-sm btn-info" title="مشاهده">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'edit_shipment' shipment.id %}" class="btn btn-sm btn-warning" title="ویرایش">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'delete_shipment' shipment.id %}" class="btn btn-sm btn-danger" title="حذف">
+                                <i>i</i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i>i</i>
+        <h3 class="empty-state-title">مرسوله‌ای یافت نشد</h3>
+        <p class="empty-state-text">برای افزودن مرسوله جدید از دکمه بالا استفاده کنید</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

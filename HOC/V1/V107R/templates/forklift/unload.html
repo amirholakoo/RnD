@@ -1,0 +1,151 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load time_ago %}
+{% load static %}
+{% block title %}تخلیه{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'forklift/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            افزودن تخلیه
+        </h1>
+        <a href="{% url 'forklift_panel' %}" class="btn btn-secondary">
+            <svg width="12" height="11" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.5 3H6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 0.5L6.5 3L4 5.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="form-wrapper">
+        <form action="{% url 'unload' %}" method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="license_number_id">شماره پلاک</label>
+                    <select name="license_number_id" id="license_number_id" class="form-control">
+                        {% for truck in trucks %}
+                        {% if truck.Is_Deleted == False %}
+                        <option value="{{ truck.id }}">{{ truck.License_plate_number }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="unload_location_id">محل تخلیه</label>
+                    <select name="unload_location_id" id="unload_location_id" class="form-control">
+                        {% for warehouse in warehouses %}
+                        {% if warehouse.Is_Deleted == False %}
+                        <option value="{{ warehouse.id }}">{{ warehouse.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="unit">واحد</label>
+                    <select name="unit" id="unit" class="form-control">
+                        {% for unit in units %}
+                        <option value="{{ unit.name }}">{{ unit.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="quantity">مقدار</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity" placeholder="مقدار را وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="quality">کیفیت</label>
+                    <input type="text" class="form-control" id="quality" name="quality" placeholder="کیفیت را وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="forklift_driver_name_id">راننده لیفتراک</label>
+                    <select name="forklift_driver_name_id" id="forklift_driver_name_id" class="form-control">
+                        {% for forklift_driver in forklift_drivers %}
+                        {% if forklift_driver.Is_Deleted == False %}
+                        <option value="{{ forklift_driver.id }}">{{ forklift_driver.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 0.5V13.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M0.5 6.95996H13.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    افزودن
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if vision_detections %}
+    <div class="divider"></div>
+    <h3 class="section-title">
+        <i></i>
+        آیا تایید میکنید که:
+    </h3>
+
+    {% for detection in vision_detections %}
+    
+    <form action="{% url 'unload' %}" method="post" class="d-flex">
+        {% csrf_token %}
+        <input type="hidden" name="vision_detection_id" value="{{ detection.id }}">
+        <div class="form-grid d-flex align-items-center p-2 w-100 ">
+            <span class="badge btn-warning p-2">{{ detection.start_time|time_ago }}</span>
+            <label class="form-label" for="unload_location_id"> در</label>
+            <select name="unload_location_id" id="unload_location_id" class="form-control w-auto">
+                {% for warehouse in warehouses %}
+                {% if warehouse.Is_Deleted == False %}
+                <option value="{{ warehouse.id }}" {% if warehouse == detection.location %}selected{% endif %}>{{ warehouse.name }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+            <label class="form-label" for="shipment_id">از</label>
+            <select name="shipment_id" id="shipment_id" class="form-control w-auto">
+                {% for shipment in shipments %}
+                <option value="{{ shipment.id }}" {% if shipment.id == detection.shipment.id %}selected{% endif %}>{{ shipment.Truck.License_plate_number }}</option>
+                {% endfor %}
+            </select>
+            <label class="form-label" for="unit">واحد</label>
+            <select name="unit" id="unit" class="form-control w-auto">
+                {% for unit in units %}
+                <option value="{{ unit.id }}" {% if unit == detection.shipment.unit %}selected{% endif %}>{{ unit.name }}</option>
+                {% endfor %}
+            </select>
+            <label class="form-label" for="quantity">به تعداد</label>
+            <input type="number" class="form-control w-auto" style="max-width:55px ;" id="quantity" name="quantity" value="{{detection.count}}">
+            <label class="form-label" for="quality">با کیفیت</label>
+            <input type="text" class="form-control w-auto"  id="quality" name="quality" placeholder="کیفیت را وارد کنید">
+            <label class="form-label" for="forklift_driver_name_id">توسط</label>
+            <select name="forklift_driver_name_id" id="forklift_driver_name_id" class="form-control w-auto">
+                {% for forklift_driver in forklift_drivers %}
+                {% if forklift_driver.Is_Deleted == False %}
+                <option value="{{ forklift_driver.id }}">{{ forklift_driver.name }}</option>
+                {% endif %}
+            {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success m-1">
+            <svg width="14" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.5 8L3.23 11.51C3.32212 11.6297 3.44016 11.7269 3.57525 11.7945C3.71034 11.862 3.85898 11.8982 4.01 11.9C4.15859 11.9018 4.3057 11.8703 4.44063 11.8081C4.57555 11.7458 4.6949 11.6542 4.79 11.54L13.5 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+        <button type="button" class="btn btn-danger m-1" onclick="AM_alert({display:true,status:'info',text:'در حال بروزرسانی'})">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.5 0.5L0.5 13.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M0.5 0.5L13.5 13.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+        </button>
+    </form>
+    <div class="divider"></div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

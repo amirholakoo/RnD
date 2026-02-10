@@ -1,0 +1,47 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}ویرایش نوع ماده{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'material/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i>i</i>
+            ویرایش نوع ماده
+        </h1>
+        <a href="{% url 'material_types' %}" class="btn btn-secondary">
+            <i>i</i>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="form-wrapper">
+        <form action="{% url 'edit_material_type' material_type.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="material_type">نوع ماده</label>
+                    <input type="text" class="form-control" id="material_type" name="material_type" placeholder="نوع ماده را وارد کنید" value="{{ material_type.material_type }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="supplier_name">نام تامین‌کننده</label>
+                    <input type="text" class="form-control" id="supplier_name" name="supplier_name" placeholder="نام تامین‌کننده را وارد کنید" value="{{ material_type.supplier_name }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات را وارد کنید">{{ material_type.description }}</textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i>i</i>
+                    ذخیره تغییرات
+                </button>
+                <a href="{% url 'material_types' %}" class="btn btn-outline">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

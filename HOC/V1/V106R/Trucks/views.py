@@ -116,7 +116,8 @@ def check_license_numbers():
                         print("shipment added",shipment.id)
 
                     try:
-                        if not shipment.unit:
+                        
+                        if not Unit.objects.filter(shipment=shipment).last():
                             response = requests.get(
                                 "http://81.163.7.71:8000/myapp/api/getUnitNamesBasedOnLicenseOfShipment",
                                 params={"lic_number": license_number},
@@ -134,6 +135,10 @@ def check_license_numbers():
                                 last_unit, _ = Unit.objects.get_or_create(name=unit_name)
                                 print(last_unit)
 
+                                if last_unit:
+                                    last_unit.shipment = shipment
+                                    last_unit.save()
+                            # temp logic
                             if last_unit:
                                 shipment.unit = last_unit
                                 shipment.save()
@@ -166,14 +171,18 @@ def check_license_numbers():
                     except Exception as e:
                         print(f"Error in getting shipment details: {e}")
             else:
-                print("no license numbers found")
+                pass
+                #print("no license numbers found")
             
         except requests.exceptions.RequestException as e:
-            print(f"Error checking license numbers: {e}")
+            pass
+            #print(f"Error checking license numbers: {e}")
         except json.JSONDecodeError as e:
-            print(f"Error parsing JSON response: {e}")
+            pass
+            #print(f"Error parsing JSON response: {e}")
         except Exception as e:
-            print(f"Unexpected error: {e}")
+            pass
+            #print(f"Unexpected error: {e}")
         
         time.sleep(check_interval)
 

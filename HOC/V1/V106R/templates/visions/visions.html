@@ -110,6 +110,15 @@
            class="btn btn-sm {% if '5' in selected_types %}btn-primary{% else %}btn-outline{% endif %}">خروج</a>
     </div>
     <script>
+    function buildUrl(params) {
+        let url = '?';
+        let parts = [];
+        if (params.type) parts.push('type=' + params.type);
+        if (params.show_all) parts.push('show_all=1');
+        if (params.organizing_page) parts.push('organizing_page=' + params.organizing_page);
+        if (params.vision_page) parts.push('vision_page=' + params.vision_page);
+        return url + parts.join('&');
+    }
     function toggleType(event, typeId) {
         event.preventDefault();
         const params = new URLSearchParams(window.location.search);
@@ -119,25 +128,30 @@
         } else {
             types.push(typeId);
         }
-        let url = '?type=' + types.join(',');
-        if (params.get('show_all')) url += '&show_all=1';
-        window.location.href = url;
+        window.location.href = buildUrl({
+            type: types.join(','),
+            show_all: params.get('show_all'),
+            vision_page: params.get('vision_page')
+        });
         return false;
     }
     function toggleShowAll(event) {
         event.preventDefault();
         const params = new URLSearchParams(window.location.search);
-        let url = '?show_all=1';
-        if (params.get('type')) url += '&type=' + params.get('type');
-        window.location.href = url;
+        window.location.href = buildUrl({
+            type: params.get('type'),
+            show_all: '1',
+            vision_page: params.get('vision_page')
+        });
         return false;
     }
     function toggleExcludeForklift(event) {
         event.preventDefault();
         const params = new URLSearchParams(window.location.search);
-        let url = '?';
-        if (params.get('type')) url += 'type=' + params.get('type');
-        window.location.href = url;
+        window.location.href = buildUrl({
+            type: params.get('type'),
+            vision_page: params.get('vision_page')
+        });
         return false;
     }
     </script>
@@ -173,6 +187,32 @@
             </tbody>
         </table>
     </div>
+    
+    {% if organizing_vision_detections.paginator.num_pages > 1 %}
+    <div class="pagination">
+        <div class="pagination-pages">
+            {% if organizing_vision_detections.has_previous %}
+            <a href="?organizing_page=1{% if selected_types %}&type={{ selected_types|join:',' }}{% endif %}{% if not exclude_forklift %}&show_all=1{% endif %}{% if vision_data.number != 1 %}&vision_page={{ vision_data.number }}{% endif %}" class="pagination-link" title="اولین">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+            </a>
+            <a href="?organizing_page={{ organizing_vision_detections.previous_page_number }}{% if selected_types %}&type={{ selected_types|join:',' }}{% endif %}{% if not exclude_forklift %}&show_all=1{% endif %}{% if vision_data.number != 1 %}&vision_page={{ vision_data.number }}{% endif %}" class="pagination-link" title="قبلی">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            {% endif %}
+            
+            <span class="pagination-info">صفحه {{ organizing_vision_detections.number }} از {{ organizing_vision_detections.paginator.num_pages }}</span>
+            
+            {% if organizing_vision_detections.has_next %}
+            <a href="?organizing_page={{ organizing_vision_detections.next_page_number }}{% if selected_types %}&type={{ selected_types|join:',' }}{% endif %}{% if not exclude_forklift %}&show_all=1{% endif %}{% if vision_data.number != 1 %}&vision_page={{ vision_data.number }}{% endif %}" class="pagination-link" title="بعدی">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </a>
+            <a href="?organizing_page={{ organizing_vision_detections.paginator.num_pages }}{% if selected_types %}&type={{ selected_types|join:',' }}{% endif %}{% if not exclude_forklift %}&show_all=1{% endif %}{% if vision_data.number != 1 %}&vision_page={{ vision_data.number }}{% endif %}" class="pagination-link" title="آخرین">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"></polyline><polyline points="18 17 13 12 18 7"></polyline></svg>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
     {% endif %}
 
     {% if vision_data %}
@@ -208,6 +248,32 @@
             </tbody>
         </table>
     </div>
+    
+    {% if vision_data.paginator.num_pages > 1 %}
+    <div class="pagination">
+        <div class="pagination-pages">
+            {% if vision_data.has_previous %}
+            <a href="?vision_page=1{% if selected_types %}&type={{ selected_types|join:',' }}{% endif %}{% if not exclude_forklift %}&show_all=1{% endif %}{% if organizing_vision_detections.number != 1 %}&organizing_page={{ organizing_vision_detections.number }}{% endif %}" class="pagination-link" title="اولین">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+            </a>
+            <a href="?vision_page={{ vision_data.previous_page_number }}{% if selected_types %}&type={{ selected_types|join:',' }}{% endif %}{% if not exclude_forklift %}&show_all=1{% endif %}{% if organizing_vision_detections.number != 1 %}&organizing_page={{ organizing_vision_detections.number }}{% endif %}" class="pagination-link" title="قبلی">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            {% endif %}
+            
+            <span class="pagination-info">صفحه {{ vision_data.number }} از {{ vision_data.paginator.num_pages }}</span>
+            
+            {% if vision_data.has_next %}
+            <a href="?vision_page={{ vision_data.next_page_number }}{% if selected_types %}&type={{ selected_types|join:',' }}{% endif %}{% if not exclude_forklift %}&show_all=1{% endif %}{% if organizing_vision_detections.number != 1 %}&organizing_page={{ organizing_vision_detections.number }}{% endif %}" class="pagination-link" title="بعدی">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </a>
+            <a href="?vision_page={{ vision_data.paginator.num_pages }}{% if selected_types %}&type={{ selected_types|join:',' }}{% endif %}{% if not exclude_forklift %}&show_all=1{% endif %}{% if organizing_vision_detections.number != 1 %}&organizing_page={{ organizing_vision_detections.number }}{% endif %}" class="pagination-link" title="آخرین">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"></polyline><polyline points="18 17 13 12 18 7"></polyline></svg>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
     {% endif %}
 </div>
 {% endblock %}

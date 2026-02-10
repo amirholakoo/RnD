@@ -62,7 +62,7 @@ def post_data(request):
             if IS_AI:
                 print(latest_data["data"][:3])
                 creation_time = time.time()+3600
-                for data in latest_data["data"][:3]:
+                for data in latest_data["data"]: #[:3]:
                     print(data)
                     last_log = SensorLogs.objects.filter(sensor=sensor).last()
                     # if last_log:

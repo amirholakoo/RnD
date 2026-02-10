@@ -8,27 +8,38 @@ import time, jdatetime
 from django.http import JsonResponse
 from django.conf import settings
 from Warehouse.models import Warehouse
-import os, requests
+import os, requests, re
 from base.views import convert_to_unix_timestamp, convert_to_jalali
 from Shipments.models import Shipment
 from django.db.models import Q
+from django.core.paginator import Paginator
 IS_START = False
 
 def visions(request):
     global IS_START
     visions = Vision.objects.all()
-    vision_data = VisionData.objects.all().order_by('-CreationDateTime')
+    vision_data_list = VisionData.objects.all().order_by('-CreationDateTime')
     
     # Filter organizing_vision_detections by multiple Types
     type_param = request.GET.get('type', '')
     show_all = request.GET.get('show_all', '')
     exclude_forklift = not show_all  # Default: exclude forklift
     selected_types = [t for t in type_param.split(',') if t] if type_param else []
-    organizing_detections = OrganizingVisionData.objects.all().filter(Is_Deleted=False).order_by('-start_time')
+    organizing_detections_list = OrganizingVisionData.objects.all().filter(Is_Deleted=False).order_by('-start_time')
     if selected_types:
-        organizing_detections = organizing_detections.filter(Type__in=selected_types)
+        organizing_detections_list = organizing_detections_list.filter(Type__in=selected_types)
     if exclude_forklift:
-        organizing_detections = organizing_detections.exclude(class_name='forklift')
+        organizing_detections_list = organizing_detections_list.exclude(class_name='forklift')
+    
+    # Pagination for vision_data (50 per page)
+    vision_data_page = request.GET.get('vision_page', 1)
+    vision_data_paginator = Paginator(vision_data_list, 50)
+    vision_data = vision_data_paginator.get_page(vision_data_page)
+    
+    # Pagination for organizing_vision_detections (50 per page)
+    organizing_page = request.GET.get('organizing_page', 1)
+    organizing_paginator = Paginator(organizing_detections_list, 50)
+    organizing_detections = organizing_paginator.get_page(organizing_page)
     
     context = {
         'visions': visions,
@@ -117,22 +128,22 @@ def Receive_Data(request):
             else:
                 ip_address = request.META.get('REMOTE_ADDR')
             
-            print("_________",ip_address,"_________",data)
+            print("============",ip_address,"============",data)
             vision = False
             try:
                 vision = Vision.objects.filter(vision_id=data["event"]["device_id"]).last()
                 vision.server_ip = ip_address
                 vision.save()
             except:
-                print("vision not found")
+                pass
                 
             if not vision:
                 try:
                     vision = Vision(name=f"vision{Vision.objects.count() + 1}",vision_id=data["event"]["device_id"],server_ip=ip_address)
                     vision.save()
-                    print("vision created")
+                    print("============ vision created ============")
                 except Exception as e:
-                    print(e)
+                    pass
 
             try:
                 vision_data = VisionData(vision=vision,
@@ -145,7 +156,7 @@ def Receive_Data(request):
                 vision_data = VisionData(vision=vision, data=data)
             vision_data.save()
             organizing_vision_detections(vision_data)
-            print("data received from device successfully", vision)
+            print("============ data received from device successfully ============", vision)
             return JsonResponse({'status': 'ok', 'message': 'Data received from device successfully'})
         except Exception as e:
             print(f"Error processing data: {e}")
@@ -156,34 +167,55 @@ def Receive_Data(request):
 
 UNIT_KEYWORDS = {
     "آخال": "akhal",
+    "بسته پرس": "akhal",
     "نشاسته": "fructose",
     "سولفات": "sulfate",
     "پک": "pack",
     "akd": "akd",
+    "سود": "sude"
 }
 
 def is_same_as(vision_data, unit_name):
     is_same = False
-
-    result = re.sub(r'(آخال|نشاسته|سولفات|پک|akd)|.', r'\1', unit_name.lower())
-    
-    print("result:",result)
-    if result in UNIT_KEYWORDS:
-        is_same = True
+    if unit_name:
+        result = re.sub(r'(آخال|نشاسته|سولفات|پک|akd|بسته پرس|سود)|.', r'\1', unit_name.lower())
+        
+        print("result:",result)
+        if result in UNIT_KEYWORDS:
+            if UNIT_KEYWORDS[result] == vision_data:
+                is_same = True
     return is_same
 
 
+def create_organized_data(vision_data):
+    if not vision_data:
+        return False
+    organized_data = OrganizingVisionData(vision=vision_data.vision,
+                                            class_name=vision_data.name,
+                                            location=vision_data.vision.warehouse,
+                                            count=vision_data.count,
+                                            Type=5 if vision_data.exit else 4 if vision_data.enter else 3,
+                                            start_time=vision_data.detections_time,
+                                            end_time=vision_data.detections_time,
+                                            enter=vision_data.enter,
+                                            exit=vision_data.exit,
+                                            enter_count=1 if vision_data.enter else 0,
+                                            exit_count=1 if vision_data.exit else 0,
+                                            move_count=1 if not vision_data.exit and not vision_data.enter else 0,
+                                            time=f"{int((vision_data.detections_time - vision_data.detections_time)/3600)}:{int((vision_data.detections_time - vision_data.detections_time)/60%60)}",
+                                            time_text=f"{jdatetime.datetime.fromtimestamp(vision_data.detections_time).strftime('%a, %d %b %Y')} از ساعت {jdatetime.datetime.fromtimestamp(vision_data.detections_time).strftime('%H:%M')} تا {jdatetime.datetime.fromtimestamp(vision_data.detections_time).strftime('%H:%M')}")
+    organized_data.save()
+    return organized_data
 
 def organizing_vision_detections(vision_data):
     try:
         data = vision_data.data
         if not data or not vision_data.name:
             return
-        print(data,"data")
+        print('============ data organizing ... ============')
         class_name = vision_data.name
         
         if class_name:
-            print("is class name ______________")
             event_str = data.get("event")
             if isinstance(event_str, str):
                 event_data = json.loads(event_str)
@@ -197,21 +229,7 @@ def organizing_vision_detections(vision_data):
                 print(OrganizingVisionData.objects.filter(vision=vision_data.vision,class_name=class_name,exit=vision_data.exit,enter=vision_data.enter).count(),"organized_data")
                 if not organized_data:
                     print("organized_data not found")
-                    organized_data = OrganizingVisionData(vision=vision_data.vision,
-                                                            class_name=class_name,
-                                                            location=vision_data.vision.warehouse,
-                                                            count=vision_data.count,
-                                                            Type=5 if vision_data.exit else 4 if vision_data.enter else 3,
-                                                            start_time=vision_data.detections_time,
-                                                            end_time=vision_data.detections_time,
-                                                            enter=vision_data.enter,
-                                                            exit=vision_data.exit,
-                                                            time=f"{int((vision_data.detections_time - vision_data.detections_time)/3600)}:{int((vision_data.detections_time - vision_data.detections_time)/60%60)}",
-                                                            time_text=f"{jdatetime.datetime.fromtimestamp(vision_data.detections_time).strftime('%a, %d %b %Y')} از ساعت {jdatetime.datetime.fromtimestamp(vision_data.detections_time).strftime('%H:%M')} تا {jdatetime.datetime.fromtimestamp(vision_data.detections_time).strftime('%H:%M')}",
-                                                            enter_count=1 if vision_data.enter else 0,
-                                                            exit_count=1 if vision_data.exit else 0,
-                                                            move_count=1 if not vision_data.exit and not vision_data.enter else 0)
-                    organized_data.save()
+                    organized_data = create_organized_data(vision_data)
                 else:
                     print("organized_data found")
                     found = False
@@ -231,33 +249,32 @@ def organizing_vision_detections(vision_data):
                             found = True
                     if not found:
                         print("organized_data not found and creating new one")
-                        organized_data = OrganizingVisionData(vision=vision_data.vision,
-                                                                class_name=class_name,
-                                                                location=vision_data.vision.warehouse,
-                                                                count=vision_data.count,
-                                                                Type=5 if vision_data.exit else 4 if vision_data.enter else 3,
-                                                                start_time=vision_data.detections_time,
-                                                                end_time=vision_data.detections_time,
-                                                                enter=vision_data.enter,
-                                                                exit=vision_data.exit,
-                                                                enter_count=1 if vision_data.enter and not vision_data.exit else 0,
-                                                                exit_count=1 if vision_data.exit and not vision_data.enter else 0,
-                                                                move_count=1 if not vision_data.exit and not vision_data.enter else 0,
-                                                                time=f"{int((vision_data.detections_time - vision_data.detections_time)/3600)}:{int((vision_data.detections_time - vision_data.detections_time)/60%60)}",
-                                                                time_text=f"{jdatetime.datetime.fromtimestamp(vision_data.detections_time).strftime('%a, %d %b %Y')} از ساعت {jdatetime.datetime.fromtimestamp(vision_data.detections_time).strftime('%H:%M')} تا {jdatetime.datetime.fromtimestamp(vision_data.detections_time).strftime('%H:%M')}")
-                        organized_data.save()
+                        organized_data = create_organized_data(vision_data)
 
                 # Find Type and Shipment
-                moved_data = OrganizingVisionData.objects.filter(~Q(vision=vision_data.vision),class_name=class_name,exit=True,count=organized_data.count,start_time__gte=organized_data.start_time - 1800,start_time__lte=organized_data.start_time,exit_count=organized_data.enter_count).first()
+                moved_data = OrganizingVisionData.objects.filter(~Q(vision=vision_data.vision),class_name=class_name,exit=True,count=organized_data.count,start_time__gte=organized_data.start_time - 600,start_time__lte=organized_data.start_time,exit_count=organized_data.enter_count).first()
                 
                 # Find shipment
                 if not organized_data.class_name == "forklift":
                     shipment = Shipment.objects.filter(Q(CreationDateTime__gte=organized_data.start_time - 3600) & Q(CreationDateTime__lte=organized_data.start_time + 3600)).last()
-                    if shipment:
-                        print("shipment found",is_same_as(organized_data.class_name, shipment.unit.name))
-                        if is_same_as(organized_data.class_name, shipment.unit.name):
+                    print("____shipment",shipment)
+                    if shipment and not moved_data:
+                        unit_name = '' if not shipment.unit else shipment.unit.name
+                        print("shipment found",is_same_as(organized_data.class_name, unit_name),unit_name)
+                        if not organized_data.shipment and (
+                                is_same_as(organized_data.class_name, unit_name)
+                                or (not shipment.unit and organized_data.Type == 5)
+                            ):
                             organized_data.shipment = shipment
                             print("shipment found and saved")
+                        else:
+                            if not organized_data.shipment == shipment and (
+                                is_same_as(organized_data.class_name, unit_name)
+                            ):
+                                print("============== find diferent shipment | change shipment ============")
+                                organized_data = create_organized_data(vision_data)
+                                organized_data.shipment = shipment
+
 
                 # Find Type
                 if organized_data.shipment:
@@ -298,7 +315,8 @@ def organizing_vision_detections(vision_data):
                             moved_data.Is_Deleted = True
 
                 organized_data.save()
-                moved_data.save()
+                if moved_data:
+                    moved_data.save()
     
     except Exception as e:
         print(e)

@@ -1,0 +1,62 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}افزودن Vision{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'visions/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            افزودن Vision
+        </h1>
+        <a href="{% url 'visions' %}" class="btn btn-secondary">
+            <svg width="12" height="11" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.5 3H6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 0.5L6.5 3L4 5.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="form-wrapper">
+        <form action="{% url 'add_vision' %}" method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="name">نام Vision</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="نام Vision را وارد کنید" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="vision_id">شناسه Vision</label>
+                    <input type="text" class="form-control" id="vision_id" name="vision_id" placeholder="شناسه Vision را وارد کنید" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="warehouse">انبار</label>
+                    <select class="form-control" id="warehouse" name="warehouse">
+                        {% for warehouse in warehouses %}
+                        <option value="{{ warehouse.id }}">{{ warehouse.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="server_ip">آدرس سرور</label>
+                    <input type="text" class="form-control" id="server_ip" name="server_ip" placeholder="آدرس IP سرور را وارد کنید">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات Vision را وارد کنید"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i>i</i>
+                    افزودن
+                </button>
+                <a href="{% url 'visions' %}" class="btn btn-outline">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
