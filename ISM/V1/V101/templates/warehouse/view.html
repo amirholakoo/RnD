@@ -1,0 +1,83 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}{{ warehouse.name }}{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'warehouse/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i>i</i>
+            {{ warehouse.name }}
+        </h1>
+        <div class="action-btns">
+            <a href="{% url 'warehouses' %}" class="btn btn-secondary">
+                <i>i</i>
+                بازگشت
+            </a>
+            <a href="{% url 'edit_warehouse' warehouse.id %}" class="btn btn-warning">
+                <i>i</i>
+                ویرایش
+            </a>
+            <a href="{% url 'delete_warehouse' warehouse.id %}" class="btn btn-danger">
+                <i>i</i>
+                حذف
+            </a>
+        </div>
+    </div>
+
+    <div class="detail-wrapper">
+        <div class="detail-header">
+            <h2 class="detail-title">
+                <i>i</i>
+                اطلاعات انبار
+            </h2>
+        </div>
+        <div class="detail-body">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">نام</span>
+                    <span class="detail-value">{{ warehouse.name }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">مکان</span>
+                    <span class="detail-value">{{ warehouse.location|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">توضیحات</span>
+                    <span class="detail-value">{{ warehouse.description|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">تعداد ویژن</span>
+                    <span class="detail-value">{{ warehouse.warehouse_vision.all.count }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">زمان ایجاد</span>
+                    <span class="detail-value">{% to_jalali warehouse.CreationDateTime %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">آخرین بروزرسانی</span>
+                    <span class="detail-value">{% to_jalali warehouse.LastUpdate %}</span>
+                </div>
+            </div>
+            {% if warehouse.warehouse_vision.all %}
+            <div class="divider"></div>
+            <h3 class="section-title">
+                <i>i</i>
+                ویژن‌های مرتبط
+            </h3>
+            <div class="action-btns">
+                {% for vision in warehouse.warehouse_vision.all %}
+                <a href="{% url 'view_vision' vision.vision.id %}" class="btn btn-info">
+                    <i>i</i>
+                    {{ vision.vision.name }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -667,6 +667,7 @@
     padding: 20px;
     text-align: center;
     transition: all 0.3s;
+    position: relative;
 }
 
 .setting-card:hover {
@@ -674,6 +675,46 @@
     transform: translateY(-2px);
 }
 
+.card-status-bar {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    background: #adadad;
+}
+.card-status-bar.error {
+    background: red;
+}
+.error {
+    background: red;
+}
+.card-status-bar.run {
+    background: #abffae;
+}
+.run {
+    background: #abffae;
+}
+.card-status-bar.remote {
+    background: #00ccff;
+}
+.remote {
+    background: #00ccff;
+}
+.card-status-bar.local {
+    background: yellow;
+}
+.local {
+    background: yellow;
+}
+.card-status-bar.interlock {
+    background: rgba(179, 46, 179, 0.5);
+}
+.interlock {
+    background: rgba(179, 46, 179, 0.5);
+}
 .setting-card.value-changed {
     animation: card-pulse 0.5s ease;
 }
@@ -734,6 +775,13 @@
     color: #333;
     font-family: monospace;
     direction: ltr;
+}
+
+.setting-card-value.live-background {
+    min-height: 36px;
+    border-radius: 6px;
+    position: relative;
+    z-index: 0;
 }
 
 .setting-card-header {
@@ -2111,6 +2159,25 @@
     cursor: pointer;
 }
 
+.alert-config-divider {
+    width: 100%;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.form-inline-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.form-inline-row label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
 .alert-types-checkboxes {
     display: flex;
     flex-direction: column;
@@ -2265,9 +2332,10 @@
 
 /* Alert Preview */
 .alert-preview-container {
-    display: flex;
+    display: grid;
     gap: 16px;
     margin-top: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .alert-preview-box {

@@ -1,0 +1,74 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}{{ material_type.material_type }}{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'material/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i>i</i>
+            {{ material_type.material_type }}
+        </h1>
+        <div class="action-btns">
+            <a href="{% url 'material_types' %}" class="btn btn-secondary">
+                <i>i</i>
+                بازگشت
+            </a>
+            <a href="{% url 'edit_material_type' material_type.id %}" class="btn btn-warning">
+                <i>i</i>
+                ویرایش
+            </a>
+            <a href="{% url 'delete_material_type' material_type.id %}" class="btn btn-danger">
+                <i>i</i>
+                حذف
+            </a>
+        </div>
+    </div>
+
+    <div class="detail-wrapper">
+        <div class="detail-header">
+            <h2 class="detail-title">
+                <i>i</i>
+                اطلاعات نوع ماده
+            </h2>
+        </div>
+        <div class="detail-body">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">نوع ماده</span>
+                    <span class="detail-value">{{ material_type.material_type }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">نام تامین‌کننده</span>
+                    <span class="detail-value">{{ material_type.supplier_name|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">توضیحات</span>
+                    <span class="detail-value">{{ material_type.description|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">وضعیت</span>
+                    <span class="detail-value">
+                        {% if material_type.Is_Active %}
+                        <span class="badge badge-success">فعال</span>
+                        {% else %}
+                        <span class="badge badge-danger">غیرفعال</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">زمان ایجاد</span>
+                    <span class="detail-value">{% to_jalali material_type.CreationDateTime %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">آخرین بروزرسانی</span>
+                    <span class="detail-value">{% to_jalali material_type.LastUpdate %}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

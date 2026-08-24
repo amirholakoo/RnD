@@ -1,0 +1,46 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}ویرایش واحد{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'unit/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            ویرایش واحد
+        </h1>
+        <a href="{% url 'units' %}" class="btn btn-secondary">
+            <svg width="12" height="11" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.5 3H6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 0.5L6.5 3L4 5.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="form-wrapper">
+        <form action="{% url 'edit_unit' unit.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="name">نام واحد</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="نام واحد را وارد کنید" value="{{ unit.name }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="description">توضیحات</label>
+                    <textarea class="form-control" id="description" name="description" placeholder="توضیحات واحد را وارد کنید">{{ unit.description }}</textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i>i</i>
+                    ذخیره تغییرات
+                </button>
+                <a href="{% url 'units' %}" class="btn btn-outline">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

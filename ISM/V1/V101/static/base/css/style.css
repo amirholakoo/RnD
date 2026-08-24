@@ -1,0 +1,661 @@
+/* ========== main menu start ========== */
+section.main_menu {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+section.main_menu .nav_link {
+    display: block;
+    width: 100%;
+    padding: 10px 24px;
+    margin-bottom: 14px;
+    position: relative;
+    transition: all 0.3s;
+}
+section.main_menu .nav_link.active svg path {
+    stroke: var(--main-color);
+}
+section.main_menu .nav_link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 0%;
+    width: 2px;
+    background-color: var(--main-color);
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+section.main_menu .nav_link.active::after {
+    height: 100%;
+    transition: all 0.3s;
+}
+/* ========== main menu end ========== */
+
+
+/* ========== page contents section start ========== */
+.page_content {
+    position: fixed;
+    top: 0;
+    right: 75px;
+    width: calc(100% - 75px);
+    height: 100vh;
+    overflow: auto;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+.page_content .section_page {
+    position: absolute;
+    padding: 60px 0;
+    right: -100%;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: calc(100% - 80px);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    z-index: -1;
+    transition: all 0.3s;
+}
+.page_content .section_page.active {
+    right: 40px;
+    opacity: 1;
+    pointer-events: visible;
+    visibility: visible;
+    z-index: +999;
+}
+/* ========== page contents section end ========== */
+
+
+/* ========== spets section start =========== */
+.steps {
+    position: absolute;
+    text-align: right;
+    top: 80px;
+    margin-bottom: 70px;
+}
+.steps .shipment_process_steps {
+    display: flex;
+    gap: 10px;
+}
+.steps .step {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    min-width: 150px;
+}
+.steps .step .index {
+    position: relative;
+    border: 2px dashed #afafaf;
+    color: #afafaf;
+    border-radius: 60px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.steps .step.active .index {
+    border-color: var(--main-color);
+    color: var(--main-color);
+}
+.steps .step.complete .index {
+    border: 2px solid var(--success-color);
+    color: var(--success-color);
+}
+.steps .step:not(:last-child) .index:after {
+    content: "";
+    position: absolute;
+    left: -225%;
+    width: 90px;
+    height: 2px;
+    background-color: #afafaf;
+}
+.steps .step.active .index:after {
+    background-color: var(--main-color);
+}
+.steps .step.complete .index:after {
+    background-color: var(--success-color);
+}
+.steps .step .title {
+    color: #afafaf;
+    font-size: 0.9rem;
+}
+.steps .step.active .title {
+    color: #000;
+    font-size: 0.9rem;
+}
+.steps .step.complete .title {
+    color: var(--success-color);
+    font-size: 0.9rem;
+}
+/* ========== spets section end =========== */
+
+
+
+/* ========== form start ========== */
+/* this codes began with trucks/add.html but mabe use for another page ... */
+.form_content {
+    width: 100%;
+    min-width: 60%;
+    max-width: 1200px;
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    overflow: hidden;
+    overflow-y: auto;
+}
+.form_content hr {
+    height: 150px;
+    width: 1px;
+    border-left: 2px dashed #d3d3d3 ;
+}
+.form_content .form_section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    text-align: right;
+    width: 100%;
+}
+.form_content .form_section .form_group {
+    position: relative;
+}
+.form_content .form_section:not(.licence_plate) .form_group {
+    width: calc(50% - 10px);
+}
+.form_content .form_actions {
+    margin: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+.btn_submit {
+    padding: 14px 18px;
+    border-radius: 10px;
+    background-color: var(--main-color);
+    color: #fff !important;
+    cursor: pointer;
+}
+.btn_cancel {
+    display: inline;
+    padding: 14px 18px;
+    border-radius: 10px;
+    background-color: var(--danger-color);
+    color: #fff !important;
+    cursor: pointer;
+}
+.btn_submit:hover, .btn_cancel:hover {
+    filter: brightness(1.4);
+    color: #fff;
+    transition: all 0.3s;
+}
+.form_content .form_section .form_group.desc {
+    width: 75%;
+}
+.form_content .form_section .form_group input,
+.form_content .form_section .form_group select,
+.form_content .form_section .form_group textarea,
+.form_style {
+    padding: 14px;
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    height: 50px;
+    color: #000;
+    font-size: 0.9rem;
+}
+.form_content .form_section .form_group input:not([place_holder_active])::placeholder,
+.form_content .form_section .form_group select:not([place_holder_active])::placeholder,
+.form_content .form_section .form_group textarea:not([place_holder_active])::placeholder {
+ opacity: 0;
+ font-size: 0.8rem;
+ transition: all 0.5s;
+}
+.form_content .form_section .form_group input:focus::placeholder, .form_content .form_section .form_group select:focus::placeholder, .form_content .form_section .form_group textarea:focus::placeholder {
+ opacity: 1;
+}
+.form_content .form_section .form_group input:focus,
+.form_content .form_section .form_group textarea:focus,
+.form_content .form_section .form_group select:focus,
+.form_content .form_section .form_group input:not(:placeholder-shown)
+.form_content .form_section .form_group textarea:not(:placeholder-shown) {
+    outline: none;
+    box-shadow: none;
+    border-color: var(--main-color);
+}
+.form_content .form_section .form_group label {
+    font-size: 1rem;
+    position: absolute;
+    background-color: #fff;
+    padding: 3px 10px;
+    top: 7px;
+    right: 10px;
+    transition: all 0.2s;
+    /* ************* is bad revised this later *********** */
+    width: calc(100% - 35px);
+}
+.form_content .form_section .form_group input:focus ~ label,
+.form_content .form_section .form_group textarea:focus ~ label,
+.form_content .form_section .form_group select:focus ~ label,
+.form_content .form_section .form_group input:not(:placeholder-shown) ~ label {
+    font-size: 0.8rem;
+    top: -10px;
+    color: var(--main-color);
+    /* ************* is bad revised this later *********** */
+    width: auto;
+}
+.form_content .form_section .licence_plate {
+    border: 2px solid var(--main-color);
+    border-radius: 15px;
+    width: 50%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    padding-bottom: 5px;
+    overflow: hidden;
+}
+.form_content .form_section .licence_plate.recognized {
+    border-color: var(--success-color);
+}
+.form_content .form_section .licence_plate input,.form_content .form_section .licence_plate select{
+    max-width: 60px;
+    text-align: center;
+    border: 0;
+    font-size: 1.4rem;
+    padding-bottom: 0px;
+    /* border-bottom: 1px solid #d3d3d3; */
+}
+.form_content .form_section .licence_plate .form_group:first-child {
+    position: relative;
+    border-left: 2px solid var(--main-color);
+    padding-left: 4px;
+}
+.form_content .form_section .licence_plate.recognized .form_group:first-child {
+    border-color: var(--success-color);
+}
+.form_content .form_section .licence_plate .form_group:first-child::after {
+    content: "ایران";
+    position: absolute;
+    top: -10px;
+    right: 15px;
+    font-weight: 900;
+}
+.form_content .form_section .licence_plate .form_group:last-child {
+    background-color: var(--main-color);
+    margin-top: -1px;
+    margin-left: -10px;
+    height: 80px;
+    color: #fff;
+    font-size: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+    justify-content: space-around;
+    padding: 0 0px;
+}
+.form_content .form_section .licence_plate .form_group:last-child .flag span {
+    display: block;
+    width: 20px;
+    height: 4px;
+}
+.form_content .form_section .licence_plate .form_group:last-child .flag span:first-child {
+    background-color: rgb(21, 177, 21);
+}
+.form_content .form_section .licence_plate .form_group:last-child .flag span:nth-child(2) {
+    background-color: #fff;
+}
+.form_content .form_section .licence_plate .form_group:last-child .flag span:last-child {
+    background-color: rgb(255, 0, 0);
+}
+
+
+.form_content .form_section .history_box {
+    position: relative;
+    padding: 12px;
+    border-radius: 16px;
+    background-color: var(--background-light);
+    width: 50%;
+}
+.form_content .form_section .history_box .timer {
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+.form_content .form_section .history_box .timer span {
+    font-size: 0.8rem;
+}
+.form_content .form_section .licence_plate_history {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 300px;
+    padding: 16px;
+    background-color: #fafafa;
+    position: relative;
+    width: 100%;
+    border-top: 1px solid #000;
+    overflow: hidden;
+    overflow-y: auto;
+    top: 100%;
+    right: 0;
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+    visibility: hidden;
+    height: 0;
+    transition: all 0.3s;
+}
+.form_content .form_section .history_box:hover {
+    border-radius: 16px 16px 0 0;
+}
+.form_content .form_section .history_box:hover > .licence_plate_history, .form_content .form_section .history_box:focus > .licence_plate_history {
+    pointer-events: visible;
+    visibility: visible;
+    height: auto;
+    opacity: 1;
+    border-radius: 0px 0 20px 20px;
+}
+.form_content .form_section .licence_plate_history::after {
+    content: "";
+    position: sticky;
+    bottom: -30px;
+    right: 0;
+    display: block;
+    width: 100%;
+    height: 100px;
+    background-image: linear-gradient(0deg, #fafafa 5%, transparent);
+    z-index: +999;
+}
+.form_content .form_section .licence_plate_history .licence_plate {
+    height: 70px;
+    min-height: 70px;
+    margin-bottom: 6px;
+    width: 240px;
+    filter: grayscale(0.4);
+}
+.form_content .form_section .licence_plate_history .licence_plate input, .form_content .form_section .licence_plate_history .licence_plate select {
+    max-width: 55px;
+    font-size: 1rem;
+}
+.form_content .form_section .licence_plate_history .licence_plate .form_group:first-child::after {
+    content: "ایران";
+    position: absolute;
+    top: -2px;
+    right: 9px;
+    font-size: 0.8rem;
+    font-weight: 900;
+}
+/* ========== form end ========== */
+
+/* ========== shipment page start =========== */
+
+
+
+/* ========== shipment page end =========== */
+
+
+/* ========== products machine page start ========== */
+.section_include_nav.section_page .section_page {
+    width: calc(100% - 240px) !important;
+    height: 100%;
+    left: 20px;
+    right: auto;
+    padding: 20px;
+}
+.section_include_nav.section_page .section_page .section_page {
+    width: calc(100% - 180px) !important;
+}
+.section_include_nav.section_page .form_content {
+    align-items: start;
+    flex-direction: column;
+    justify-content: start;
+}
+.section_include_nav.section_page .form_content {
+    height: 100%;
+}
+.form_content_nav {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 12px;
+    width: 180px;
+    padding-left: 20px;
+    border-left: 1px solid #e0e0e0;
+    height: 100%;
+}
+
+.form_content_nav .nav_item {
+    padding: 12px;
+    background-color: var(--background-light);
+    border: 1px solid #afafaf;
+    border-radius: 16px;
+    width: 100%;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+.form_content_nav .nav_item.active, .form_content_nav .nav_item:hover {
+    border-color: var(--main-color);
+    color: var(--main-color);
+    transition: all 0.3s;
+}
+.form_content .form_content {
+    padding: 40px 0px;
+}
+.section_include_nav.section_page .form_content .form_content .form_content_nav {
+    background-color: #fafafa;
+    padding: 20px;
+    border: 1px solid #d3d3d3;
+    border-right: 0;
+    border-radius: 18px 0 0 18px;
+}
+.section_include_nav.section_page .form_content .form_content .form_content_nav .nav_item{
+    line-height: 18px;
+}
+.section_include_nav.section_page > .section_page {
+    padding: 0 30px;
+}
+/* ========== products machine page end ========== */
+.devider {
+    position: relative;
+    width: 100%;
+    text-align: right;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 20px 0 12px 0;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+}
+.devider::before {
+    content: "";
+    width: 20px;
+    height: 2px;
+    background-color: var(--main-color);
+}
+.devider::after {
+    content: "";
+    width: 100%;
+    height: 1px;
+    background-color: var(--main-color);
+}
+
+
+/* =========== products page start ============*/
+
+.add_products .form_content .product_header {
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 18px;
+    justify-content: space-around;
+    width: 100%;
+    padding: 16px;
+    background: var(--background-light);
+    border: 1px solid #afafaf;
+    border-radius: 16px;
+    font-size: 0.9rem;
+    font-weight: 900;
+}
+.add_products .form_content .product_item {
+    display: flex;
+    margin-bottom: 18px;
+    justify-content: space-around;
+    width: 100%;
+    padding: 16px;
+    background: var(--background-light);
+    border-radius: 16px;
+    font-size: 0.9rem;
+    font-weight: 900;
+}
+.add_products .form_content .product_item .item .title {
+    display: none;
+}
+table {
+    border-radius: 18px;
+    width: 100%;
+    margin-top: 20px;
+    overflow: hidden;
+    border: 1px solid #000;
+}
+table th {
+    margin-bottom: 16px;
+    background-color: #4d4ea8 !important;
+    color: #fff;
+}
+table tr:first-child {
+    background-color: rgb(151, 151, 151);
+}
+table tr {
+    margin-bottom: 4px;
+}
+table td,table th {
+    border: 1px solid #ffffff;
+    padding: 10px;
+    text-align: center;
+    font-size: 0.9rem;
+    background-color: var(--background-light);
+}
+/* =========== products page end ============*/
+
+
+/* =========== qr code settings page start =========== */
+
+#qr_code_settings .qr_container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 16px;
+}
+#qr_code_settings .qr_container > div {
+    width: 50%;
+}
+#qr_code_settings .qr_container .qr_settings .qr_keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#qr_code_settings .qr_container .qr_settings .qr_keys .key_item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--background-light);
+    border-radius: 12px;
+    border: 1px solid #d4d4d4;
+    font-size: 0.9rem;
+    gap: 10px;
+}
+
+#qr_code_settings .qr_container .qr_settings .qr_keys .key_item label {
+    margin-bottom: 0;
+}
+#qr_code_settings .qr_container .qr_settings .qr_keys .key_item.active {
+    border-color: var(--main-color);
+    background-color: #f3f3f3;
+    color: var(--main-color);
+}
+#qr_code_settings .content_preview {
+    padding: 20px;
+    border-radius: 20px;
+    border: 2px dashed var(--main-color);
+}
+
+
+.section_page.qrcode.active {
+    width: auto;
+    width: calc(100% - 0px);
+    height: 100%;
+    left: 0;
+    right: 0 !important;
+    background: #fff;
+    z-index: +1001;
+    position: fixed;
+}
+
+.section_page.qrcode .btn_cancel {
+    position: absolute;
+    top: -100%;
+    right: calc(50% - 40px);
+    z-index: +1001;
+    transition: all 0.3s;
+}
+.section_page.qrcode .section_page {
+    position: unset;
+}
+.section_page.qrcode .qr_gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+.section_page.qrcode .qr_gallery .img_box {
+    max-width: 300px;
+    border: 2px solid var(--background-light);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    text-align: justify;
+    color: #000;
+    font-size: 1rem;
+}
+.section_page.qrcode .qr_gallery h4 {
+    font-size: 1.2rem;
+}
+.section_page.qrcode .qr_gallery p {
+    font-size: 1rem;
+    max-width: 35%;
+    text-align: justify;
+}
+.section_page.qrcode .btn_cancel.active {
+    top: 40px;
+}
+#qr_code_custome {
+    direction: ltr;
+}
+/* =========== qr code settings page end =========== */

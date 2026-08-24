@@ -59,8 +59,9 @@ class PLCLogsAdmin(JalaliDateTimeMixin, admin.ModelAdmin):
 
 @admin.register(PLC_Keys)
 class PLCKeysAdmin(JalaliDateTimeMixin, admin.ModelAdmin):
-    list_display = ('id', 'name', 'fa_name', 'key', 'value', 'description', 'jalali_creation_datetime', 'jalali_last_update')
+    list_display = ('id', 'name', 'fa_name', 'key', 'value', 'live_background', 'value_max', 'description', 'jalali_creation_datetime', 'jalali_last_update')
     search_fields = ('name', 'fa_name', 'key', 'value')
+    list_editable = ('live_background', 'value_max')
     ordering = ('-CreationDateTime',)
 
 

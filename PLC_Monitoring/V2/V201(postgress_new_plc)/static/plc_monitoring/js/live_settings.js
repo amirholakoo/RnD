@@ -1,6 +1,7 @@
 let eventSource = null;
 let keyNames = {};
 let keyOrders = {};
+let keyMeta = {};
 let alertConfigs = {};
 let alertStates = {};
 
@@ -11,14 +12,20 @@ function loadKeyNames() {
             if (data.status === 'ok') {
                 keyNames = {};
                 keyOrders = {};
+                keyMeta = {};
                 data.data.forEach(item => {
                     keyNames[item.key] = item.fa_name || item.name || item.key;
                     if (typeof item.order_index === 'number') {
                         keyOrders[item.key] = item.order_index;
                     }
+                    keyMeta[item.key] = {
+                        live_background: item.live_background || false,
+                        value_max: item.value_max != null ? item.value_max : 100
+                    };
                 });
                 applySettingsOrder();
                 initSettingCardsDrag();
+                checkAllCardsForAlerts();
             }
         })
         .catch(err => console.error('Error loading key names:', err));
@@ -37,10 +44,38 @@ function formatDisplayValue(key, value) {
     return value;
 }
 
+function hexToRgba(hex, alpha) {
+    const m = String(hex).match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+    return m ? `rgba(${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)},${alpha})` : hex;
+}
+
+
+// // update status
+// function UpdateStatus(card,key,value) {
+//     let name = card.querySelector('.setting-card-key').innerHTML;
+//     let target_name = name.split('_')[1]
+//     for (const x of document.querySelector(".settings-grid-large").children) {
+//         if (x.dataset.key.toLowerCase() == target_name.toLowerCase()) {
+//             console.log("================",x,"================");
+//             let status_card = x.querySelector(".card-status-bar");
+//             if (!status_card) {
+//                 let status_html_code = `
+//                 <div class="card-status-bar"></div>
+//                 `
+//                 x.insertAdjacentHTML("afterbegin",status_html_code);
+//             }
+
+//             card.remove();
+//         }
+//     }
+// }
+
+
 // Update card style based on key and value
 function updateCardStyle(card, key, value) {
     const numValue = parseFloat(value);
     const isNumeric = !isNaN(numValue) && isFinite(value);
+    let alertColor = null;
     
     if (key === 'st') {
         if (value === 'm') {
@@ -61,21 +96,40 @@ function updateCardStyle(card, key, value) {
         let alertTriggered = false;
         let alertType = null;
         
-        if (config.max_value !== null && numValue > config.max_value) {
-            const color = config.color_max || '#ff4444';
-            card.style.background = `linear-gradient(135deg, transparent 0%, ${color} 100%)`;
-            card.style.border = `1px solid ${color}`;
+        if (config.max_value != null && numValue > config.max_value) {
+            alertColor = config.color_max || '#ff8800';
+            alertType = config.max_value != null ? 'max_2' : 'max';
             alertTriggered = true;
+        }
+        if (config.max_value_2 != null && numValue > config.max_value_2) {
+            alertColor = config.color_max_2 || '#ff4444';
             alertType = 'max';
-        } else if (config.min_value !== null && numValue < config.min_value) {
-            const color = config.color_min || '#ff8800';
-            card.style.background = `linear-gradient(135deg, transparent 0%, ${color} 100%)`;
-            card.style.border = `1px solid ${color}`;
             alertTriggered = true;
+        }
+        if (config.min_value != null && numValue < config.min_value) {
+            alertColor = config.color_min || '#ff8800';
+            alertType = config.min_value != null ? 'min_2' : 'min';
+            alertTriggered = true;
+        }
+        if (config.min_value_2 != null && numValue < config.min_value_2) {
+            alertColor = config.color_min_2 || '#ff4444';
             alertType = 'min';
+            alertTriggered = true;
+        }
+        
+        const hasLiveBg = keyMeta[key] && keyMeta[key].live_background;
+        if (!hasLiveBg) {
+            if (alertColor) {
+                card.style.background = `linear-gradient(135deg, transparent 0%, ${alertColor} 100%)`;
+                card.style.border = `1px solid ${alertColor}`;
+                
+            } else {
+                card.style.background = '';
+                card.style.border = '';
+            }
         } else {
             card.style.background = '';
-            card.style.border = '';
+            card.style.border = alertColor ? `1px solid ${alertColor}` : '';
         }
         
         if (alertTriggered && config.alert_types) {
@@ -88,6 +142,61 @@ function updateCardStyle(card, key, value) {
             }
         } else {
             alertStates[key] = null;
+        }
+    }
+    
+    const valueEl = card.querySelector('.setting-card-value');
+    if (valueEl && keyMeta[key]) {
+        const meta = keyMeta[key];
+        if (meta.live_background && isNumeric) {
+            const maxVal = meta.value_max || 100;
+            const percent = Math.min(100, Math.max(0, (numValue / maxVal) * 100));
+            const fillColor = alertColor ? hexToRgba(alertColor, 0.3) : 'rgba(76,175,80,0.3)';
+            valueEl.parentElement.style.background = `linear-gradient(to top, ${fillColor} 0%, ${fillColor} ${percent}%, transparent ${percent}%)`;
+            valueEl.parentElement.classList.add('live-background');
+        } else {
+            valueEl.parentElement.classList.remove('live-background');
+            if (!alertColor) valueEl.parentElement.style.background = '';
+        }
+    }
+
+    if (key.toLowerCase().includes("status")) {
+        //UpdateStatus(card,key,value);
+        let status_card = card.querySelector(".card-status-bar");
+        if (!status_card) {
+            let status_html_code = `
+            <div class="card-status-bar"></div>
+            `
+            card.insertAdjacentHTML("afterbegin",status_html_code);
+        }
+        status_card = card.querySelector(".card-status-bar");
+        if(String(value)=="3") {
+            status_card.classList.add("error");
+            card.querySelector('.setting-card-value').innerHTML = "RRROR";
+        }
+        else if(String(value)=="4") {
+            status_card.classList.add("run");
+            card.querySelector('.setting-card-value').innerHTML = "RUN";
+        }
+        else if(String(value)=="5") {
+            status_card.classList.add("remote");
+            card.querySelector('.setting-card-value').innerHTML = "REMOTE";
+        }
+        else if(String(value)=="6") {
+            status_card.classList.add("local");
+            card.querySelector('.setting-card-value').innerHTML = "LOCAL";
+        }
+        else if(String(value)=="7") {
+            status_card.classList.add("interlock");
+            card.querySelector('.setting-card-value').innerHTML = "INTER LOCK";
+        }
+        else {
+            card.querySelector('.setting-card-value').innerHTML = "No Connection";
+            status_card.classList.remove("error");
+            status_card.classList.remove("run");
+            status_card.classList.remove("remote");
+            status_card.classList.remove("local");
+            status_card.classList.remove("interlock");
         }
     }
 }
@@ -139,6 +248,7 @@ function updateSettings(data) {
             const newCard = document.createElement('div');
             newCard.className = 'setting-card new-card';
             newCard.dataset.key = key;
+            newCard.dataset.name = "name";
             newCard.setAttribute('draggable', 'true');
             newCard.setAttribute('title', 'کلیک برای تنظیمات هشدار');
             newCard.innerHTML = `
@@ -392,8 +502,21 @@ function triggerAlert(key, type, value, config) {
     if (!config.alert_types) return;
     
     const keyName = getKeyName(key);
-    const threshold = type === 'max' ? config.max_value : config.min_value;
-    const message = `${keyName}: مقدار ${value} از ${type === 'max' ? 'حداکثر' : 'حداقل'} (${threshold}) عبور کرد`;
+    let threshold, label;
+    if (type === 'max') {
+        threshold = config.max_value_2;
+        label = 'حداکثر ۲';
+    } else if (type === 'max_2') {
+        threshold = config.max_value;
+        label = 'حداکثر';
+    } else if (type === 'min') {
+        threshold = config.min_value_2;
+        label = 'حداقل ۲';
+    } else {
+        threshold = config.min_value;
+        label = 'حداقل';
+    }
+    const message = `${keyName}: مقدار ${value} از ${label} (${threshold}) عبور کرد`;
     
     if (config.alert_types.local) {
         showLocalAlert(message);
@@ -436,15 +559,26 @@ function closeLocalAlert() {
 
 function updatePreview() {
     const colorMax = document.getElementById('alert_config_color_max').value;
+    const colorMax2 = document.getElementById('alert_config_color_max_2').value;
     const colorMin = document.getElementById('alert_config_color_min').value;
+    const colorMin2 = document.getElementById('alert_config_color_min_2').value;
     const previewMax = document.getElementById('preview_max');
+    const previewMax2 = document.getElementById('preview_max_2');
     const previewMin = document.getElementById('preview_min');
+    const previewMin2 = document.getElementById('preview_min_2');
     
     if (previewMax) {
         previewMax.style.background = `linear-gradient(135deg, transparent 0%, ${colorMax} 100%)`;
         previewMax.style.border = `1px solid ${colorMax}`;
     }
-    
+    if (previewMax2) {
+        previewMax2.style.background = `linear-gradient(135deg, transparent 0%, ${colorMax2} 100%)`;
+        previewMax2.style.border = `1px solid ${colorMax2}`;
+    }
+    if (previewMin2) {
+        previewMin2.style.background = `linear-gradient(135deg, transparent 0%, ${colorMin2} 100%)`;
+        previewMin2.style.border = `1px solid ${colorMin2}`;
+    }
     if (previewMin) {
         previewMin.style.background = `linear-gradient(135deg, transparent 0%, ${colorMin} 100%)`;
         previewMin.style.border = `1px solid ${colorMin}`;
@@ -455,26 +589,44 @@ function openAlertConfigModal(key) {
     const modal = document.getElementById('alert_config_modal');
     const keyInput = document.getElementById('alert_config_key');
     const minInput = document.getElementById('alert_config_min');
+    const min2Input = document.getElementById('alert_config_min_2');
     const maxInput = document.getElementById('alert_config_max');
+    const max2Input = document.getElementById('alert_config_max_2');
     const colorMaxInput = document.getElementById('alert_config_color_max');
+    const colorMax2Input = document.getElementById('alert_config_color_max_2');
     const colorMinInput = document.getElementById('alert_config_color_min');
+    const colorMin2Input = document.getElementById('alert_config_color_min_2');
     const localCheckbox = document.getElementById('alert_type_local');
     const smsCheckbox = document.getElementById('alert_type_sms');
     const emailCheckbox = document.getElementById('alert_type_email');
+    const liveBgCheckbox = document.getElementById('alert_config_live_background');
+    const valueMaxInput = document.getElementById('alert_config_value_max');
     
     if (!modal) return;
     
     keyInput.value = key;
+    
+    if (keyMeta[key]) {
+        liveBgCheckbox.checked = keyMeta[key].live_background || false;
+        valueMaxInput.value = keyMeta[key].value_max != null ? keyMeta[key].value_max : 100;
+    } else {
+        liveBgCheckbox.checked = false;
+        valueMaxInput.value = 100;
+    }
     
     fetch(`/api/alert-config/?key=${encodeURIComponent(key)}`)
         .then(response => response.json())
         .then(data => {
             if (data.status === 'ok') {
                 const config = data.data;
-                minInput.value = config.min_value !== null ? config.min_value : '';
-                maxInput.value = config.max_value !== null ? config.max_value : '';
+                minInput.value = config.min_value != null ? config.min_value : '';
+                min2Input.value = config.min_value_2 != null ? config.min_value_2 : '';
+                maxInput.value = config.max_value != null ? config.max_value : '';
+                max2Input.value = config.max_value_2 != null ? config.max_value_2 : '';
                 colorMaxInput.value = config.color_max || '#ff4444';
-                colorMinInput.value = config.color_min || '#ff8800';
+                colorMax2Input.value = config.color_max_2 || '#ff8800';
+                colorMinInput.value = config.color_min || '#ff4444';
+                colorMin2Input.value = config.color_min_2 || '#ffaa00';
                 
                 localCheckbox.checked = config.alert_types.local || false;
                 smsCheckbox.checked = config.alert_types.sms || false;
@@ -485,12 +637,18 @@ function openAlertConfigModal(key) {
         .catch(err => {
             console.error('Error loading alert config:', err);
             minInput.value = '';
+            min2Input.value = '';
             maxInput.value = '';
+            max2Input.value = '';
             colorMaxInput.value = '#ff4444';
-            colorMinInput.value = '#ff8800';
+            colorMax2Input.value = '#ff8800';
+            colorMinInput.value = '#ff4444';
+            colorMin2Input.value = '#ffaa00';
             localCheckbox.checked = false;
             smsCheckbox.checked = false;
             emailCheckbox.checked = false;
+            liveBgCheckbox.checked = false;
+            valueMaxInput.value = 100;
             updatePreview();
         });
     
@@ -511,9 +669,15 @@ function closeAlertConfigModal() {
 function saveAlertConfig() {
     const key = document.getElementById('alert_config_key').value;
     const minValue = document.getElementById('alert_config_min').value;
+    const minValue2 = document.getElementById('alert_config_min_2').value;
     const maxValue = document.getElementById('alert_config_max').value;
+    const maxValue2 = document.getElementById('alert_config_max_2').value;
     const colorMax = document.getElementById('alert_config_color_max').value;
+    const colorMax2 = document.getElementById('alert_config_color_max_2').value;
     const colorMin = document.getElementById('alert_config_color_min').value;
+    const colorMin2 = document.getElementById('alert_config_color_min_2').value;
+    const liveBackgroundChecked = document.getElementById('alert_config_live_background').checked;
+    const valueMax = document.getElementById('alert_config_value_max').value;
     const localChecked = document.getElementById('alert_type_local').checked;
     const smsChecked = document.getElementById('alert_type_sms').checked;
     const emailChecked = document.getElementById('alert_type_email').checked;
@@ -527,25 +691,41 @@ function saveAlertConfig() {
     const formData = new FormData();
     formData.append('key', key);
     formData.append('min_value', minValue || '');
+    formData.append('min_value_2', minValue2 || '');
     formData.append('max_value', maxValue || '');
+    formData.append('max_value_2', maxValue2 || '');
     formData.append('color_max', colorMax);
+    formData.append('color_max_2', colorMax2);
     formData.append('color_min', colorMin);
+    formData.append('color_min_2', colorMin2);
     formData.append('alert_types', JSON.stringify(alertTypes));
     
-    fetch('/api/alert-config/save/', {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'ok') {
+    const keySettingsForm = new FormData();
+    keySettingsForm.append('key', key);
+    keySettingsForm.append('live_background', liveBackgroundChecked);
+    keySettingsForm.append('value_max', valueMax || '100');
+    
+    Promise.all([
+        fetch('/api/alert-config/save/', { method: 'POST', body: formData }).then(r => r.json()),
+        fetch('/api/plc-keys/update-settings-by-key/', { method: 'POST', body: keySettingsForm }).then(r => r.json())
+    ]).then(([alertRes, keyRes]) => {
+        const data = alertRes;
+        if (data.status === 'ok') {
                 alertConfigs[key] = {
                     min_value: data.data.min_value,
+                    min_value_2: data.data.min_value_2,
                     max_value: data.data.max_value,
+                    max_value_2: data.data.max_value_2,
                     color_max: data.data.color_max,
+                    color_max_2: data.data.color_max_2,
                     color_min: data.data.color_min,
+                    color_min_2: data.data.color_min_2,
                     alert_types: data.data.alert_types
                 };
+                if (keyRes.status === 'ok' && keyMeta[key]) {
+                    keyMeta[key].live_background = liveBackgroundChecked;
+                    keyMeta[key].value_max = parseFloat(valueMax) || 100;
+                }
                 
                 checkAllCardsForAlerts();
                 
@@ -554,9 +734,8 @@ function saveAlertConfig() {
             } else {
                 showLocalAlert('خطا: ' + (data.message || 'خطا در ذخیره تنظیمات'));
             }
-        })
-        .catch(err => {
-            console.error('Error saving alert config:', err);
+        }).catch(err => {
+            console.error('Error saving config:', err);
             showLocalAlert('خطا در ارتباط با سرور');
         });
 }

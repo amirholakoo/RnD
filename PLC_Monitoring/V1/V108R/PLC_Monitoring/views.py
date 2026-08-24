@@ -159,6 +159,8 @@ def get_plc_keys(request):
             'value': key.value,
             'order_index': key.order_index,
             'description': key.description,
+            'live_background': key.live_background,
+            'value_max': key.value_max,
             'CreationDateTime': key.CreationDateTime,
             'LastUpdate': key.LastUpdate
         })
@@ -177,6 +179,11 @@ def create_plc_key(request):
         key = request.POST.get('key')
         value = request.POST.get('value', '')
         description = request.POST.get('description', '')
+        live_background = request.POST.get('live_background', 'false').lower() in ('true', '1', 'yes')
+        try:
+            value_max = float(request.POST.get('value_max', 100))
+        except (ValueError, TypeError):
+            value_max = 100
         
         if not key:
             return JsonResponse({'status': 'error', 'message': 'نام کلید الزامی است'})
@@ -186,7 +193,9 @@ def create_plc_key(request):
             fa_name=fa_name,
             key=key,
             value=value,
-            description=description
+            description=description,
+            live_background=live_background,
+            value_max=value_max
         )
         
         return JsonResponse({
@@ -226,6 +235,11 @@ def update_plc_key(request):
         plc_key.key = key
         plc_key.value = value
         plc_key.description = description
+        plc_key.live_background = request.POST.get('live_background', 'false').lower() in ('true', '1', 'yes')
+        try:
+            plc_key.value_max = float(request.POST.get('value_max', 100))
+        except (ValueError, TypeError):
+            plc_key.value_max = 100
         plc_key.save()
         
         return JsonResponse({
@@ -262,6 +276,33 @@ def delete_plc_key(request):
         return JsonResponse({'status': 'ok', 'message': 'کلید با موفقیت حذف شد'})
     except PLC_Keys.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'کلید یافت نشد'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+
+@csrf_exempt
+def update_key_settings_by_key(request):
+    """Update live_background and value_max for a PLC key by key name"""
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
+    try:
+        key = request.POST.get('key')
+        if not key:
+            return JsonResponse({'status': 'error', 'message': 'کلید الزامی است'})
+        plc_key = PLC_Keys.objects.filter(key=key).first()
+        if not plc_key:
+            return JsonResponse({'status': 'error', 'message': 'کلید یافت نشد'})
+        if 'live_background' in request.POST:
+            plc_key.live_background = request.POST.get('live_background', 'false').lower() in ('true', '1', 'yes')
+        if 'value_max' in request.POST:
+            try:
+                plc_key.value_max = float(request.POST.get('value_max', 100))
+            except (ValueError, TypeError):
+                plc_key.value_max = 100
+        plc_key.save()
+        return JsonResponse({
+            'status': 'ok',
+            'data': {'live_background': plc_key.live_background, 'value_max': plc_key.value_max}
+        })
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
 
@@ -812,9 +853,13 @@ def get_key_alert_config(request):
             'data': {
                 'key': config.key,
                 'min_value': config.min_value,
+                'min_value_2': config.min_value_2,
                 'max_value': config.max_value,
+                'max_value_2': config.max_value_2,
                 'color_max': config.color_max,
+                'color_max_2': config.color_max_2,
                 'color_min': config.color_min,
+                'color_min_2': config.color_min_2,
                 'alert_types': config.alert_types or {}
             }
         })
@@ -824,9 +869,13 @@ def get_key_alert_config(request):
             'data': {
                 'key': key,
                 'min_value': None,
+                'min_value_2': None,
                 'max_value': None,
+                'max_value_2': None,
                 'color_max': '#ff4444',
+                'color_max_2': '#ff8800',
                 'color_min': '#ff8800',
+                'color_min_2': '#ffaa00',
                 'alert_types': {}
             }
         })
@@ -843,9 +892,13 @@ def save_key_alert_config(request):
     try:
         key = request.POST.get('key')
         min_value = request.POST.get('min_value')
+        min_value_2 = request.POST.get('min_value_2')
         max_value = request.POST.get('max_value')
+        max_value_2 = request.POST.get('max_value_2')
         color_max = request.POST.get('color_max', '#ff4444')
+        color_max_2 = request.POST.get('color_max_2', '#ff8800')
         color_min = request.POST.get('color_min', '#ff8800')
+        color_min_2 = request.POST.get('color_min_2', '#ffaa00')
         alert_types_json = request.POST.get('alert_types', '{}')
         
         if not key:
@@ -857,9 +910,19 @@ def save_key_alert_config(request):
             min_value = None
         
         try:
+            min_value_2 = float(min_value_2) if min_value_2 else None
+        except (ValueError, TypeError):
+            min_value_2 = None
+        
+        try:
             max_value = float(max_value) if max_value else None
         except (ValueError, TypeError):
             max_value = None
+        
+        try:
+            max_value_2 = float(max_value_2) if max_value_2 else None
+        except (ValueError, TypeError):
+            max_value_2 = None
         
         try:
             alert_types = json.loads(alert_types_json) if alert_types_json else {}
@@ -868,9 +931,13 @@ def save_key_alert_config(request):
         
         config, created = KeyAlertConfig.objects.get_or_create(key=key)
         config.min_value = min_value
+        config.min_value_2 = min_value_2
         config.max_value = max_value
+        config.max_value_2 = max_value_2
         config.color_max = color_max
+        config.color_max_2 = color_max_2
         config.color_min = color_min
+        config.color_min_2 = color_min_2
         config.alert_types = alert_types
         config.save()
         
@@ -880,9 +947,13 @@ def save_key_alert_config(request):
             'data': {
                 'key': config.key,
                 'min_value': config.min_value,
+                'min_value_2': config.min_value_2,
                 'max_value': config.max_value,
+                'max_value_2': config.max_value_2,
                 'color_max': config.color_max,
+                'color_max_2': config.color_max_2,
                 'color_min': config.color_min,
+                'color_min_2': config.color_min_2,
                 'alert_types': config.alert_types
             }
         })
@@ -898,10 +969,14 @@ def get_all_alert_configs(request):
         data = {}
         for config in configs:
             data[config.key] = {
-                'min_value': config.min_value,
+                'min_value': config.min_value_2,
+                'min_value_2': config.min_value,
                 'max_value': config.max_value,
+                'max_value_2': config.max_value_2,
                 'color_max': config.color_max,
-                'color_min': config.color_min,
+                'color_max_2': config.color_max_2,
+                'color_min': config.color_min_2,
+                'color_min_2': config.color_min,
                 'alert_types': config.alert_types or {}
             }
         return JsonResponse({'status': 'ok', 'data': data})

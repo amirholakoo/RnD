@@ -1,0 +1,74 @@
+
+{% load static %}
+
+<section class="add_shipment section_page" id="shipment_detail">
+    <form class="form_content" action="{% url 'add_shipment' %}" method="post">
+        {% csrf_token %}
+        <div class="form_section">
+            <div class="form_group">
+                <label class="form-label" for="name">نام مرسوله</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="نام مرسوله را وارد کنید">
+            </div>
+            <div class="form_group">
+                <label class="form-label" for="shipment_type">نوع مرسوله</label>
+                <select class="form-control" id="shipment_type" name="shipment_type">
+                    <option value="1">ورودی</option>
+                    <option value="2">خروجی</option>
+                </select>
+            </div>
+            <div class="form_group">
+                <label class="form-label" for="Truck">شماره پلاک</label>
+                <select class="form-control" id="Truck" name="Truck">
+                    {% for Truck in trucks %}
+                    <option value="{{ Truck.id }}">{{ Truck.License_plate_number }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form_group">
+                <label class="form-label" for="material">ماده</label>
+                <select class="form-control" id="material" name="material">
+                    <option value="">انتخاب کنید</option>
+                    {% for material in materials %}
+                    <option value="{{ material.id }}">{{ material.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form_group">
+                <label class="form-label" for="Customer">مشتری</label>
+                <select class="form-control" id="Customer" name="Customer">
+                    {% for customer in customers %}
+                    <option value="{{ customer.id }}">{{ customer.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form_group">
+                <label class="form-label" for="Supplier">تامین‌کننده</label>
+                <select class="form-control" id="Supplier" name="Supplier">
+                    {% for supplier in suppliers %}
+                    <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form_group">
+                <label class="form-label" for="unit">واحد</label>
+                <select class="form-control" name="unit" id="unit">
+                    <option value="">انتخاب کنید</option>
+                    {% for unit in units %}
+                    <option value="{{unit.id}}">{{unit.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+                <div class="form_group">
+                <label class="form-label" for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات را وارد کنید"></textarea>
+            </div>
+        </div>
+
+        <div class="form_actions">
+            <a href="#add_shipment_weight" class="btn_submit">
+                ادامه
+            </a>
+            <a href="#shipment_page#add_truck" class="btn_cancel">انصراف</a>
+        </div>
+    </form>
+</section>

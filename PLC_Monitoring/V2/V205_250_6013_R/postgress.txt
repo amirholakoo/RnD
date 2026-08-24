@@ -1,0 +1,71 @@
+sudo apt install postgresql postgresql-contrib -y
+
+sudo apt clean
+sudo rm -rf /var/lib/apt/lists/*
+sudo apt update
+sudo apt --fix-broken install
+sudo apt install postgresql postgresql-contrib -y
+sudo systemctl status postgresql
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+sudo -i -u postgres
+createdb plc_250_main
+psql -l
+createuser pi_user
+psql
+ALTER USER pi_user WITH PASSWORD '0000';
+ALTER ROLE pi_user SET client_encoding TO 'utf8';
+ALTER ROLE pi_user SET default_transaction_isolation TO 'read committed';
+ALTER ROLE pi_user SET timezone TO 'UTC';
+
+GRANT ALL PRIVILEGES ON DATABASE plc_250_main TO pi_user;
+\q
+exit
+sudo nano /etc/postgresql/*/main/pg_hba.conf
+
+local   all             all                                     peer
+to:
+local   all             all                                     md5
+
+
+sudo systemctl restart postgresql
+
+psql -U pi_user -d plc_250_main -h localhost
+
+0000
+\q
+
+sudo apt install libpq-dev python3-dev -y
+pip install psycopg2-binary
+
+python -c "import psycopg2; print('OK')"
+
+
+django.db.migrations.exceptions.MigrationSchemaMissing: Unable to create the django_migrations table (permission denied for schema public
+LINE 1: CREATE TABLE "django_migrations" ("id" bigint NOT NULL PRIMA...
+
+sudo -i -u postgres
+psql
+
+
+\c plc_monitoring_pm2
+
+
+ALTER SCHEMA public OWNER TO pi_user;
+GRANT ALL ON SCHEMA public TO pi_user;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO pi_user;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO pi_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL ON TABLES TO pi_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL ON SEQUENCES TO pi_user;
+
+\q
+exit
+
+CREATE TABLE test_permission (id INT);
+DROP TABLE test_permission;
+
+python manage.py migrate

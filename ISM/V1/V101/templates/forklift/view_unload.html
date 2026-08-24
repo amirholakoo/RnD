@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}تخلیه{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'forklift/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i>i</i>
+            جزئیات تخلیه
+        </h1>
+        <div class="action-btns">
+            <a href="{% url 'forklift_panel' %}" class="btn btn-secondary">
+                <svg width="12" height="11" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.5 3H6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4 0.5L6.5 3L4 5.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                بازگشت
+            </a>
+            <a href="{% url 'edit_unload' unload.id %}" class="btn btn-warning">
+                <i>i</i>
+                ویرایش
+            </a>
+            <a href="{% url 'delete_unload' unload.id %}" class="btn btn-danger">
+                <i>i</i>
+                حذف
+            </a>
+        </div>
+    </div>
+
+    <div class="detail-wrapper">
+        <div class="detail-header">
+            <h2 class="detail-title">
+                <i>i</i>
+                اطلاعات تخلیه
+            </h2>
+        </div>
+        <div class="detail-body">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">شماره پلاک</span>
+                    <span class="detail-value">{% if unload.license_number %}{{ unload.license_number.License_plate_number }}{% else %}-{% endif %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">محل تخلیه</span>
+                    <span class="detail-value">{% if unload.unload_location %}{{ unload.unload_location.name }}{% else %}-{% endif %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">مقدار</span>
+                    <span class="detail-value">{{ unload.quantity|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">کیفیت</span>
+                    <span class="detail-value">{{ unload.quality|default:"-" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">راننده لیفتراک</span>
+                    <span class="detail-value">{% if unload.forklift_driver_name %}{{ unload.forklift_driver_name.name }}{% else %}-{% endif %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">زمان ایجاد</span>
+                    <span class="detail-value">{% to_jalali unload.CreationDateTime %}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">آخرین بروزرسانی</span>
+                    <span class="detail-value">{% to_jalali unload.LastUpdate %}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

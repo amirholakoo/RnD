@@ -1,0 +1,55 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}ویرایش انبار{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'warehouse/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i>i</i>
+            ویرایش انبار
+        </h1>
+        <a href="{% url 'warehouses' %}" class="btn btn-secondary">
+            <i>i</i>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="form-wrapper">
+        <form action="{% url 'edit_warehouse' warehouse.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="name">نام انبار</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="نام انبار را وارد کنید" value="{{ warehouse.name }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="location">مکان</label>
+                    <input type="text" class="form-control" id="location" name="location" placeholder="مکان انبار را وارد کنید" value="{{ warehouse.location }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="vision">Vision</label>
+                    <select class="form-control" id="vision" name="vision" multiple data-multi-select-plugin>
+                        {% for v in all_visions %}
+                        <option value="{{ v.id }}" {% for vv in visions %}{% if vv.vision.id == v.id %} selected{% endif %}{% endfor %}>{{ v.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات انبار را وارد کنید">{{ warehouse.description }}</textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i>i</i>
+                    ذخیره تغییرات
+                </button>
+                <a href="{% url 'warehouses' %}" class="btn btn-outline">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

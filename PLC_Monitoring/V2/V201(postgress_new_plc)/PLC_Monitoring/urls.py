@@ -17,6 +17,7 @@ urlpatterns = [
     path("api/plc-keys/create/", views.create_plc_key, name="create_plc_key"),
     path("api/plc-keys/update/", views.update_plc_key, name="update_plc_key"),
     path("api/plc-keys/delete/", views.delete_plc_key, name="delete_plc_key"),
+    path("api/plc-keys/update-settings-by-key/", views.update_key_settings_by_key, name="update_key_settings_by_key"),
     # PLC Logs SSE
     path("api/logs/stream/", views.sse_plc_logs, name="sse_plc_logs"),
     path("api/logs/", views.get_initial_logs, name="get_initial_logs"),

@@ -1,0 +1,84 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}کامیون‌ها{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'trucks/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            کامیون‌ها
+        </h1>
+        <a href="{% url 'add_truck' %}" class="btn btn-primary">
+            <i>i</i>
+            افزودن کامیون
+        </a>
+    </div>
+
+    {% if trucks %}
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>شماره پلاک</th>
+                    <th>نوع</th>
+                    <th>رنگ</th>
+                    <th>وضعیت</th>
+                    <th>مکان</th>
+                    <th>راننده</th>
+                    <th>تلفن</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for truck in trucks %}
+                {% if not truck.Is_Deleted %}
+                <tr>
+                    <td>
+                        <a href="{% url 'view_truck' truck.id %}">{{ truck.name }}</a>
+                    </td>
+                    <td>{{ truck.License_plate_number }}</td>
+                    <td>{{ truck.Truck_type }}</td>
+                    <td>{{ truck.Truck_color }}</td>
+                    <td>
+                        {% if truck.status == 'Free' %}
+                        <span class="badge badge-success">آزاد</span>
+                        {% else %}
+                        <span class="badge badge-warning">مشغول</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ truck.location }}</td>
+                    <td>{{ truck.driver_name }}</td>
+                    <td>{{ truck.phone }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{% url 'view_truck' truck.id %}" class="btn btn-sm btn-info" title="مشاهده">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'edit_truck' truck.id %}" class="btn btn-sm btn-warning" title="ویرایش">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'delete_truck' truck.id %}" class="btn btn-sm btn-danger" title="حذف">
+                                <i>i</i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i>i</i>
+        <h3 class="empty-state-title">کامیونی یافت نشد</h3>
+        <p class="empty-state-text">برای افزودن کامیون جدید از دکمه بالا استفاده کنید</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

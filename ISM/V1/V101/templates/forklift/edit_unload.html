@@ -1,0 +1,85 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}ویرایش تخلیه{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'forklift/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i>i</i>
+            ویرایش تخلیه
+        </h1>
+        <a href="{% url 'forklift_panel' %}" class="btn btn-secondary">
+            <svg width="12" height="11" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.5 3H6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 0.5L6.5 3L4 5.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="form-wrapper">
+        <form action="{% url 'edit_unload' unload.id %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ unload.id }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="license_number_id">شماره پلاک</label>
+                    <select name="license_number_id" id="license_number_id" class="form-control">
+                        {% for truck in trucks %}
+                        {% if truck.Is_Deleted == False %}
+                        <option value="{{ truck.id }}" {% if unload.license_number.id == truck.id %}selected{% endif %}>{{ truck.License_plate_number }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="unload_location_id">محل تخلیه</label>
+                    <select name="unload_location_id" id="unload_location_id" class="form-control">
+                        {% for warehouse in warehouses %}
+                        {% if warehouse.Is_Deleted == False %}
+                        <option value="{{ warehouse.id }}" {% if unload.unload_location.id == warehouse.id %}selected{% endif %}>{{ warehouse.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="unit">واحد</label>
+                    <select name="unit" id="unit" class="form-control">
+                        {% for unit in units %}
+                        <option value="{{ unit.name }}" {% if unload.unit.id == unit.id %}selected{% endif %}>{{ unit.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="quantity">مقدار</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity" placeholder="مقدار را وارد کنید" value="{{ unload.quantity }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="quality">کیفیت</label>
+                    <input type="text" class="form-control" id="quality" name="quality" placeholder="کیفیت را وارد کنید" value="{{ unload.quality }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="forklift_driver_name_id">راننده لیفتراک</label>
+                    <select name="forklift_driver_name_id" id="forklift_driver_name_id" class="form-control">
+                        {% for forklift_driver in forklift_drivers %}
+                        {% if forklift_driver.Is_Deleted == False %}
+                        <option value="{{ forklift_driver.id }}" {% if unload.forklift_driver_name.id == forklift_driver.id %}selected{% endif %}>{{ forklift_driver.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i>i</i>
+                    ذخیره تغییرات
+                </button>
+                <a href="{% url 'forklift_panel' %}" class="btn btn-outline">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

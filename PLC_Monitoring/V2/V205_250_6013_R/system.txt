@@ -1,0 +1,55 @@
+sudo nano /etc/systemd/system/django_plc.service
+
+[Unit]
+Description=Django PLC Server
+After=network.target
+
+[Service]
+User=admin
+Group=admin
+WorkingDirectory=/home/admin/plc_250_main
+Environment="PATH=/home/admin/plc_250_main/env/bin"
+ExecStart=/home/admin/plc_250_main/env/bin/python manage.py runserver 0.0.0.0:6013
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+sudo nano /etc/systemd/system/opc_client_pm2.service
+
+
+[Unit]
+Description=TCP Client PM2
+After=network.target
+
+[Service]
+User=admin
+Group=admin
+WorkingDirectory=/home/admin/plc_250_main
+Environment="PATH=/home/admin/plc_250_main/env/bin"
+ExecStart=/home/admin/plc_250_main/env/bin/python opc_client_pm2.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+
+
+sudo systemctl enable django_plc
+sudo systemctl enable tcp_client_pm2
+
+
+sudo systemctl start django_plc
+sudo systemctl start tcp_client_pm2
+
+
+sudo systemctl status django_plc
+sudo systemctl status tcp_client_pm2

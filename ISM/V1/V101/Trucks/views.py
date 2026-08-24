@@ -1,0 +1,71 @@
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import *
+import json, threading, time, requests, re
+from django.contrib import messages
+from django.shortcuts import redirect
+
+def trucks(request):
+    trucks = Truck.objects.all()
+    context = {
+        'trucks': trucks
+    }
+    return render(request, 'trucks/trucks.html', context)
+
+def add_truck(request):
+    print("yeeeeeeeeeeehhhhhh babe")
+    if request.method == "POST":
+        try:
+            truck = Truck(
+                License_plate_number=request.POST.get("License_plate_number",''),
+                description=request.POST.get("description",''),
+                phone=request.POST.get("phone",''),
+                driver_name=request.POST.get("driver_name",''),
+                location=request.POST.get("location",''),
+            )
+            truck.save()
+            messages.success(request,"با موفقیت اضافه شد")
+            return redirect("trucks")
+        except Exception as e:
+            messages.error(request,"خطا در اضافه شدن Truck: "+str(e))
+            return redirect("add_truck")
+    return render(request, 'trucks/add.html')
+
+def edit_truck(request, id):
+    truck = Truck.objects.get(id=id)
+    if request.method == "POST":
+        try:
+            truck = Truck.objects.get(id=id)
+            truck.License_plate_number = request.POST.get("License_plate_number",'')
+            truck.description = request.POST.get("description",'')
+            truck.phone = request.POST.get("phone",'')
+            truck.driver_name = request.POST.get("driver_name",'')
+            truck.save()
+            messages.success(request,"با موفقیت ویرایش شد")
+            return redirect("trucks")
+        except Exception as e:
+            messages.error(request,"خطا در ویرایش Truck: "+str(e))
+            return redirect("edit_truck", id=id)
+    context = {
+        'truck': truck
+    }
+    return render(request, 'trucks/edit.html', context)
+
+def delete_truck(request, id):
+        try:
+            truck = Truck.objects.get(id=id)
+            truck.Is_Deleted = True
+            truck.save()
+            messages.success(request,"با موفقیت حذف شد")
+            return redirect("trucks")
+        except Exception as e:
+            messages.error(request,"خطا در حذف Truck: "+str(e))
+            return redirect("trucks", id=id)
+
+def view_truck(request, id):
+    truck = Truck.objects.get(id=id)
+    context = {
+        'truck': truck
+    }
+    return render(request, 'trucks/view.html', context)

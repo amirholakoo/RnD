@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuration - Backup System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.1rem;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .config-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .config-section {
+      margin-bottom: 2rem;
+    }
+
+    .config-section h2 {
+      font-size: 1.3rem;
+      color: #2d3748;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #667eea;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .config-section h2 svg {
+      width: 20px;
+      height: 20px;
+      stroke: #667eea;
+      fill: none;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-group .input-hint {
+      font-size: 0.85rem;
+      color: #718096;
+      margin-top: 0.25rem;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .device-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .device-item {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .device-item input {
+      flex: 1;
+      padding: 0.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 6px;
+    }
+
+    .device-item button {
+      padding: 0.5rem 1rem;
+      background: #fc8181;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .device-item button:hover {
+      background: #f56565;
+    }
+
+    .add-device-btn {
+      padding: 0.5rem 1rem;
+      background: #48bb78;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    .add-device-btn:hover {
+      background: #38a169;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .save-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .save-btn:hover {
+      background: #5a67d8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    .cancel-btn {
+      background: #718096;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .cancel-btn:hover {
+      background: #4a5568;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .alert-success {
+      background: #c6f6d5;
+      color: #22543d;
+      border: 1px solid #9ae6b4;
+    }
+
+    .alert-error {
+      background: #fed7d7;
+      color: #742a2a;
+      border: 1px solid #fc8181;
+    }
+
+    .alert.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Configuration</h1>
+      <p>Manage your backup system settings</p>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="{{ url_for('index') }}" class="nav-btn">← Back to Dashboard</a>
+    </div>
+
+    <div id="alert" class="alert"></div>
+
+    <form id="config-form">
+      <div class="config-card">
+        <div class="config-section">
+          <h2>
+            <svg viewBox="0 0 24 24" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Backup Schedule
+          </h2>
+          <div class="form-group">
+            <label for="interval_hours">Backup Interval (hours)</label>
+            <input type="number" id="interval_hours" name="interval_hours" value="{{ config.interval_hours }}" min="1" step="1" required>
+            <div class="input-hint">How often backups should run automatically</div>
+          </div>
+
+          <div class="form-group">
+            <label for="retention_days">Retention Period (days)</label>
+            <input type="number" id="retention_days" name="retention_days" value="{{ config.retention_days }}" min="1" step="1" required>
+            <div class="input-hint">How many days to keep old backups</div>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <h2>
+            <svg viewBox="0 0 24 24" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+            External Storage
+          </h2>
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="enable_external_backup" name="enable_external_backup" {% if config.enable_external_backup %}checked{% endif %}>
+              <label for="enable_external_backup" style="margin: 0;">Enable External Storage Backup</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="external_storage_path">External Storage Base Path</label>
+            <input type="text" id="external_storage_path" name="external_storage_path" value="{{ config.external_storage_path }}" placeholder="/media/admin">
+            <div class="input-hint">Base directory to scan for USB drives (e.g., /media/admin will auto-detect any mounted USB like e805-4c41)</div>
+          </div>
+
+          <div class="form-group">
+            <label for="external_backup_dir">External Backup Directory</label>
+            <input type="text" id="external_backup_dir" name="external_backup_dir" value="{{ config.external_backup_dir }}" placeholder="backup-system">
+            <div class="input-hint">Subdirectory name on external storage (ALL backups go here when USB is connected)</div>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <h2>
+            <svg viewBox="0 0 24 24" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+            Remote Devices
+          </h2>
+          <div class="form-group">
+            <label>Device IP Addresses</label>
+            <div id="device-list" class="device-list">
+              {% for device in config.remote_devices %}
+              <div class="device-item">
+                <input type="text" value="{{ device }}" class="device-input" placeholder="192.168.1.100">
+                <button type="button" class="remove-device-btn" onclick="removeDevice(this)">Remove</button>
+              </div>
+              {% endfor %}
+            </div>
+            <button type="button" class="add-device-btn" onclick="addDevice()">+ Add Device</button>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <h2>
+            <svg viewBox="0 0 24 24" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+            Paths
+          </h2>
+          <div class="form-group">
+            <label for="remote_search_dir">Remote Search Directory</label>
+            <input type="text" id="remote_search_dir" name="remote_search_dir" value="{{ config.remote_search_dir }}" required>
+            <div class="input-hint">Directory to search for SQLite files on remote devices</div>
+          </div>
+
+          <div class="form-group">
+            <label for="remote_backup_dir">Remote Backup Directory</label>
+            <input type="text" id="remote_backup_dir" name="remote_backup_dir" value="{{ config.remote_backup_dir }}" required>
+            <div class="input-hint">Where to store backups on remote devices</div>
+          </div>
+
+          <div class="form-group">
+            <label for="backup_system_dir">Backup System Directory</label>
+            <input type="text" id="backup_system_dir" name="backup_system_dir" value="{{ config.backup_system_dir }}" required>
+            <div class="input-hint">Directory to exclude from backup search (backup-system source code)</div>
+          </div>
+
+          <div class="form-group">
+            <label for="local_backup_base">Local Backup Directory</label>
+            <input type="text" id="local_backup_base" name="local_backup_base" value="{{ config.local_backup_base }}" required>
+            <div class="input-hint">Local directory for storing pulled backups</div>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <h2>
+            <svg viewBox="0 0 24 24" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            SSH Credentials
+          </h2>
+          <div class="form-group">
+            <label for="remote_user">Remote Username</label>
+            <input type="text" id="remote_user" name="remote_user" value="{{ config.remote_user }}" required>
+          </div>
+
+          <div class="form-group">
+            <label for="ssh_pass">SSH Password</label>
+            <input type="text" id="ssh_pass" name="ssh_pass" value="{{ config.ssh_pass }}" required>
+            <div class="input-hint">Note: Stored in plain text - use with caution</div>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <a href="{{ url_for('index') }}" class="cancel-btn">Cancel</a>
+          <button type="submit" class="save-btn">Save Configuration</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function addDevice() {
+      const deviceList = document.getElementById('device-list');
+      const deviceItem = document.createElement('div');
+      deviceItem.className = 'device-item';
+      deviceItem.innerHTML = `
+        <input type="text" class="device-input" placeholder="192.168.1.100">
+        <button type="button" class="remove-device-btn" onclick="removeDevice(this)">Remove</button>
+      `;
+      deviceList.appendChild(deviceItem);
+    }
+
+    function removeDevice(btn) {
+      btn.parentElement.remove();
+    }
+
+    function showAlert(message, isError = false) {
+      const alert = document.getElementById('alert');
+      alert.textContent = message;
+      alert.className = 'alert ' + (isError ? 'alert-error' : 'alert-success') + ' show';
+      setTimeout(() => {
+        alert.classList.remove('show');
+      }, 5000);
+    }
+
+    document.getElementById('config-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Collect form data
+      const formData = new FormData(e.target);
+      const config = {};
+
+      // Text and number fields
+      config.interval_hours = parseFloat(formData.get('interval_hours'));
+      config.retention_days = parseInt(formData.get('retention_days'));
+      config.enable_external_backup = formData.get('enable_external_backup') === 'on';
+      config.external_storage_path = formData.get('external_storage_path');
+      config.external_backup_dir = formData.get('external_backup_dir');
+      config.remote_search_dir = formData.get('remote_search_dir');
+      config.remote_backup_dir = formData.get('remote_backup_dir');
+      config.backup_system_dir = formData.get('backup_system_dir');
+      config.local_backup_base = formData.get('local_backup_base');
+      config.remote_user = formData.get('remote_user');
+      config.ssh_pass = formData.get('ssh_pass');
+      config.log_file = "{{ config.log_file }}";
+
+      // Collect device IPs
+      const deviceInputs = document.querySelectorAll('.device-input');
+      config.remote_devices = Array.from(deviceInputs)
+        .map(input => input.value.trim())
+        .filter(value => value !== '');
+
+      try {
+        const response = await fetch('/api/config', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(config)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          showAlert(result.message);
+          setTimeout(() => {
+            window.location.href = "{{ url_for('index') }}";
+          }, 2000);
+        } else {
+          showAlert(result.error, true);
+        }
+      } catch (error) {
+        showAlert('Failed to save configuration: ' + error.message, true);
+      }
+    });
+  </script>
+</body>
+</html>
+

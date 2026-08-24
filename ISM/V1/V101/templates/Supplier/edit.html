@@ -1,0 +1,58 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}ویرایش تامین‌کننده{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'Supplier/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            ویرایش تامین‌کننده
+        </h1>
+        <a href="{% url 'suppliers' %}" class="btn btn-secondary">
+            <svg width="12" height="11" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.5 3H6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 0.5L6.5 3L4 5.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="form-wrapper">
+        <form action="{% url 'edit_supplier' supplier.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="name">نام</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="نام را وارد کنید" value="{{ supplier.name }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="phone">شماره تلفن</label>
+                    <input type="text" class="form-control" id="phone" name="phone" placeholder="شماره تلفن را وارد کنید" value="{{ supplier.phone }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="email">ایمیل</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="ایمیل را وارد کنید" value="{{ supplier.email }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="address">آدرس</label>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="آدرس را وارد کنید" value="{{ supplier.address }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="description">توضیحات</label>
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات را وارد کنید">{{ supplier.description }}</textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i>i</i>
+                    ذخیره تغییرات
+                </button>
+                <a href="{% url 'suppliers' %}" class="btn btn-outline">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

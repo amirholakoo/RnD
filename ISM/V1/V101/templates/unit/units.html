@@ -1,0 +1,64 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}واحدها{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'unit/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            واحدها
+        </h1>
+        <a href="{% url 'add_unit' %}" class="btn btn-primary">
+            <i>i</i>
+            افزودن واحد
+        </a>
+    </div>
+
+    {% if units %}
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>توضیحات</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for unit in units %}
+                <tr>
+                    <td>
+                        <a href="{% url 'view_unit' unit.id %}">{{ unit.name }}</a>
+                    </td>
+                    <td>{{ unit.description }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{% url 'view_unit' unit.id %}" class="btn btn-sm btn-info" title="مشاهده">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'edit_unit' unit.id %}" class="btn btn-sm btn-warning" title="ویرایش">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'delete_unit' unit.id %}" class="btn btn-sm btn-danger" title="حذف">
+                                <i>i</i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i>i</i>
+        <h3 class="empty-state-title">واحدی یافت نشد</h3>
+        <p class="empty-state-text">برای افزودن واحد جدید از دکمه بالا استفاده کنید</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

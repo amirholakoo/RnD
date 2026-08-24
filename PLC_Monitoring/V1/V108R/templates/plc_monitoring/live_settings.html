@@ -23,6 +23,10 @@
                 {% endif %}
             </div>
         </div>
+        <div class="machine_status off" id="machine_status">
+            <h6>وضعیت ماشین</h6>
+            <span>STOP</span>
+        </div>
         <div class="plc-detail-left">
             <div class="live-indicator">
                 <span class="live-dot"></span>
@@ -115,6 +119,11 @@
                     </svg>
                     خروجی Excel
                 </button>
+                <label class="excluded-key-item data_only_run" for="data_only_run" style="margin-bottom: 0 !important;">
+                    <input type="checkbox" id="data_only_run">
+                    <span class="key-name">داده هایی که ماشین در وضعیت RUN قرار دارد</span>
+                    <span class="key-code"></span>
+                </label>
                 <button type="button" class="btn-chart-settings" id="btn_chart_settings">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"/>
@@ -350,36 +359,80 @@
                 <input type="text" id="alert_config_key" readonly class="form-control">
             </div>
             <div class="alert-config-form-group">
-                <label>حداقل مقدار:</label>
-                <input type="number" id="alert_config_min" step="any" class="form-control" placeholder="خالی بگذارید">
+                
             </div>
             <div class="alert-config-form-group">
-                <label>حداکثر مقدار:</label>
+                <label>Max2 :</label>
+                <input type="number" id="alert_config_max_2" step="any" class="form-control" placeholder="خالی بگذارید">
+            </div>
+            <div class="alert-config-form-group">
+                <label>Max2 :</label>
+                <input type="color" id="alert_config_color_max_2" value="#ff8800" class="form-control color-input" onchange="updatePreview()">
+            </div>
+            <div class="alert-config-form-group">
+                <label>Max1 :</label>
                 <input type="number" id="alert_config_max" step="any" class="form-control" placeholder="خالی بگذارید">
             </div>
             <div class="alert-config-form-group">
-                <label>رنگ هنگام عبور از حداکثر:</label>
+                <label>Max1 :</label>
                 <input type="color" id="alert_config_color_max" value="#ff4444" class="form-control color-input" onchange="updatePreview()">
             </div>
             <div class="alert-config-form-group">
-                <label>رنگ هنگام عبور از حداقل:</label>
-                <input type="color" id="alert_config_color_min" value="#ff8800" class="form-control color-input" onchange="updatePreview()">
+                <label>Min1:</label>
+                <input type="number" id="alert_config_min_2" step="any" class="form-control" placeholder="خالی بگذارید">
             </div>
             <div class="alert-config-form-group">
+                <label>Min1 :</label>
+                <input type="color" id="alert_config_color_min_2" value="#ffaa00" class="form-control color-input" onchange="updatePreview()">
+            </div>
+            <div class="alert-config-form-group">
+                <label>Min2:</label>
+                <input type="number" id="alert_config_min" step="any" class="form-control" placeholder="خالی بگذارید">
+            </div>
+            <div class="alert-config-form-group">
+                <label>Min2 :</label>
+                <input type="color" id="alert_config_color_min" value="#ff4444" class="form-control color-input" onchange="updatePreview()">
+            </div>
+            <div class="alert-config-form-group d-none">
                 <label>پیش‌نمایش:</label>
                 <div class="alert-preview-container">
                     <div class="alert-preview-box" id="preview_max">
                         <div class="alert-preview-header">
-                            <div class="alert-preview-key">نمونه - حداکثر</div>
+                            <div class="alert-preview-key">Max1</div>
                         </div>
                         <div class="alert-preview-value">100</div>
                     </div>
+                    <div class="alert-preview-box" id="preview_max_2">
+                        <div class="alert-preview-header">
+                            <div class="alert-preview-key">Max2</div>
+                        </div>
+                        <div class="alert-preview-value">80</div>
+                    </div>
+                    <div class="alert-preview-box" id="preview_min_2">
+                        <div class="alert-preview-header">
+                            <div class="alert-preview-key">Min1</div>
+                        </div>
+                        <div class="alert-preview-value">20</div>
+                    </div>
                     <div class="alert-preview-box" id="preview_min">
                         <div class="alert-preview-header">
-                            <div class="alert-preview-key">نمونه - حداقل</div>
+                            <div class="alert-preview-key">Min2</div>
                         </div>
-                        <div class="alert-preview-value">50</div>
+                        <div class="alert-preview-value">5</div>
                     </div>
+                </div>
+            </div>
+            <div class="alert-config-form-group alert-config-divider">
+                <label>پس‌زمینه زنده:</label>
+                <div class="alert-types-checkboxes">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="alert_config_live_background" value="live_background">
+                        <span>نمایش پر شدن مقدار بر اساس Max</span>
+                    </label>
+                </div>
+                <div class="form-inline-row">
+                    <label for="alert_config_value_max">حداکثر (Max):</label>
+                    <input type="number" id="alert_config_value_max" step="any" value="100" class="form-control" placeholder="100" style="max-width: 100px;">
                 </div>
             </div>
             <div class="alert-config-form-group">
@@ -882,7 +935,8 @@ document.addEventListener('drop', async function(e) {
 // Export button click handler
 document.getElementById('export_xlsx_btn').addEventListener('click', function() {
     const interval = getInterval();
-    const url = `/api/export/logs/?plc=${PLC_ID}&range=${currentRange}&interval=${interval}`;
+    let just_run = document.getElementById("data_only_run").checked ? true : false
+    const url = `/api/export/logs/?plc=${PLC_ID}&range=${currentRange}&interval=${interval}&just_run=${just_run}`;
     window.location.href = url;
 });
 

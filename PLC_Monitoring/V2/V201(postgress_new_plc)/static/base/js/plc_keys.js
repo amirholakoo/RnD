@@ -212,7 +212,7 @@ function renderSettingsTable(keys) {
     if (keys.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" class="empty-state">
+                <td colspan="7" class="empty-state">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M21 2L19 4M11.3891 11.6109C12.3844 12.6062 13 13.9812 13 15.5C13 18.5376 10.5376 21 7.5 21C4.46243 21 2 18.5376 2 15.5C2 12.4624 4.46243 10 7.5 10C9.01878 10 10.3938 10.6156 11.3891 11.6109ZM11.3891 11.6109L15.5 7.5M15.5 7.5L18.5 10.5L22 7L19 4M15.5 7.5L19 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -229,6 +229,8 @@ function renderSettingsTable(keys) {
             <td>${key.fa_name || '-'}</td>
             <td>${key.key}</td>
             <td>${key.value || '-'}</td>
+            <td><span class="status-badge ${key.live_background ? 'known' : 'unknown'}">${key.live_background ? 'بله' : 'خیر'}</span></td>
+            <td>${key.value_max != null ? key.value_max : 100}</td>
             <td>
                 <div class="action-btns">
                     <button type="button" class="action-btn edit" onclick='editKey(${JSON.stringify(key)})'>ویرایش</button>
@@ -309,6 +311,10 @@ function resetKeyForm() {
         document.getElementById('key_fa_name_input').value = '';
         document.getElementById('key_input').value = '';
         document.getElementById('value_input').value = '';
+        const liveBgInput = document.getElementById('live_background_input');
+        const valueMaxInput = document.getElementById('value_max_input');
+        if (liveBgInput) liveBgInput.checked = false;
+        if (valueMaxInput) valueMaxInput.value = '100';
         document.getElementById('key_description_input').value = '';
         document.getElementById('key_submit_btn').textContent = 'افزودن';
         editingKeyId = null;
@@ -327,6 +333,10 @@ function editKey(keyData) {
     document.getElementById('key_fa_name_input').value = keyData.fa_name || '';
     document.getElementById('key_input').value = keyData.key;
     document.getElementById('value_input').value = keyData.value || '';
+    const liveBgInput = document.getElementById('live_background_input');
+    const valueMaxInput = document.getElementById('value_max_input');
+    if (liveBgInput) liveBgInput.checked = keyData.live_background || false;
+    if (valueMaxInput) valueMaxInput.value = keyData.value_max != null ? keyData.value_max : 100;
     document.getElementById('key_description_input').value = keyData.description || '';
     document.getElementById('key_submit_btn').textContent = 'بروزرسانی';
     editingKeyId = keyData.id;

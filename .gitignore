@@ -24,4 +24,6 @@
 /TOTAL Monitoring/MQ-4/V1(deprecated)/.devcontainer
 /TOTAL Monitoring/MQ-4/V1(deprecated)/.vscode
 *.sqlite3
+*.sql
+d.json
 __pycache__

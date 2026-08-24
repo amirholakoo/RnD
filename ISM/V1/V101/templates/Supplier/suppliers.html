@@ -1,0 +1,68 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}تامین‌کنندگان{% endblock %}
+{% block Link %}
+<link rel="stylesheet" href="{% static 'Supplier/css/style.css' %}?version={{version}}" type="text/css">
+{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i></i>
+            تامین‌کنندگان
+        </h1>
+        <a href="{% url 'add_supplier' %}" class="btn btn-primary">
+            <i>i</i>
+            افزودن تامین‌کننده
+        </a>
+    </div>
+
+    {% if suppliers %}
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>شماره تلفن</th>
+                    <th>آدرس</th>
+                    <th>ایمیل</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for supplier in suppliers %}
+                <tr>
+                    <td>
+                        <a href="{% url 'view_supplier' supplier.id %}">{{ supplier.name }}</a>
+                    </td>
+                    <td>{{ supplier.phone }}</td>
+                    <td>{{ supplier.address }}</td>
+                    <td>{{ supplier.email }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{% url 'view_supplier' supplier.id %}" class="btn btn-sm btn-info" title="مشاهده">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'edit_supplier' supplier.id %}" class="btn btn-sm btn-warning" title="ویرایش">
+                                <i>i</i>
+                            </a>
+                            <a href="{% url 'delete_supplier' supplier.id %}" class="btn btn-sm btn-danger" title="حذف">
+                                <i>i</i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i>i</i>
+        <h3 class="empty-state-title">تامین‌کننده‌ای یافت نشد</h3>
+        <p class="empty-state-text">برای افزودن تامین‌کننده جدید از دکمه بالا استفاده کنید</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

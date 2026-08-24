@@ -1,0 +1,189 @@
+{% load static %}
+<section class="settings section_page section_include_nav" id="settings">
+    <div class="form_content h-100">
+        <div class="form_content_nav">
+            <a href="#settings#products_machine#machines_page#add_production_machine" class="nav_item active" nav_id="products_machine">ماشین های تولید</a>
+            <a href="#settings#products_type#products_type_page#add_product_type" class="nav_item active" nav_id="products_type">انواع محصولات</a>
+            <a href="#settings#qr_code_settings" class="nav_item active" nav_id="qr_code_settings">QR Code</a>
+        </div>
+        <div class="section_page align-items-start p-0" id="products_machine" >
+            <div class="form_content">
+                <div class="form_content_nav product_machine_nav">
+                    <div class="devider pb-2">
+                        ماشین ها
+                    </div>
+                    {% for x in products_machine %}
+                    <a href="#settings#products_machine#machines_page#machine_{{x.name}}" class="nav_item active" nav_id="machine_{{x.name}}">{{x.name}}</a>
+                    {% endfor %}
+                    <a href="#settings#products_machine#machines_page#add_production_machine" class="nav_item text-center" nav_id="add_production_machine">افزودن +</a>
+                </div>
+                <div class="section_page align-items-start pt-0" id="machines_page">
+                    <div class="form_content" id="products_machine_form_content">
+                        {% for x in products_machine %}
+                        <div class="section_page align-items-start pt-0" id="machine_{{x.name}}">
+                            <div class="form_content">
+                                <div class="devider">
+                                    مشخصات ماشین {{x.name}}
+                                </div>
+                                <div class="form_section">
+                                    <div class="form_group">
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="مثال: pm4-400" value="{{x.name}}" required readonly>
+                                        <label class="form-label" for="name">نام ماشین</label>
+                                    </div>
+                                    <div class="form_group">
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="مثال: pm4-400" value="{{x.api|default:''}}" required readonly>
+                                        <label class="form-label" for="name">api</label>
+                                    </div>
+                                    <div class="form_group">
+                                        <textarea type="text" class="form-control" style="height: auto" id="name" name="name" placeholder="مثال: pm4-400" rows="3" required readonly>
+                                        </textarea>
+                                        <label class="form-label" for="name">api</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="section_page align-items-start pt-0" id="add_production_machine" >
+                            <div class="form_content">
+                                <div class="devider">
+                                    افزودن ماشین
+                                </div>
+                                <div class="form_section">
+                                    <div class="form_group">
+                                        <input type="text" class="form-control" id="production_machine_name" name="production_machine_name" placeholder="مثال: pm4-400" value="" required>
+                                        <label class="form-label" for="production_machine_name">نام ماشین</label>
+                                    </div>
+                                    <div class="form_group">
+                                        <input type="text" class="form-control" id="production_machine_api" name="production_machine_api" placeholder="مثال: http://192.168.2.46:6010/last_roll" value="" required>
+                                        <label class="form-label" for="production_machine_api">api</label>
+                                    </div>
+                                </div>
+                                <div class="form_actions">
+                                    <a class="btn_submit" id="submit_production_machine">
+                                        ثبت ماشین
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section_page align-items-start p-0" id="products_type" >
+            <div class="form_content">
+                <div class="form_content_nav product_machine_nav">
+                    <div class="devider pb-2">
+                        انواع محصولات
+                    </div>
+                    {% for x in products_type %}
+                    <a href="#settings#products_type#products_type_page#product_type_{{x.id}}" class="nav_item active" nav_id="product_type_{{x.id}}">{{x.name}}</a>
+                    {% endfor %}
+                    <a href="#settings#products_type#products_type_page#add_product_type" class="nav_item text-center" nav_id="add_product_type">افزودن +</a>
+                </div>
+                <div class="section_page align-items-start pt-0" id="products_type_page">
+                    <div class="form_content" id="products_type_form_content">
+                        {% for x in products_type %}
+                        <div class="section_page align-items-start pt-0" id="product_type_{{x.id}}">
+                            <div class="form_content">
+                                <div class="devider">
+                                    عنوان {{x.name}}
+                                </div>
+                                <div class="form_section">
+                                    <div class="form_group">
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="مثال: pm4-400" value="{{x.name}}" required readonly>
+                                        <label class="form-label" for="name">عنوان</label>
+                                    </div>
+                                    <div class="form_group">
+                                        <textarea type="text" class="form-control" style="height: auto" id="name" name="name" placeholder="مثال: pm4-400" rows="3" required readonly>
+                                        {{x.description}}
+                                        </textarea>
+                                        <label class="form-label" for="name">توضیحات</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="section_page align-items-start pt-0" id="add_product_type" >
+                            <div class="form_content">
+                                <div class="devider">
+                                    افزودن نوع محصول
+                                </div>
+                                <div class="form_section">
+                                    <div class="form_group">
+                                        <input type="text" class="form-control" id="product_type_title" name="product_type_title" placeholder="مثال: TestLiner HOMAYOUN" value="" required>
+                                        <label class="form-label" for="product_type_title">عنوان</label>
+                                    </div>
+                                    <div class="form_group">
+                                        <textarea type="text" class="form-control" id="product_type_desc" name="product_type_desc" placeholder="توضیحات، نکته و ..."></textarea>
+                                        <label class="form-label" for="product_type_desc">توضیحات</label>
+                                    </div>
+                                </div>
+                                <div class="form_actions">
+                                    <a class="btn_submit" id="submit_product_type">
+                                        ثبت
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section_page align-items-start p-3" id="qr_code_settings" >
+            <div class="form_content p-3 flex-nowrap">
+                <div class="devider">
+                    تنظیمات qr code
+                </div>
+                <p class="help_point mb-3">
+                    این تنظیمات برای شخصی سازی محتوای داخل QR Code میباشد.
+                </p>
+                <div class="qr_container">
+                    <div class="qr_settings">
+                        <div class="devider">
+                            کلید ها
+                        </div>
+                        <div class="qr_keys">
+                            {% for key in products_key %}
+                            <div class="key_item {% if not key in qr_setting.excluded_fields_in_qr %}active{% endif %}">
+                                <input type="checkbox" name="qr_key_{{key}}" id="qr_key_{{key}}" value="{{key}}" {% if not key in qr_setting.excluded_fields_in_qr %}checked{% endif %}>
+                                <label for="qr_key_{{key}}">{{key}}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="devider">
+                            سفارشی
+                        </div>
+                        <div class="help_point">
+                            در این بخش میتوانید محتوای دلخواه خود رو بنویسید و هرجا که نیاز نمایش کلید ها داشتید کافیست نام آن کلید را بین علامت * قرار دهید <br>
+                            مثال: <br>
+                            عرض کاغذ: *width* <br>
+                            <strong>توجه کنید اگر این بخش پر شود دیگر به بخش بالا توجه نخواهد شد.</strong>
+                        </div>
+                        <div class="form_section">
+                            <div class="form_group desc w-100">
+                                <textarea class="form-control" id="qr_code_custome" name="qr_code_custome" placeholder="عرض: *width*, تعداد پارگی: *breaks*" rows="3" style="height: auto">{{qr_setting.custome_qr|default:''}}</textarea>
+                                <label class="form-label" for="qr_code_custome">محتوای دلخواه</label>
+                            </div>
+                    </div>
+                        </div>
+                    <div class="content_preview" dir="ltr">
+                        {% if qr_setting.custome_qr %}
+                        {{qr_setting.custome_qr|safe}}
+                        {% else %}
+                        {% for key in products_key %}
+                        {% if not key in qr_setting.excluded_fields_in_qr %}
+                        {{key}}: {{key}}.value,<br>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form_actions">
+                    <a class="btn_submit" id="qr_setting_save_btn">
+                        ذخیره تنظیمات
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

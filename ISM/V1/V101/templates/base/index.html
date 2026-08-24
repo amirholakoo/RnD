@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}
+{% load to_jalali %}
+{% load static %}
+{% block title %}نرم افزار مدیریتی همایون{% endblock %}
+{% block content %}
+<main class="page_content">
+    <section class="section_page" id="shipment_page">
+        <section class="steps">
+            <div class="shipment_process_steps">
+                <div class="step nav_item" nav_id="add_truck">
+                    <span class="index">1</span>
+                    <h6 class="title">انتخاب / افزودن پلاک</h6>
+                </div>
+                <div class="step nav_item" nav_id="shipment_detail">
+                    <span class="index">2</span>
+                    <h6 class="title">بارنامه</h6>
+                </div>
+                <div class="step nav_item" nav_id="add_shipment_weight">
+                    <span class="index">3</span>
+                    <h6 class="title">وزن گیری</h6>
+                </div>
+            </div>
+        </section>
+        {% include "trucks/add.html" %}
+        {% include "shipments/add.html" %}
+    </section>
+    {% include "products/products.html" %}
+    {% include "base/settings.html" %}
+    {% include "products/qr_code.html" %}
+</main>
+{% endblock %}

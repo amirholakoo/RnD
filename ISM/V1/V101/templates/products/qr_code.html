@@ -1,0 +1,19 @@
+{% load static %}
+<section class="qrcode section_page full-100" id="qrcode_page">
+    <a href="#add_products#products_list" class="back_button btn_cancel">
+        بازگشت
+    </a>
+    <div class="form_content">
+        {% for x in products %}
+        <div class="section_page" id="qr_{{x.roll_number}}">
+            <div class="qr_gallery">
+                <div class="img_box">
+                    <img src="{{x.qr}}" alt="">
+                </div>
+                <h4>شماره رول {{x.roll_number}}</h4>
+                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quis et ex soluta omnis iure aliquid? Dolores accusamus in numquam. Aliquid, repellat fugit. Libero facilis beatae laborum ea! Sint, suscipit delectus.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>

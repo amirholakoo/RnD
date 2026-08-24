@@ -1,0 +1,46 @@
+from django.contrib import admin
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("",views.dashboard),
+    path("live-settings/", views.live_settings, name="live_settings"),
+    path("roll/<int:roll_id>/", views.roll_detail, name="roll_detail"),
+    path("api/rolls/", views.roll_detail_api, name="roll_detail_api"),
+    # PLC CRUD
+    path("api/plcs/", views.get_plcs, name="get_plcs"),
+    path("api/plcs/create/", views.create_plc, name="create_plc"),
+    path("api/plcs/update/", views.update_plc, name="update_plc"),
+    path("api/plcs/delete/", views.delete_plc, name="delete_plc"),
+    # PLC Keys CRUD
+    path("api/plc-keys/", views.get_plc_keys, name="get_plc_keys"),
+    path("api/plc-keys/create/", views.create_plc_key, name="create_plc_key"),
+    path("api/plc-keys/update/", views.update_plc_key, name="update_plc_key"),
+    path("api/plc-keys/delete/", views.delete_plc_key, name="delete_plc_key"),
+    path("api/plc-keys/update-settings-by-key/", views.update_key_settings_by_key, name="update_key_settings_by_key"),
+    # PLC Logs SSE
+    path("api/logs/stream/", views.sse_plc_logs, name="sse_plc_logs"),
+    path("api/logs/", views.get_initial_logs, name="get_initial_logs"),
+    # PLC Settings SSE
+    path("api/settings/", views.get_plc_settings, name="get_plc_settings"),
+    path("api/settings/stream/", views.sse_plc_settings, name="sse_plc_settings"),
+    # Chart Excluded Keys
+    path("api/chart-excluded-keys/toggle/", views.toggle_chart_excluded_key, name="toggle_chart_excluded_key"),
+    # Key Order
+    path("api/plc-keys/order/", views.update_key_order, name="update_key_order"),
+    path("api/plc-keys/order/bulk/", views.update_keys_order_bulk, name="update_keys_order_bulk"),
+    # Live settings groups
+    path("api/plc-keys/groups/create/", views.group_create, name="group_create"),
+    path("api/plc-keys/groups/add-key/", views.group_add_key, name="group_add_key"),
+    path("api/plc-keys/groups/remove-key/", views.group_remove_key, name="group_remove_key"),
+    path("api/plc-keys/groups/update-name/", views.group_update_name, name="group_update_name"),
+    # Historical Chart Data
+    path("api/historical-chart/", views.get_historical_chart_data, name="get_historical_chart_data"),
+     path("api/live-chart/", views.sse_live_chart, name="live_chart"),
+    # Export
+    path("api/export/logs/", views.export_logs_csv, name="export_all_logs_xlsx"),
+    # Alert Configurations
+    path("api/alert-config/", views.get_key_alert_config, name="get_key_alert_config"),
+    path("api/alert-config/save/", views.save_key_alert_config, name="save_key_alert_config"),
+    path("api/alert-configs/all/", views.get_all_alert_configs, name="get_all_alert_configs"),
+]

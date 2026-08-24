@@ -1,0 +1,451 @@
+{% load static %}
+<section class="add_truck section_page" id="add_truck">
+    <form class="form_content" action="{% url 'add_truck' %}" method="post">
+        {% csrf_token %}
+        <div class="form_section" style="width: 40%;">
+            <div class="form_group">
+                <input type="text" class="form-control" id="name" name="name" placeholder="بار زعیم" required>
+                <label class="form-label" for="name">نام کامیون</label>
+            </div>
+            <div class="form_group">
+                <input type="text" class="form-control" id="driver_name" name="driver_name" placeholder="امیر موسوی">
+                <label class="form-label" for="driver_name">نام راننده</label>
+            </div>
+            <div class="form_group">
+                <input type="text" dir="ltr" class="form-control" id="phone" name="phone" placeholder="0910***5728">
+                <label class="form-label" for="phone">تلفن همراه</label>
+            </div>
+            <div class="form_group desc w-100">
+                <textarea class="form-control" id="description" name="description" placeholder="توضیحات را وارد کنید" rows="3" style="height: auto"></textarea>
+                <label class="form-label" for="description">توضیحات</label>
+            </div>
+        </div>
+        <hr>
+        <div class="form_section w-50">
+            <h6 class="w-100 text-right">
+                شماره پلاک را وارد کنید
+                <p class="help_point">سیستم با توجه به الگوریتم تعیین شده پلاک پیشنهادی خود را انتخاب کرده اما همچنان شما میتوانید به صورت دستی و یا با انتخاب از لیست پلاک ها آن را تغییر دهید.</p>
+            </h6>
+            <div class="licence_plate" style="">
+                <div class="form_group">
+                    <input type="number" class="form-control" id="License_plate_4" name="License_plate_4" placeholder="28" place_holder_active>
+                </div>
+                <div class="form_group">
+                    <input type="number" class="form-control" id="License_plate_3" name="License_plate_3" placeholder="653" place_holder_active>
+                </div>
+                <div class="form_group">
+                    <select type="text" class="form-control" id="License_plate_2" name="License_plate_2" placeholder="الف" place_holder_active>
+                        <option value="الف" selected>الف</option>
+                        <option value="ب">ب</option>
+                        <option value="پ">پ</option>
+                        <option value="ت">ت</option>
+                        <option value="ث">ث</option>
+                        <option value="ج">ج</option>
+                        <option value="چ">چ</option>
+                        <option value="ح">ح</option>
+                        <option value="خ">خ</option>
+                        <option value="د">د</option>
+                        <option value="ذ">ذ</option>
+                        <option value="ر">ر</option>
+                        <option value="ز">ز</option>
+                        <option value="ژ">ژ</option>
+                        <option value="س">س</option>
+                        <option value="ش">ش</option>
+                        <option value="ص">ص</option>
+                        <option value="ض">ض</option>
+                        <option value="ط">ط</option>
+                        <option value="ظ">ظ</option>
+                        <option value="ع">ع</option>
+                        <option value="غ">غ</option>
+                        <option value="ف">ف</option>
+                        <option value="ق">ق</option>
+                        <option value="ک">ک</option>
+                        <option value="گ">گ</option>
+                        <option value="ل">ل</option>
+                        <option value="م">م</option>
+                        <option value="ن">ن</option>
+                        <option value="و">و</option>
+                        <option value="ه">ه</option>
+                        <option value="ی">ی</option>
+                    </select>
+                </div>
+                <div class="form_group">
+                    <input type="number" class="form-control" id="License_plate_1" name="License_plate_1" placeholder="83" place_holder_active>
+                </div>
+                <div class="form_group">
+                    <div class="flag">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="text">
+                        I.R. <br>
+                        IRAN
+                    </div>
+                </div>
+            </div>
+            <div class="history_box">
+                <div class="timer">
+                    <h6>لیست پلاک ها</h6>
+                    <span id="licence_plate_history_timer">10 ثانیه</span>
+                </div>
+                <div class="licence_plate_history">
+                    <div class="licence_plate">
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_4" name="License_plate_4" placeholder="28" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_3" name="License_plate_3" placeholder="653" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <select type="text" class="form-control" id="License_plate_2" name="License_plate_2" placeholder="الف" place_holder_active>
+                                <option value="الف" selected>الف</option>
+                                <option value="ب">ب</option>
+                                <option value="پ">پ</option>
+                                <option value="ت">ت</option>
+                                <option value="ث">ث</option>
+                                <option value="ج">ج</option>
+                                <option value="چ">چ</option>
+                                <option value="ح">ح</option>
+                                <option value="خ">خ</option>
+                                <option value="د">د</option>
+                                <option value="ذ">ذ</option>
+                                <option value="ر">ر</option>
+                                <option value="ز">ز</option>
+                                <option value="ژ">ژ</option>
+                                <option value="س">س</option>
+                                <option value="ش">ش</option>
+                                <option value="ص">ص</option>
+                                <option value="ض">ض</option>
+                                <option value="ط">ط</option>
+                                <option value="ظ">ظ</option>
+                                <option value="ع">ع</option>
+                                <option value="غ">غ</option>
+                                <option value="ف">ف</option>
+                                <option value="ق">ق</option>
+                                <option value="ک">ک</option>
+                                <option value="گ">گ</option>
+                                <option value="ل">ل</option>
+                                <option value="م">م</option>
+                                <option value="ن">ن</option>
+                                <option value="و">و</option>
+                                <option value="ه">ه</option>
+                                <option value="ی">ی</option>
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_1" name="License_plate_1" placeholder="83" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <div class="flag">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="text">
+                                I.R. <br>
+                                IRAN
+                            </div>
+                        </div>
+                    </div>
+                    <div class="licence_plate recognized">
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_4" name="License_plate_4" placeholder="28" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_3" name="License_plate_3" placeholder="653" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <select type="text" class="form-control" id="License_plate_2" name="License_plate_2" placeholder="الف" place_holder_active>
+                                <option value="الف" selected>الف</option>
+                                <option value="ب">ب</option>
+                                <option value="پ">پ</option>
+                                <option value="ت">ت</option>
+                                <option value="ث">ث</option>
+                                <option value="ج">ج</option>
+                                <option value="چ">چ</option>
+                                <option value="ح">ح</option>
+                                <option value="خ">خ</option>
+                                <option value="د">د</option>
+                                <option value="ذ">ذ</option>
+                                <option value="ر">ر</option>
+                                <option value="ز">ز</option>
+                                <option value="ژ">ژ</option>
+                                <option value="س">س</option>
+                                <option value="ش">ش</option>
+                                <option value="ص">ص</option>
+                                <option value="ض">ض</option>
+                                <option value="ط">ط</option>
+                                <option value="ظ">ظ</option>
+                                <option value="ع">ع</option>
+                                <option value="غ">غ</option>
+                                <option value="ف">ف</option>
+                                <option value="ق">ق</option>
+                                <option value="ک">ک</option>
+                                <option value="گ">گ</option>
+                                <option value="ل">ل</option>
+                                <option value="م">م</option>
+                                <option value="ن">ن</option>
+                                <option value="و">و</option>
+                                <option value="ه">ه</option>
+                                <option value="ی">ی</option>
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_1" name="License_plate_1" placeholder="83" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <div class="flag">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="text">
+                                I.R. <br>
+                                IRAN
+                            </div>
+                        </div>
+                    </div>
+                    <div class="licence_plate">
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_4" name="License_plate_4" placeholder="28" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_3" name="License_plate_3" placeholder="653" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <select type="text" class="form-control" id="License_plate_2" name="License_plate_2" placeholder="الف" place_holder_active>
+                                <option value="الف" selected>الف</option>
+                                <option value="ب">ب</option>
+                                <option value="پ">پ</option>
+                                <option value="ت">ت</option>
+                                <option value="ث">ث</option>
+                                <option value="ج">ج</option>
+                                <option value="چ">چ</option>
+                                <option value="ح">ح</option>
+                                <option value="خ">خ</option>
+                                <option value="د">د</option>
+                                <option value="ذ">ذ</option>
+                                <option value="ر">ر</option>
+                                <option value="ز">ز</option>
+                                <option value="ژ">ژ</option>
+                                <option value="س">س</option>
+                                <option value="ش">ش</option>
+                                <option value="ص">ص</option>
+                                <option value="ض">ض</option>
+                                <option value="ط">ط</option>
+                                <option value="ظ">ظ</option>
+                                <option value="ع">ع</option>
+                                <option value="غ">غ</option>
+                                <option value="ف">ف</option>
+                                <option value="ق">ق</option>
+                                <option value="ک">ک</option>
+                                <option value="گ">گ</option>
+                                <option value="ل">ل</option>
+                                <option value="م">م</option>
+                                <option value="ن">ن</option>
+                                <option value="و">و</option>
+                                <option value="ه">ه</option>
+                                <option value="ی">ی</option>
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_1" name="License_plate_1" placeholder="83" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <div class="flag">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="text">
+                                I.R. <br>
+                                IRAN
+                            </div>
+                        </div>
+                    </div>
+                    <div class="licence_plate recognized">
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_4" name="License_plate_4" placeholder="28" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_3" name="License_plate_3" placeholder="653" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <select type="text" class="form-control" id="License_plate_2" name="License_plate_2" placeholder="الف" place_holder_active>
+                                <option value="الف" selected>الف</option>
+                                <option value="ب">ب</option>
+                                <option value="پ">پ</option>
+                                <option value="ت">ت</option>
+                                <option value="ث">ث</option>
+                                <option value="ج">ج</option>
+                                <option value="چ">چ</option>
+                                <option value="ح">ح</option>
+                                <option value="خ">خ</option>
+                                <option value="د">د</option>
+                                <option value="ذ">ذ</option>
+                                <option value="ر">ر</option>
+                                <option value="ز">ز</option>
+                                <option value="ژ">ژ</option>
+                                <option value="س">س</option>
+                                <option value="ش">ش</option>
+                                <option value="ص">ص</option>
+                                <option value="ض">ض</option>
+                                <option value="ط">ط</option>
+                                <option value="ظ">ظ</option>
+                                <option value="ع">ع</option>
+                                <option value="غ">غ</option>
+                                <option value="ف">ف</option>
+                                <option value="ق">ق</option>
+                                <option value="ک">ک</option>
+                                <option value="گ">گ</option>
+                                <option value="ل">ل</option>
+                                <option value="م">م</option>
+                                <option value="ن">ن</option>
+                                <option value="و">و</option>
+                                <option value="ه">ه</option>
+                                <option value="ی">ی</option>
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_1" name="License_plate_1" placeholder="83" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <div class="flag">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="text">
+                                I.R. <br>
+                                IRAN
+                            </div>
+                        </div>
+                    </div>
+                    <div class="licence_plate">
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_4" name="License_plate_4" placeholder="28" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_3" name="License_plate_3" placeholder="653" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <select type="text" class="form-control" id="License_plate_2" name="License_plate_2" placeholder="الف" place_holder_active>
+                                <option value="الف" selected>الف</option>
+                                <option value="ب">ب</option>
+                                <option value="پ">پ</option>
+                                <option value="ت">ت</option>
+                                <option value="ث">ث</option>
+                                <option value="ج">ج</option>
+                                <option value="چ">چ</option>
+                                <option value="ح">ح</option>
+                                <option value="خ">خ</option>
+                                <option value="د">د</option>
+                                <option value="ذ">ذ</option>
+                                <option value="ر">ر</option>
+                                <option value="ز">ز</option>
+                                <option value="ژ">ژ</option>
+                                <option value="س">س</option>
+                                <option value="ش">ش</option>
+                                <option value="ص">ص</option>
+                                <option value="ض">ض</option>
+                                <option value="ط">ط</option>
+                                <option value="ظ">ظ</option>
+                                <option value="ع">ع</option>
+                                <option value="غ">غ</option>
+                                <option value="ف">ف</option>
+                                <option value="ق">ق</option>
+                                <option value="ک">ک</option>
+                                <option value="گ">گ</option>
+                                <option value="ل">ل</option>
+                                <option value="م">م</option>
+                                <option value="ن">ن</option>
+                                <option value="و">و</option>
+                                <option value="ه">ه</option>
+                                <option value="ی">ی</option>
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_1" name="License_plate_1" placeholder="83" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <div class="flag">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="text">
+                                I.R. <br>
+                                IRAN
+                            </div>
+                        </div>
+                    </div>
+                    <div class="licence_plate">
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_4" name="License_plate_4" placeholder="28" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_3" name="License_plate_3" placeholder="653" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <select type="text" class="form-control" id="License_plate_2" name="License_plate_2" placeholder="الف" place_holder_active>
+                                <option value="الف" selected>الف</option>
+                                <option value="ب">ب</option>
+                                <option value="پ">پ</option>
+                                <option value="ت">ت</option>
+                                <option value="ث">ث</option>
+                                <option value="ج">ج</option>
+                                <option value="چ">چ</option>
+                                <option value="ح">ح</option>
+                                <option value="خ">خ</option>
+                                <option value="د">د</option>
+                                <option value="ذ">ذ</option>
+                                <option value="ر">ر</option>
+                                <option value="ز">ز</option>
+                                <option value="ژ">ژ</option>
+                                <option value="س">س</option>
+                                <option value="ش">ش</option>
+                                <option value="ص">ص</option>
+                                <option value="ض">ض</option>
+                                <option value="ط">ط</option>
+                                <option value="ظ">ظ</option>
+                                <option value="ع">ع</option>
+                                <option value="غ">غ</option>
+                                <option value="ف">ف</option>
+                                <option value="ق">ق</option>
+                                <option value="ک">ک</option>
+                                <option value="گ">گ</option>
+                                <option value="ل">ل</option>
+                                <option value="م">م</option>
+                                <option value="ن">ن</option>
+                                <option value="و">و</option>
+                                <option value="ه">ه</option>
+                                <option value="ی">ی</option>
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <input type="number" class="form-control" id="License_plate_1" name="License_plate_1" placeholder="83" place_holder_active>
+                        </div>
+                        <div class="form_group">
+                            <div class="flag">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="text">
+                                I.R. <br>
+                                IRAN
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form_actions">
+            <a href="#shipment_page#shipment_detail" class="btn_submit">
+                ادامه
+            </a>
+            <a href="#shipment_page#add_truck" class="btn_cancel">انصراف</a>
+        </div>
+    </form>
+</section>

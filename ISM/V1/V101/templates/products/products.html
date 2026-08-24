@@ -1,0 +1,94 @@
+{% load static %}
+<section class="add_products section_page section_include_nav" id="add_products">
+    <div class="form_content h-100" id="add_roll_section">
+        <div class="form_content_nav">
+            <a href="#add_products#products_list" class="nav_item text-center" nav_id="products_list">لیست محصولات</a>
+            <div class="devider">
+                افزودن محصول
+            </div>
+            {% for x in products_machine %}
+            <a href="#add_products#roll_{{x.name}}" class="nav_item machine_api" machine_id="{{x.id}}" nav_id="roll_{{x.name}}" data-id="{{x.id}}">{{x.name}}</a>
+            {% endfor %}
+        </div>
+        {% for x in products_machine %}
+        <div class="section_page align-items-start pt-0" id="roll_{{x.name}}" >
+            <div class="form_content">
+                <div class="devider">
+                    ماشین {{x.name}}
+                </div>
+                <div class="form_section">
+                    <div class="form_group">
+                        <input type="number" class="form-control" id="product_form_roll_number_{{x.id}}" name="product_form_roll_number" placeholder="مثال: 6540">
+                        <label class="form-label" for="product_form_roll_number_{{x.id}}">شماره رول</label>
+                    </div>
+                    <div class="form_group">
+                        <input type="number" class="form-control" id="product_form_width_{{x.id}}" name="product_form_width" placeholder="مثال: 200">
+                        <label class="form-label" for="product_form_width_{{x.id}}">عرض</label>
+                    </div>
+                    <div class="form_group">
+                        <input type="number" class="form-control" id="product_form_grammage_{{x.id}}" name="product_form_grammage" placeholder="مثال: 200">
+                        <label class="form-label" for="product_form_grammage_{{x.id}}">گرماژ</label>
+                    </div>
+                    <div class="form_group">
+                        <input type="number" class="form-control" id="product_form_length_{{x.id}}" name="product_form_length" placeholder="مثال: 200">
+                        <label class="form-label" for="product_form_length_{{x.id}}">طول</label>
+                    </div>
+                    <div class="form_group">
+                        <input type="number" class="form-control" id="product_form_breaks_{{x.id}}" name="product_form_breaks" placeholder="مثال: 200">
+                        <label class="form-label" for="product_form_breaks_{{x.id}}">پارگی</label>
+                    </div>
+                    <div class="form_group">
+                        <select class="form-control" id="product_form_type_{{x.id}}" name="product_form_type">
+                            {% for x in products_type %}
+                            <option value="{{ x.id }}">{{ x.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label class="form-label" for="product_form_type_{{x.id}}">نوع</label>
+                    </div>
+                    <div class="form_group">
+                        <select class="form-control" id="product_form_profile_{{x.id}}" name="product_form_profile">
+                            <option value="0">0</option>
+                            <option value="200" selected>200</option>
+                            <option value="210-220">210-220</option>
+                            <option value="240-250">240-250</option>
+                        </select>
+                        <label class="form-label" for="product_form_profile_{{x.id}}">پروفایل مصرف</label>
+                    </div>
+                    <div class="form_group">
+                        <textarea class="form-control" style="height: auto;" name="product_form_desc" id="product_form_desc_{{x.id}}" rows="3"></textarea>
+                        <label class="form-label" for="product_form_desc_{{x.id}}">توضیحات</label>
+                    </div>
+                </div>
+
+                <div class="form_actions">
+                    <a class="btn_submit" onclick="add_products(this,{{x.id}})">
+                        افزودن
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="section_page align-items-start pt-0" id="products_list" >
+            <div class="form_content">
+                <div class="devider">
+                    لیست محصولات
+                </div>
+                <table id="products_list_table">
+                    <tr>
+                        <th>#</th>
+                        <th></th>
+                        <th>شماره رول</th>
+                        <th>ماشین</th>
+                        <th>عرض</th>
+                        <th>گرماژ</th>
+                        <th>طول</th>
+                        <th>پارگی</th>
+                        <th>نوع</th>
+                        <th>پروفایل</th>
+                        <th>QR</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

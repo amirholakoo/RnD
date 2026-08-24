@@ -51,6 +51,28 @@ def visions(request):
     }
     return render(request, 'visions/visions.html', context)
 
+def visions_report(request):
+    visions = Vision.objects.all()
+    vision_data_list = VisionData.objects.all().order_by('-CreationDateTime')
+    time_ago = 0
+    if request.GET.get("range"):
+        time_ago = int(request.GET.get("range")) * 24 * 60 * 60
+    print(time_ago,time.time()-time_ago)
+    organizing_detections = (
+        OrganizingVisionData.objects.filter(Is_Deleted=False)
+        .filter(start_time__gte=time.time()-time_ago)
+        .filter((~Q(Type=5) & ~Q(Type=4)))
+        .filter(~Q(class_name="forklift"))
+        .order_by('-start_time')
+        .values()
+    )
+    data = {
+        "help":'(1,"تخلیه"),(2,"بارگیری"),(3,"جابجایی"),(4,"ورود"),(5,"خروج"),(6,"جابجایی داخلی")',
+        "data":list(organizing_detections),
+    }
+    return JsonResponse(data, safe=False)
+
+
 def add(request):
     warehouses = Warehouse.objects.all().filter(Is_Deleted=False)
     if request.method == 'POST':
@@ -212,12 +234,16 @@ def create_organized_data(vision_data,key,count,start_time,end_time,t):
 
 def organizing_vision_detections(vision_data):
 
-
     def check_for_movement(organized_data):
         print('============ finding movement ... ============')
-        moved_data = OrganizingVisionData.objects.filter(~Q(vision=vision_data.vision),class_name=class_name,Type=5,count=organized_data.count,start_time__gte=organized_data.start_time - 600,start_time__lte=organized_data.start_time).first()
+        moved_data = OrganizingVisionData.objects.filter(~Q(vision=vision_data.vision) & (Q(Type=5)|Q(Type=2)),class_name=class_name,start_time__gte=organized_data.start_time - 600,start_time__lte=organized_data.start_time).first()
         if moved_data :
-            print(f"================ moved_data found =================")
+            if moved_data.count < organized_data.count:
+                return False
+                
+            if moved_data.count > organized_data.count :
+                moved_data.count -= organized_data.count
+
             organized_data.Type = 3
             if not organized_data.destenation:
                 organized_data.destenation = organized_data.location
@@ -233,7 +259,7 @@ def organizing_vision_detections(vision_data):
     def check_for_shipment(organized_data):
         print('============ finding shipment ... ============')
         if not organized_data.class_name == "forklift":
-            last_shipments = Shipment.objects.filter(Q(CreationDateTime__gte=organized_data.start_time - 1080) & Q(CreationDateTime__lte=organized_data.start_time + 1080))   
+            last_shipments = Shipment.objects.filter(Q(CreationDateTime__gte=organized_data.start_time - 3600) & Q(CreationDateTime__lte=organized_data.start_time + 3600)).order_by("-CreationDateTime")
             if last_shipments:
                 print(f"================ last_shipments and not moved_data =================")
                 # find true shipment
@@ -242,9 +268,10 @@ def organizing_vision_detections(vision_data):
                     unit_name = '' if not shipment.unit else shipment.unit.name
                     print(f"================ {unit_name} =================")
                     if ( 
-                        is_same_as(organized_data.class_name, unit_name) or 
+                        (is_same_as(organized_data.class_name, unit_name) and not
+                         OrganizingVisionData.objects.filter(shipment=shipment,end_time__gte=time.time() - 1800,end_time__lte=time.time()).exists()) or 
                         (not shipment.unit and organized_data.class_name == "paper-roll" and organized_data.Type == 5) and not
-                        (organized_data.Type == 1 and OrganizingVisionData.objects.filter(Type=1,shipment=shipment,start_time__gte=time.time() - 900,end_time__lte=time.time()).exists())
+                        (OrganizingVisionData.objects.filter(Type=1,shipment=shipment,end_time__gte=time.time() - 900,end_time__lte=time.time()).exists())
                         ):
                         print(f"================ is same =================")
                         # search if already have this or not ...
