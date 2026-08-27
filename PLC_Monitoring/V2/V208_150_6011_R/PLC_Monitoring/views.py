@@ -705,61 +705,96 @@ def roll_detail(request, roll_id):
 def roll_detail_api(request):
     """ roll details api for lab system | POST """
 
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({
+            "error": "only POST requests"
+        })
 
-        roll_from_request = (
-            request.POST.get("roll_from_request")
-            or request.GET.get("roll_from_request")
-        )
+    roll_from_request = (
+        request.POST.get("roll_from_request")
+        or request.GET.get("roll_from_request")
+    )
 
-        if roll_from_request:
-            try:
-                roll_number = int(roll_from_request)
-                rolls = Rolls.objects.filter(
-                    roll_number__gte=roll_number
-                )
-            except (ValueError, TypeError):
-                rolls = Rolls.objects.all()
+    if roll_from_request:
+        try:
+            roll_number = int(roll_from_request)
+
+            rolls = Rolls.objects.filter(
+                roll_number__gte=roll_number
+            )
+
+        except (ValueError, TypeError):
+            rolls = Rolls.objects.all()
+
+    else:
+        rolls = Rolls.objects.all()[:20]
+
+    plc_keys = list(
+        PLC_Keys.objects.all().values()
+    )
+
+    data = []
+
+    for roll in rolls:
+
+        # اگر Snapshot کامل قبلاً ذخیره شده،
+        # دیگر سراغ PLC_Logs نمی‌رویم.
+        if roll.plc_setting:
+
+            full_plc_setting = roll.plc_setting
+
         else:
-            rolls = Rolls.objects.all()[:20]
 
-        plc_keys = list(
-            PLC_Keys.objects.all().values()
-        )
-
-        data = []
-
-        for roll in rolls:
+            # Snapshot را از Delta Logs بازسازی کن
             full_plc_setting = get_full_roll_setting(roll)
 
-            data.append({
-                "plc_setting": full_plc_setting,
-                "roll_number": roll.roll_number,
-                "CreationDateTime": roll.CreationDateTime,
-                "Paper_breaks": roll.Paper_breaks,
-                "Printed_length": roll.Printed_length,
-            })
+            # Snapshot کامل را برای استفاده‌های بعدی ذخیره کن
+            if full_plc_setting:
+                roll.plc_setting = full_plc_setting
+                roll.save(update_fields=["plc_setting", "LastUpdate"])
 
-        return JsonResponse({
-            "status": 200,
-            "data": data,
-            "plc_keys": plc_keys
+                PLC_Logs.objects.create(
+                    plc=roll.plc,
+                    roll=roll,
+                    is_running=False,
+                    data="",
+                    json_data=full_plc_setting
+                )
+
+        data.append({
+            "plc_setting": full_plc_setting,
+            "roll_number": roll.roll_number,
+            "CreationDateTime": roll.CreationDateTime,
+            "Paper_breaks": roll.Paper_breaks,
+            "Printed_length": roll.Printed_length,
         })
 
     return JsonResponse({
-        "error": "only POST requests"
+        "status": 200,
+        "data": data,
+        "plc_keys": plc_keys
     })
 
 
 def get_full_roll_setting(roll):
+    required_keys = set(
+        PLC_Keys.objects.values_list("key", flat=True)
+    )
+
+    if not required_keys:
+        return {}
 
     current_state = {}
 
+    # from new to old
     logs = (
         PLC_Logs.objects
-        .filter(roll=roll)
-        .exclude(json_data__isnull=True)
-        .order_by("CreationDateTime")
+        .filter(
+            roll=roll,
+            json_data__isnull=False
+        )
+        .order_by("-CreationDateTime")
+        .only("json_data", "CreationDateTime")
     )
 
     for log in logs:
@@ -767,8 +802,12 @@ def get_full_roll_setting(roll):
         if not log.json_data:
             continue
 
-        current_state.update(log.json_data)
+        for key, value in log.json_data.items():
+            if key in required_keys and key not in current_state:
+                current_state[key] = value
 
+        if required_keys.issubset(current_state.keys()):
+            break
     return current_state
 
 

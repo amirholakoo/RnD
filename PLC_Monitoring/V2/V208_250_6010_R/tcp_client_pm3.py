@@ -97,7 +97,9 @@ def main_loop():
 
                     if plc_obj.setting is None:
                         plc_obj.setting = {}
+                    
                     if count < 250:
+                        
                         for key, value in data.items():
                             if key not in plc_obj.setting:
                                 new_data[key] = value
@@ -113,7 +115,7 @@ def main_loop():
                         continue
                     
                     plc_log = PLC_Logs(plc=plc_obj,
-                                       json_data=data)
+                                       json_data=plc_obj.setting if count >= 249 else data)
                     plc_log.save()
 
                     if "cr" in data:
@@ -121,7 +123,7 @@ def main_loop():
                         # if roll_obj.plc_setting is None:
                         #     roll_obj.plc_setting = {}
                         roll_obj.roll_number = int(data["cr"])
-                        #roll_obj.plc_setting.update(data)
+                        roll_obj.plc_setting.update(plc_obj.setting)
                         roll_obj.save()
                         plc_log.roll = roll_obj
                         plc_log.save()

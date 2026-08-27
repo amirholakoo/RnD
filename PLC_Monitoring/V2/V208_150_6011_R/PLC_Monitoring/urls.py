@@ -7,7 +7,7 @@ urlpatterns = [
     path("live-settings/", views.live_settings, name="live_settings"),
     path("roll/<int:roll_id>/", views.roll_detail, name="roll_detail"),
     path("api/rolls/", views.roll_detail_api, name="roll_detail_api"),
-    path("api/last_roll/", views.last_roll, name="roll_detail_api"),
+    path("api/last_roll/", views.last_roll, name="last_roll"),
     # PLC CRUD
     path("api/plcs/", views.get_plcs, name="get_plcs"),
     path("api/plcs/create/", views.create_plc, name="create_plc"),
