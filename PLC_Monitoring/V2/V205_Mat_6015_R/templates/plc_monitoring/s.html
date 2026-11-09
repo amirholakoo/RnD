@@ -1,0 +1,187 @@
+
+    <style>
+      
+
+      .contracts-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 5px 18px rgba(18, 48, 74, .08);
+        line-height: 0;
+      }
+
+      .contracts-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: auto;
+        vertical-align: top;
+        line-height: 1.9;
+
+      }
+
+      .contracts-table th {
+        background: var(--navy);
+        color: #fff;
+        font-weight: 700;
+        text-align: center;
+        vertical-align: middle;
+        padding: 13px 10px;
+        border-left: 1px solid rgba(255, 255, 255, .16);
+        white-space: nowrap;
+      }
+
+      .contracts-table td {
+        padding: 11px 10px;
+        border-bottom: 1px solid var(--line);
+        border-left: 1px solid var(--line);
+        vertical-align: middle;
+        text-align: center;
+      }
+
+      .contracts-table tbody tr:nth-child(even) {
+        background: var(--stripe)
+      }
+
+      .contracts-table tbody tr:hover {
+        background: #eaf3f9
+      }
+
+      .contracts-table th:first-child,
+      .contracts-table td:first-child {
+        width: 58px;
+        min-width: 58px;
+        text-align: center;
+        vertical-align: middle;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Center employer, location, start/end dates, and progress both horizontally and vertically. */
+      .contracts-table th:nth-child(3),
+      .contracts-table td:nth-child(3),
+      .contracts-table th:nth-child(4),
+      .contracts-table td:nth-child(4),
+      .contracts-table th:nth-child(6),
+      .contracts-table td:nth-child(6),
+      .contracts-table th:nth-child(7),
+      .contracts-table td:nth-child(7),
+      .contracts-table th:nth-child(8),
+      .contracts-table td:nth-child(8) {
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .contracts-table td:nth-child(6),
+      .contracts-table td:nth-child(7),
+      .contracts-table td:nth-child(8) {
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .contracts-table td:nth-child(8) {
+        font-weight: 700;
+        color: var(--blue);
+        white-space: normal;
+      }
+
+      .contracts-table tbody tr:last-child td {
+        border-bottom: 1px solid var(--line)
+      }
+
+      @media(max-width:700px) {
+        body {
+          padding: 8px;
+          font-size: 12px
+        }
+
+        .contracts-table th,
+        .contracts-table td {
+          padding: 9px 8px
+        }
+      }
+
+      /* تنظیم عرض جدول شش‌ستونه */
+      .contracts-table th:nth-child(1),
+      .contracts-table td:nth-child(1) {
+        width: 6%;
+      }
+
+      .contracts-table th:nth-child(2),
+      .contracts-table td:nth-child(2) {
+        width: 34%;
+      }
+
+      .contracts-table th:nth-child(3),
+      .contracts-table td:nth-child(3) {
+        width: 17%;
+      }
+
+      .contracts-table th:nth-child(4),
+      .contracts-table td:nth-child(4),
+      .contracts-table th:nth-child(5),
+      .contracts-table td:nth-child(5) {
+        width: 13%;
+      }
+
+      .contracts-table th:nth-child(6),
+      .contracts-table td:nth-child(6) {
+        width: 17%;
+      }
+
+      .contracts-table tbody tr:last-child td {
+        border-bottom: 1px solid var(--line);
+      }
+    </style>
+    
+    <div class="contracts-table-wrap" dir="rtl">
+      <table class="contracts-table" dir="rtl">
+        <thead>
+          <tr>
+            <th>ردیف</th>
+            <th>موضوع قرارداد</th>
+            <th>نام کارفرما</th>
+            <th>تاریخ شروع</th>
+            <th>تاریخ پایان</th>
+            <th>وضعیت</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>تامین تری اتیلن گلایکول - TEG</td>
+            <td>شرکت Sinopec</td>
+            <td>29/09/1404</td>
+            <td>10/01/1405</td>
+            <td>خاتمه یافته</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>تامین Medium Heating Oil</td>
+            <td>شرکت Sinopec</td>
+            <td>25/12/1403</td>
+            <td>25/09/1403</td>
+            <td>خاتمه یافته</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>تامین Air Conditioner</td>
+            <td>شرکت Sinopec</td>
+            <td>19/08/1403</td>
+            <td>19/11/1403</td>
+            <td>خاتمه یافته</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>تامین سخت افزار شبکه و کامپیوتر</td>
+            <td>شرکت Sinopec</td>
+            <td>20/06/1402</td>
+            <td>20/09/1402</td>
+            <td>خاتمه یافته</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>

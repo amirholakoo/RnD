@@ -1,0 +1,91 @@
+#calendar {
+  /* background: #f5f4f7; */
+  max-height: 450px;
+  max-width: 550px;
+  /* border: 1px solid #d7d7d7; */
+  border-radius: 20px;
+  padding: 10px;
+}
+#calendar select {
+  border-radius: 6px;
+  padding: 6px;
+}
+.calendar .days.title {
+  color: #000000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f4f4f4;
+  border-radius: 6px;
+}
+.calendar .days.title .day_item {
+  border: none;
+  font-size: 1.2em;
+}
+.calendar .days .day_item {
+  font-weight: 400;
+  width: 13.9%;
+  padding: 9px;
+  font-size: 1.4em;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid #eeeeee;
+  margin: 1px;
+}
+.calendar .days .calendar_day:hover {
+  background-color: var(--main);
+}
+.calendar .days .day_item .title {
+  cursor: pointer;
+  font-weight: 700;
+}
+.calendar .days .day_item label {
+  margin-bottom: 0;
+  cursor: pointer;
+  font-size: 0.8em;
+}
+.calendar .off {
+  color: #FF0000;
+}
+.calendar .off.border-info {
+border: 1px solid #17a2b8 !important;
+color: #17a2b8;
+}
+.calendar .item-parent {
+display: flex;
+max-width: 100%;
+transition: all 0.3s;
+}
+.calendar .item-parent .calendar_month {
+opacity: 0;
+visibility: hidden;
+pointer-events: none;
+z-index: -1;
+width: 0;
+position: absolute;
+transition: all 0.3s;
+}
+.calendar .item-parent .calendar_month.active {
+opacity: 1;
+visibility: visible;
+pointer-events: visible;
+z-index: 1;
+width: 100%;
+position: unset;
+}
+.calendar_day input {
+  margin-top: 0;
+}
+
+section:not(.calendar) input[type=radio] {
+  display: none;
+}
+section.calendar input[type=radio] {
+  display: block;
+}
+
+section.calendar .disable{
+  color: rgb(0 0 0 / 30%);
+  pointer-events: none;
+}

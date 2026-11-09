@@ -1,0 +1,130 @@
+import os, time
+import django
+import socket
+import struct
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+django.setup()
+
+from PLC_Monitoring.models import *
+
+
+def update_health(server=None, plc=None):
+    obj = TCP_CONNECTION.objects.first()
+    if not obj: obj = TCP_CONNECTION()
+    
+    if server: obj.ServerLastUpdate = time.time()
+    if plc: obj.ClientLastUpdate = time.time()
+    obj.save()
+
+
+s = socket.socket()
+s.bind(("0.0.0.0", 3000))
+s.listen(5)
+s.settimeout(1.0)
+
+print("================= PLC TCP server started ================")
+
+try:
+    while True:
+        update_health(server=True)
+        try:
+            conn, addr = s.accept()
+            raw_data = conn.recv(1024)
+            print(conn)
+            print(f"1-raw_data: {raw_data}")
+            if raw_data:
+                update_health(plc=True)
+                clean_bytes = raw_data.replace(b'\x00', b'')
+                raw_data = clean_bytes.decode("utf-8", errors="ignore").strip()
+                
+                print(f"Cleaned raw_data: {raw_data}")
+                if "ERROR" in raw_data:
+                    continue
+                last_log = PLC_Logs.objects.order_by("-CreationDateTime").first()
+                raw_data = "n=MAT-MAKING;" + raw_data
+                print(raw_data)
+                if last_log and raw_data == last_log.data:
+                    last_log.save()
+                    continue
+                    
+                if raw_data.startswith("n=") and "=" in raw_data:
+                    data = dict(item.split("=", 1) for item in raw_data.split(";") if "=" in item)
+                    plc_obj, created = PLC.objects.get_or_create(device_id=data["n"])
+
+
+                    # =========================
+                    # Convert WA bits to warnings
+                    # =========================
+
+                    warning_data = {}
+
+                    for key, value in data.items():
+
+                        if key.startswith("wa"):
+                            try:
+                                wa_number = int(key[2:])
+                                warning_value = int(value)
+                                print("==========wa val===========",warning_value)
+                                for bit in range(32):
+
+                                    warning_number = (wa_number - 1) * 32 + bit + 1
+                                    warning_key = f"warning{warning_number}"
+
+                                    warning_data[warning_key] = (
+                                        warning_value >> bit
+                                    ) & 1
+
+                            except (ValueError, TypeError):
+                                pass
+                    print("==========wa===========",warning_data)
+                    data.update(warning_data)
+
+                    # for key in list(data):
+                    #     if key == "wa1" or key == "wa2" or key == "wa3" or key == "wa4":
+                    #         del data[key]
+
+                    # check if the log is already in the database
+                    incoming_keys = data.keys()
+                    print(incoming_keys)
+                    new_data = {}
+                    if plc_obj.setting is None:
+                        plc_obj.setting = {}
+                    for key, value in data.items():
+                        if key not in plc_obj.setting:
+                            new_data[key] = value
+                            continue
+                        if plc_obj.setting[key] != value:
+                            new_data[key] = value
+                    print("====================",new_data,"=======================")
+                    data = new_data
+                    if not data :
+                        continue
+                    plc_log = PLC_Logs(plc=plc_obj,
+                                       json_data=data)
+                    plc_log.save()
+
+                    # save new key in plc_keys table
+                    existing_keys = set(PLC_Keys.objects.filter(key__in=incoming_keys).values_list("key", flat=True))
+                    missing_keys = incoming_keys - existing_keys
+                    PLC_Keys.objects.bulk_create([PLC_Keys(key=key,value=str(type(key).__name__))for key in missing_keys])
+
+                    plc_obj.setting.update(data)
+                    for key, value in data.items():
+                        plc_obj.setting[key] = value
+                    plc_obj.save()
+
+
+                else:
+                    PLC_Logs.objects.create(data=raw_data)
+            conn.sendall(b"OK")
+
+        except Exception as e:
+            print(f"Worker error: {e}")
+
+except KeyboardInterrupt:
+    print("\nShutting down PLC TCP server...")
+    s.close()
+
+finally:
+    s.close()

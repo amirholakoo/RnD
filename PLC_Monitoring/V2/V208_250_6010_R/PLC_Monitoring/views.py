@@ -444,7 +444,7 @@ def live_settings(request):
 def get_historical_chart_data(request):
     """Get historical chart data for a PLC based on time range"""
     plc_id = request.GET.get('plc')
-    time_range = request.GET.get('range', '4h')
+    time_range = request.GET.get('range', '4-h')
     interval = int(request.GET.get('interval', 60))  # Default 60 seconds
     
     if not plc_id:
@@ -726,14 +726,20 @@ def roll_detail_api(request):
 
         if roll_from_request:
             try:
-                roll_number = int(roll_from_request)
-                rolls = Rolls.objects.filter(
-                    roll_number__gte=roll_number
-                )
+                roll_number = int(roll_from_request)-2
+                roll_target = Rolls.objects.filter(
+                    roll_number=roll_number
+                ).last()
+                if roll_target:
+                    rolls = Rolls.objects.filter(
+                        CreationDateTime__gte=roll_target.CreationDateTime
+                    )
+                else:
+                    rolls = Rolls.objects.order_by("-CreationDateTime")[:50]
             except (ValueError, TypeError):
-                rolls = Rolls.objects.all()
+                rolls = Rolls.objects.order_by("-CreationDateTime")[:50]
         else:
-            rolls = Rolls.objects.all()[:20]
+            rolls = Rolls.objects.order_by("-CreationDateTime")[:50]
 
         plc_keys = list(
             PLC_Keys.objects.all().values()
