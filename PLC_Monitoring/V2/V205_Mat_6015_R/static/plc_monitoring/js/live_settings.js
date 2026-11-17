@@ -854,8 +854,8 @@ const s2 = {
     2:"انتظار دستور ساخت",
     3:"تزریق مواد",
     4:"هم زدن",
-    5:"آبگیری هدف",
-    6:"همزدن - عدم اجازه ارسال",
+    5:"همزدن - عدم اجازه ارسال",
+    6:"آبگیری هدف",
     7:"ارسال",
     8:"آبگیری و شستشو",
     9:"ارسال آب شستشو",
@@ -866,8 +866,8 @@ const s3 = {
     2:"انتظار دستور ساخت",
     3:"تزریق مواد",
     4:"هم زدن",
-    5:"آبگیری هدف",
-    6:"همزدن - عدم اجازه ارسال",
+    5:"همزدن - عدم اجازه ارسال",
+    6:"آبگیری هدف",
     7:"ارسال",
     8:"آبگیری و شستشو",
     9:"ارسال آب شستشو",
@@ -899,7 +899,16 @@ function update_svg_map(key, value) {
     let img_target = document.querySelector(`[img_key="img_${key}"]`);
     let systemalarm = document.getElementById("systemalarm");
     let bg_rec = document.querySelector(`[bg_rec="${key}"]`);
-    let emergency = document.querySelector(`[emergency_key="${key}"]`);
+    let setpoint = document.querySelectorAll(`[setpoint_key="${key}"]`);
+
+
+    const emergency = [...document.querySelectorAll(`[emergency_key]`)]
+    .filter(obj =>
+        obj.getAttribute("emergency_key")
+            .split(";")
+            .map(key => key.trim())
+            .includes(key)
+    );
 
     const water_flow = [...document.querySelectorAll("[waterflow]")]
     .filter(obj =>
@@ -990,7 +999,7 @@ function update_svg_map(key, value) {
                 bg_rec.style.fill = custome_color;
             }
         } else {
-            bg_rec.style.fill = "#b3b3b3"
+            bg_rec.style.fill = "#f3f3f3"
         }
     }
     if (rec) {
@@ -1006,6 +1015,14 @@ function update_svg_map(key, value) {
             resizeBarFromTop(rec, numValue + 3);
         }
     }
+    if (setpoint) {
+        setpoint.forEach(point=>{
+            SetpointPosition(point, 0);
+            if (numValue) {
+                SetpointPosition(point, numValue);
+            }
+        })
+    }
     if (key == "t18") {
         if (String(value) == "1") {
             systemalarm.classList.add("infinite_pulse");
@@ -1014,13 +1031,24 @@ function update_svg_map(key, value) {
         }
     }
     if (emergency) {
-        if(String(value)=="1") {
-            emergency.style.opacity= "1";
-        } else {
-            emergency.style.opacity= ".02";
+        for (const x of emergency) {
+            let emergency_dependency = x.getAttribute("emergency_key").split(";")
+            let emergency_on = false;
+            emergency_dependency.map(dependency_key => {
+                if(String(value)=="1") {
+                    x.style.opacity= "1";
+                    emergency_on=true;
+                }
+                if(dependency_key in wa_values && wa_values[dependency_key]=="1") {
+                    x.style.opacity= "1";
+                    emergency_on=true;
+                }
+            })
+            if(!emergency_on) {
+                x.style.opacity= ".02";
+            }
         }
     }
-    
     if (water_flow) {
         for (const x of water_flow) {
             let water_dependency = x.getAttribute("waterflow").split(";")
@@ -1202,6 +1230,21 @@ function resizeBarFromTop(obj, value) {
 }
 // warnings status configs
 
+
+function SetpointPosition(obj, value) {
+    const Percent = 100;
+
+    const origin = Number(obj.getAttribute('origin'));
+    if (isNaN(origin)) return;
+
+    const Height = Number(obj.getAttribute('height'));
+
+    value = Math.max(0, Math.min(Number(value) || 0, Percent));
+
+    const y = Height - (value / Percent) * Height;
+
+    obj.setAttribute("transform", `translate(0, ${y})`);
+}
 function UpdateWA(key, value) {
     if (!/^wa[1-9]-(?:[0-9]|1[0-5])$/.test(key)) return;
 

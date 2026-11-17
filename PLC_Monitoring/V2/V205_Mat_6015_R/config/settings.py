@@ -100,7 +100,7 @@ DATABASES = {
         'PASSWORD': '0000',
         'HOST': 'localhost',
         'PORT': '5432',
-        "CONN_MAX_AGE": 60,
+        "CONN_MAX_AGE": 0,
         'CONN_HEALTH_CHECKS': True,
         'OPTIONS': {
             'connect_timeout': 5,

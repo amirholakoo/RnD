@@ -3,6 +3,7 @@ from datetime import datetime
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.db import transaction
+from django.db import connections, close_old_connections
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
@@ -240,7 +241,6 @@ def _update_current_step(material, now, plc_obj):
         int((now - start_time).total_seconds())
     )
 
-    # محاسبه تغییر وزن نسبت به ابتدای مرحله
     weight_start = _to_number(current_step.get("weight_start"))
     weight_end = _get_weight(plc_obj, material.tank)
 
@@ -253,7 +253,7 @@ def _update_current_step(material, now, plc_obj):
 
     current_step.setdefault("weight_details", [])
     _update_temperature_details(current_step, plc_obj)
-    # ثبت تغییرات در دیتابیس
+
     material.steps_details = details
     material.LastUpdate = now
 
@@ -284,7 +284,6 @@ def process_material_step(plc_obj, tank, status):
 
     now = timezone.now()
 
-    # رکوردهای این مخزن را بررسی می‌کنیم تا آخرین پخت باز پیدا شود.
     records = Materials.objects.filter(
         plc=plc_obj,
         tank=tank,
@@ -354,6 +353,7 @@ print("================= PLC TCP server started ================")
 
 try:
     while True:
+        close_old_connections()
         update_health(server=True)
         try:
             conn, addr = s.accept()
@@ -386,7 +386,7 @@ try:
 
                     for key, value in data.items():
 
-                        if key in ("wa1", "wa2", "wa3", "wa4", "wa5","wa6","wa7","wa8","wa9","wb1"):
+                        if key in ("wa1", "wa2", "wa3", "wa4", "wa5","wa6","wa7","wa8","wa9","wb1","wb2","wb3","wb4","wb5","wb6"):
                             try:
                                 word_value = int(value)
 

@@ -1,17 +1,14 @@
 from django.http import JsonResponse, StreamingHttpResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
-from django.db import transaction
+from django.db import transaction, connections, close_old_connections
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from datetime import timedelta, datetime
 from .models import *
-import json
-import time, csv
-import jdatetime
-from io import BytesIO
-from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
+import time, csv, jdatetime, json
+from django.core.serializers.json import DjangoJSONEncoder
+
 def dashboard(request):
     context = {
         'all_plcs': PLC.objects.all(),
@@ -309,60 +306,90 @@ def update_key_settings_by_key(request):
         return JsonResponse({'status': 'error', 'message': str(e)})
 
 def sse_plc_logs(request):
-    """SSE endpoint for streaming PLC_Logs in real-time (new logs + updated logs)"""
+
     def event_stream():
         last_id = 0
         last_update_time = timezone.now()
-        
-        while True:
-            logs_data = []
-            
-            # Get new logs
-            new_logs = PLC_Logs.objects.filter(id__gt=last_id).select_related('plc').order_by('-id')[:50]
-            if new_logs:
-                last_id = new_logs[0].id
-                for log in reversed(new_logs):
-                    logs_data.append({
-                        'id': log.id,
-                        'plc_id': log.plc.id if log.plc else None,
-                        'plc_device_id': log.plc.device_id if log.plc else 'نامشخص',
-                        'plc_name': log.plc.name if log.plc else '',
-                        'data': str(log.json_data),
-                        'json_data': log.json_data,
-                        'CreationDateTime': log.CreationDateTime.timestamp() if log.CreationDateTime else None,
-                        'LastUpdate': log.LastUpdate.timestamp() if log.LastUpdate else None,
-                        'is_update': False
-                    })
-            
-            # Get updated logs (LastUpdate changed since last check)
-            updated_logs = PLC_Logs.objects.filter(
-                id__lte=last_id,
-                LastUpdate__gt=last_update_time
-            ).select_related('plc').order_by('-LastUpdate')[:20]
-            
-            for log in updated_logs:
-                logs_data.append({
-                    'id': log.id,
-                    'plc_id': log.plc.id if log.plc else None,
-                    'plc_device_id': log.plc.device_id if log.plc else 'نامشخص',
-                    'plc_name': log.plc.name if log.plc else '',
-                    'data': log.data,
-                    'json_data': log.json_data,
-                    'CreationDateTime': log.CreationDateTime.timestamp() if log.CreationDateTime else None,
-                    'LastUpdate': log.LastUpdate.timestamp() if log.LastUpdate else None,
-                    'is_update': True
-                })
-            
-            last_update_time = timezone.now()
-            
-            if logs_data:
-                yield f"data: {json.dumps(logs_data, ensure_ascii=False, default=str)}\n\n"
-            
-            time.sleep(1)
-    
-    response = StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+
+        try:
+            while True:
+                logs_data = []
+
+                close_old_connections()
+
+                try:
+                    check_time = timezone.now()
+                    new_logs = list(
+                        PLC_Logs.objects
+                        .filter(id__gt=last_id)
+                        .select_related('plc')
+                        .order_by('-id')[:50]
+                    )
+
+                    if new_logs:
+                        last_id = new_logs[0].id
+
+                        for log in reversed(new_logs):
+                            logs_data.append({
+                                'id': log.id,
+                                'plc_id': log.plc.id if log.plc else None,
+                                'plc_device_id': log.plc.device_id if log.plc else 'نامشخص',
+                                'plc_name': log.plc.name if log.plc else '',
+                                'data': str(log.json_data),
+                                'json_data': log.json_data,
+                                'CreationDateTime': log.CreationDateTime.timestamp() if log.CreationDateTime else None,
+                                'LastUpdate': log.LastUpdate.timestamp() if log.LastUpdate else None,
+                                'is_update': False
+                            })
+
+                    updated_logs = list(
+                        PLC_Logs.objects
+                        .filter(
+                            id__lte=last_id,
+                            LastUpdate__gt=last_update_time,
+                            LastUpdate__lte=check_time
+                        )
+                        .select_related('plc')
+                        .order_by('-LastUpdate')[:20]
+                    )
+
+                    for log in updated_logs:
+                        logs_data.append({
+                            'id': log.id,
+                            'plc_id': log.plc.id if log.plc else None,
+                            'plc_device_id': log.plc.device_id if log.plc else 'نامشخص',
+                            'plc_name': log.plc.name if log.plc else '',
+                            'data': log.data,
+                            'json_data': log.json_data,
+                            'CreationDateTime': log.CreationDateTime.timestamp() if log.CreationDateTime else None,
+                            'LastUpdate': log.LastUpdate.timestamp() if log.LastUpdate else None,
+                            'is_update': True
+                        })
+
+                    last_update_time = check_time
+
+                finally:
+                    connections.close_all()
+
+                if logs_data:
+                    yield (
+                        f"data: {json.dumps(logs_data, ensure_ascii=False, cls=DjangoJSONEncoder)}\n\n"
+                    )
+
+                time.sleep(1)
+
+        finally:
+            # هنگام قطع اتصال کلاینت نیز منابع آزاد شوند
+            connections.close_all()
+
+    response = StreamingHttpResponse(
+        event_stream(),
+        content_type='text/event-stream'
+    )
+
     response['Cache-Control'] = 'no-cache'
     response['X-Accel-Buffering'] = 'no'
+
     return response
 
 def get_initial_logs(request):
@@ -705,38 +732,43 @@ def sse_plc_settings(request):
         last_update_time = None
         
         while True:
+            close_old_connections()
             health = TCP_CONNECTION.objects.first()
             now = time.time()
-            if not health:
-                health = TCP_CONNECTION(
-                    ServerLastUpdate=time.time(),
-                    ClientLastUpdate=time.time(),
-                )
-                health.save()
-            server_status = "OK" if (now - health.ServerLastUpdate) < 30 else "ERROR"
-            plc_status = "OK" if (now - health.ClientLastUpdate) < 30 else "ERROR"
-            data = {
-                'server_status':server_status,
-                'plc_status':plc_status,
-            }
             try:
-                plc = PLC.objects.get(id=plc_id)
-                
-                if plc.LastUpdate and (last_update_time is None or plc.LastUpdate > last_update_time):
-                    last_update_time = plc.LastUpdate
-                    data['id']= plc.id,
-                    data['device_id']= plc.device_id
-                    data['name']= plc.name
-                    data['setting']= plc.setting
-                    data['LastUpdate']= plc.LastUpdate.timestamp() if plc.LastUpdate else None
-                    data['server_status']=server_status
-                    data['plc_status']=plc_status
-                    # yield f"data: {json.dumps(data, ensure_ascii=False, default=str)}\n\n"
-            except PLC.DoesNotExist:
-                pass
-            print(data)
-            yield f"data: {json.dumps(data, ensure_ascii=False, default=str)}\n\n"
-            time.sleep(1)
+
+                if not health:
+                    health = TCP_CONNECTION(
+                        ServerLastUpdate=time.time(),
+                        ClientLastUpdate=time.time(),
+                    )
+                    health.save()
+                server_status = "OK" if (now - health.ServerLastUpdate) < 30 else "ERROR"
+                plc_status = "OK" if (now - health.ClientLastUpdate) < 30 else "ERROR"
+                data = {
+                    'server_status':server_status,
+                    'plc_status':plc_status,
+                }
+                try:
+                    plc = PLC.objects.get(id=plc_id)
+                    
+                    if plc.LastUpdate and (last_update_time is None or plc.LastUpdate > last_update_time):
+                        last_update_time = plc.LastUpdate
+                        data['id']= plc.id,
+                        data['device_id']= plc.device_id
+                        data['name']= plc.name
+                        data['setting']= plc.setting
+                        data['LastUpdate']= plc.LastUpdate.timestamp() if plc.LastUpdate else None
+                        data['server_status']=server_status
+                        data['plc_status']=plc_status
+                        # yield f"data: {json.dumps(data, ensure_ascii=False, default=str)}\n\n"
+                except PLC.DoesNotExist:
+                    pass
+                print(data)
+                yield f"data: {json.dumps(data, ensure_ascii=False, default=str)}\n\n"
+                time.sleep(1)
+            finally:
+                connections.close_all()
     
     response = StreamingHttpResponse(event_stream(), content_type='text/event-stream')
     response['Cache-Control'] = 'no-cache'
